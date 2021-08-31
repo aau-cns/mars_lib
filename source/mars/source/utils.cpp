@@ -25,6 +25,47 @@ Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::Matri
   return mat_out;
 }
 
+void Utils::TransformImu(const IMUMeasurementType& prev, const IMUMeasurementType& now, const double& dt,
+                         const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab, IMUMeasurementType& result)
+{
+  const Eigen::Matrix3d R_ba = q_ab.toRotationMatrix().transpose();
+  const Eigen::Vector3d w_a_now(now.angular_velocity_);
+  const Eigen::Vector3d w_a_prev(prev.angular_velocity_);
+  const Eigen::Vector3d acc_a(now.linear_acceleration_);
+
+  // Transformation of angular velocity
+  const Eigen::Vector3d w_b = R_ba * w_a_now;
+
+  // Transformation of linear acceleration
+  Eigen::Vector3d acc_b;
+
+  if (dt > 0)
+  {
+    // Account for angular acceleration
+    const Eigen::Vector3d dw_a = (w_a_now - w_a_prev) / dt;
+    acc_b = R_ba * (acc_a + (Skew(w_a_now) * Skew(w_a_now) + Skew(dw_a)) * p_ab);
+  }
+  else
+  {
+    // Since dt is zero, do not concider angular acceleration
+    acc_b = R_ba * (acc_a + (Skew(w_a_now) * Skew(w_a_now)) * p_ab);
+  }
+
+  // Map return values
+  result.angular_velocity_ = w_b;
+  result.linear_acceleration_ = acc_b;
+  return;
+}
+
+void Utils::TransformImu(const IMUMeasurementType& now, const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab,
+                         IMUMeasurementType& result)
+{
+  const double dt = 0; // Setting dt=0 ignores angular acceleration
+  const IMUMeasurementType prev; // Empty previous IMU measurement
+
+  TransformImu(prev, now, dt, p_ab, q_ab, result);
+}
+
 Eigen::Matrix3d Utils::Skew(const Eigen::Vector3d& v)
 {
   Eigen::Matrix3d res;

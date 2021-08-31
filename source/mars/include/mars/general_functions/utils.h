@@ -11,6 +11,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <mars/sensors/imu/imu_measurement_type.h>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -23,6 +24,36 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   Utils();
+
+  ///
+  /// \brief TransformImu Transform IMU measurements from current frame A to frame B
+  ///
+  /// This function takes angular accleration into account and thus needs the previous IMU measurement and dt
+  ///
+  /// \param prev Previos IMU measurement expressed in frame A
+  /// \param now  Current IMU measurement expressed in frame A
+  /// \param dt   Delta time between both IMU measurements
+  /// \param p_ab Transformation of frame B w.r.t. frame A
+  /// \param q_ab Rotation of frame B w.r.t. frame A
+  /// \param result Transformed current IMU measurement expressed in frame B
+  ///
+  static void TransformImu(const mars::IMUMeasurementType& prev, const mars::IMUMeasurementType& now, const double& dt,
+                           const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab,
+                           mars::IMUMeasurementType& result);
+
+  ///
+  /// \brief TransformImu Transform IMU measurements from current frame A to frame B
+  ///
+  /// This function does not take the angular accleration into account and thus does not need the previous IMU
+  /// measurement and dt
+  ///
+  /// \param now  Current IMU measurement expressed in frame A
+  /// \param p_ab Transformation of frame B w.r.t. frame A
+  /// \param q_ab Rotation of frame B w.r.t. frame A
+  /// \param result Transformed current IMU measurement expressed in frame B
+  ///
+  static void TransformImu(const mars::IMUMeasurementType& now, const Eigen::Vector3d& p_ab,
+                           const Eigen::Quaterniond& q_ab, mars::IMUMeasurementType& result);
 
   ///
   /// \brief skew generate the skew symmetric matrix of v
