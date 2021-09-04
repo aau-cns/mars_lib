@@ -1,0 +1,6 @@
+traj_file_name: "traj.csv" # the files need to be placed in source/examples/mars_thl/sim_data/thl
+pose_file_name: "pose_sensor_1.csv"
+imu_n_w: [0.013, 0.013, 0.013] # Noise STD [rad/s]
+imu_n_bw: [0.0013, 0.0013, 0.0013]
+imu_n_a: [0.083, 0.083, 0.083] # Noise STD [m/s^2]
+imu_n_ba: [0.0083, 0.0083, 0.0083]

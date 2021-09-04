@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg2"
+   width="270"
+   height="55"
+   viewBox="0 0 270 55"
+   sodipodi:docname="mars_logo.svg"
+   inkscape:version="0.92.5 (0.92.5+68)"
+   inkscape:export-filename="/home/chrbrommer/Documents/mars_ws/mars_cpp/resources/mars_logo.png"
+   inkscape:export-xdpi="600"
+   inkscape:export-ydpi="600">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2495"
+     inkscape:window-height="1416"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="128.27207"
+     inkscape:cy="34.941408"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:lockguides="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     showguides="false" />
+  <rect
+     style="opacity:1;fill:#ff9955;fill-opacity:1;fill-rule:evenodd;stroke:#ff9955;stroke-width:11.33899879;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect840"
+     width="258.66101"
+     height="43.660999"
+     x="5.6694946"
+     y="5.6695004"
+     rx="7.3016505"
+     ry="7.30165" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56.81261444px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="0.13719489"
+     y="220.85806"
+     id="text819-3"><tspan
+       sodipodi:role="line"
+       id="tspan817-6"
+       x="0.13719489"
+       y="220.85806"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'a Astro Space';-inkscape-font-specification:'a Astro Space';letter-spacing:15px;stroke-width:1px">MaRS</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.3003788px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="255.94658"
+     y="220.09882"
+     id="text816-3"
+     inkscape:export-xdpi="600"
+     inkscape:export-ydpi="600"><tspan
+       sodipodi:role="line"
+       id="tspan814-56"
+       x="255.94658"
+       y="220.09882"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:62.42633438px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:1px">a</tspan></text>
+  <g
+     id="g941"
+     transform="translate(-0.35508819,-6.2784912)">
+    <text
+       id="text819"
+       y="55"
+       x="21.067198"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56.81261444px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'a Astro Space';-inkscape-font-specification:'a Astro Space';letter-spacing:15px;stroke-width:1px"
+         y="55"
+         x="21.067198"
+         id="tspan817"
+         sodipodi:role="line">M</tspan></text>
+    <g
+       transform="translate(6.4349136,6.400766)"
+       id="text816"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.3003788px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       aria-label="a">
+      <path
+         sodipodi:nodetypes="sccccsccsscsscccscsscccssscsccscsccccs"
+         inkscape:connector-curvature="0"
+         id="path872"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:62.42633438px;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';stroke-width:1px"
+         d="m 103.63465,42.419027 h 2.43462 c 0.79073,-0.04162 1.47742,-0.104046 2.06007,-0.187279 v -6.742044 c -0.49941,-0.08324 -1.10286,-0.145662 -1.81036,-0.187279 -0.7075,-0.08324 -1.35257,-0.124853 -1.93522,-0.124853 -0.79073,0 -1.56066,0.06243 -2.30977,0.187279 -0.74912,0.08324 -1.415,0.249706 -1.99764,0.499411 -0.541031,0.249705 -0.978016,0.603454 -1.310957,1.061247 -0.332941,0.457793 -0.499411,1.061248 -0.499411,1.810364 0,1.331762 0.499411,2.288966 1.498232,2.871611 0.998826,0.541029 2.288966,0.811543 3.870436,0.811543 z m -0.68669,-24.595976 c 2.41381,0 4.41146,0.291323 5.99293,0.873969 1.62308,0.541028 2.91322,1.331761 3.87043,2.3722 0.9572,0.998821 1.64389,2.247348 2.06007,3.745581 0.41617,1.456614 0.62426,3.100507 0.62426,4.93168 v 17.479374 c -1.12367,0.249705 -2.78838,0.541028 -4.99411,0.873968 -2.20573,0.332941 -4.68197,0.499411 -7.42873,0.499411 -1.87279,0 -3.579106,-0.16647 -5.118959,-0.499411 -1.498232,-0.33294 -2.788376,-0.873968 -3.870433,-1.623084 -1.082057,-0.790734 -1.914408,-1.789555 -2.497053,-2.996464 -0.582646,-1.248527 -0.873969,-2.767568 -0.873969,-4.557123 0,-1.70632 0.33294,-3.142126 0.998821,-4.307417 0.665881,-1.165291 1.560659,-2.101686 2.684333,-2.809185 1.123674,-0.707499 2.413818,-1.206909 3.870432,-1.498232 1.456612,-0.332941 5.395678,-0.650701 5.541488,-0.460349 l 4.32187,5.641735 c 0,0 -0.0184,-4.174604 0,-5.181386 0.0184,-1.006782 0,-0.936395 0,-0.936395 0,-1.456615 -0.45779,-2.663524 -1.37338,-3.620727 -0.91559,-0.998821 -2.49705,-1.498232 -4.7444,-1.498232 -1.45661,0 -2.871609,0.104044 -4.244988,0.312131 -1.331762,0.208088 -2.413819,0.457793 -3.24617,0.749116 l -1.061247,-6.180207 c 0.957203,-0.332941 2.309774,-0.624264 4.057711,-0.873969 1.747936,-0.291323 3.558304,-0.436984 5.431094,-0.436984 z" />
+    </g>
+    <text
+       id="text819-3-2-1"
+       y="55"
+       x="147.46742"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56.81261444px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'a Astro Space';-inkscape-font-specification:'a Astro Space';letter-spacing:15px;stroke-width:1px"
+         y="55"
+         x="147.46742"
+         id="tspan817-6-9-2"
+         sodipodi:role="line">R</tspan></text>
+    <text
+       id="text819-3-2-1-7"
+       y="55"
+       x="209.91853"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56.81261444px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'a Astro Space';-inkscape-font-specification:'a Astro Space';letter-spacing:15px;stroke-width:1px"
+         y="55"
+         x="209.91853"
+         id="tspan817-6-9-2-0"
+         sodipodi:role="line">S</tspan></text>
+  </g>
+</svg>

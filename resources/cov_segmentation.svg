@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="176.8067mm"
+   height="55.022484mm"
+   viewBox="0 0 176.8067 55.022484"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (0.92.5+68)"
+   sodipodi:docname="cov_segmentation.svg"
+   inkscape:export-filename="/home/chrbrommer/Documents/mars_ws/mars_cpp/resources/cov_segmentation.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path1886"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path1868"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1886-1"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-6-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1886-1-4"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1886-9"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-0-7"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1886-9-7"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath22">
+      <path
+         d="M 0,9.69141 H 5020 V 1569.6914 H 0 Z"
+         id="path20"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="359.12665"
+     inkscape:cy="52.503262"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer4"
+     showgrid="false"
+     inkscape:window-width="2495"
+     inkscape:window-height="1416"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:snap-object-midpoints="false"
+     inkscape:snap-center="false"
+     showguides="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="false"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-others="true"
+     inkscape:snap-bbox="false"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:bbox-nodes="false"
+     inkscape:bbox-paths="false"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="squareforcenter"
+     style="display:none"
+     transform="translate(-33.53456,-112.83637)">
+    <rect
+       style="opacity:0.56400003;fill:#ff8080;fill-opacity:1;stroke:none;stroke-width:16.5364418;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4526-3"
+       width="52.916668"
+       height="52.916668"
+       x="42.597916"
+       y="124.61874"
+       ry="0.083521634"
+       rx="0.083521634" />
+  </g>
+  <g
+     inkscape:label="Circle"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="opacity:0.85901645"
+     transform="translate(-33.53456,-112.83637)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Labels"
+     transform="translate(-33.53456,-112.83637)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="tmp"
+     transform="translate(-21.599161,-39.37067)">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1721"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.25px;line-height:125%;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.26458333,0,0,0.26458333,20.00251,-200.11809)"><flowRegion
+         id="flowRegion1723"><rect
+           id="rect1725"
+           width="139.11502"
+           height="141.86501"
+           x="407.13498"
+           y="57.904648" /></flowRegion><flowPara
+         id="flowPara1727" /></flowRoot>    <g
+       id="g1172">
+      <rect
+         rx="0.59847867"
+         ry="0.58798856"
+         y="39.37067"
+         x="21.599161"
+         height="55.022484"
+         width="52.50388"
+         id="rect6950-7-8-3-4-85-2-5-8"
+         style="fill:#eaeaea;fill-opacity:1;stroke:none;stroke-width:0.93795556;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:2.08876443px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="23.86083"
+         y="42.363285"
+         id="text7039-7-6-7-1-1-8-4-6"><tspan
+           id="tspan830"
+           sodipodi:role="line"
+           x="23.86083"
+           y="42.363285"
+           style="font-weight:bold;font-size:2.11666679px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Covariance - Full Sensor Updates</tspan></text>
+      <g
+         id="g1145">
+        <rect
+           rx="0"
+           style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-61-7-6"
+           width="13.012982"
+           height="20.649977"
+           x="-93.15966"
+           y="23.4548"
+           ry="0"
+           transform="rotate(-90)" />
+        <rect
+           style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5"
+           width="20.649973"
+           height="20.649973"
+           x="23.454798"
+           y="44.367069"
+           ry="0"
+           rx="0" />
+        <rect
+           rx="0"
+           style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6"
+           width="13.012982"
+           height="13.012982"
+           x="45.163109"
+           y="66.013924"
+           ry="0" />
+        <text
+           id="text7039-7-6-7-1-1-8-4-6-5"
+           y="47.424931"
+           x="28.510511"
+           style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="47.424931"
+             x="28.510511"
+             sodipodi:role="line"
+             id="tspan5002-4-0-1-1-5-2-7">Core State</tspan></text>
+        <text
+           id="text7039-7-6-7-1-1-8-4-6-5-4"
+           y="69.058113"
+           x="47.191837"
+           style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="69.058113"
+             x="47.191837"
+             sodipodi:role="line"
+             id="tspan1116">Sensor A</tspan></text>
+        <rect
+           rx="0"
+           style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-3"
+           width="13.012982"
+           height="13.012982"
+           x="59.234425"
+           y="80.023781"
+           ry="0" />
+        <text
+           id="text7039-7-6-7-1-1-8-4-6-5-4-2"
+           y="83.056343"
+           x="61.331196"
+           style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="83.056343"
+             x="61.331196"
+             sodipodi:role="line"
+             id="tspan1116-9">Sensor B</tspan></text>
+        <rect
+           rx="0"
+           style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-61"
+           width="13.012982"
+           height="20.649977"
+           x="45.163109"
+           y="44.367069"
+           ry="0" />
+        <rect
+           rx="0"
+           style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-61-5"
+           width="13.012982"
+           height="20.649977"
+           x="59.234425"
+           y="44.367069"
+           ry="0" />
+        <rect
+           rx="0"
+           style="fill:#7e7e7e;fill-opacity:0.85882353;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-54"
+           width="13.012982"
+           height="13.012982"
+           x="59.234425"
+           y="66.013924"
+           ry="0" />
+        <rect
+           rx="0"
+           style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-61-7"
+           width="13.012982"
+           height="20.649977"
+           x="-79.088356"
+           y="23.454796"
+           ry="0"
+           transform="rotate(-90)" />
+        <text
+           id="text7039-7-6-7-1-1-8-4-6-5-6"
+           y="69.128838"
+           x="24.562428"
+           style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="69.128838"
+             x="24.562428"
+             sodipodi:role="line"
+             id="tspan5002-4-0-1-1-5-2-7-7">Cross-Correlations</tspan><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="71.333702"
+             x="24.562428"
+             sodipodi:role="line"
+             id="tspan1475">Core - Sensor A</tspan></text>
+        <text
+           id="text7039-7-6-7-1-1-8-4-6-5-6-1"
+           y="83.200127"
+           x="24.562431"
+           style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           xml:space="preserve"><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="83.200127"
+             x="24.562431"
+             sodipodi:role="line"
+             id="tspan5002-4-0-1-1-5-2-7-7-2">Cross-Correlations</tspan><tspan
+             style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+             y="85.404991"
+             x="24.562431"
+             sodipodi:role="line"
+             id="tspan1477">Core - Sensor B</tspan></text>
+        <rect
+           rx="0"
+           style="fill:#7e7e7e;fill-opacity:0.85882353;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect6950-7-8-3-4-85-2-5-6-54-5"
+           width="13.012982"
+           height="13.012982"
+           x="45.163109"
+           y="80.023781"
+           ry="0" />
+      </g>
+    </g>
+    <rect
+       style="fill:#eaeaea;fill-opacity:1;stroke:none;stroke-width:0.93795562;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6950-7-8-3-4-85-2-5-8-9"
+       width="117.42365"
+       height="55.022484"
+       x="80.982208"
+       y="39.37067"
+       ry="0.58798856"
+       rx="1.338483" />
+    <text
+       id="text7039-7-6-7-1-1-8-4-6-3"
+       y="42.363285"
+       x="83.329506"
+       style="font-style:normal;font-weight:normal;font-size:2.08876443px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-weight:bold;font-size:2.11666679px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px"
+         y="42.363285"
+         x="83.329506"
+         sodipodi:role="line"
+         id="tspan830-7">Covariance - Modular Sensor Updates</tspan></text>
+    <g
+       id="g1299">
+      <rect
+         rx="0"
+         ry="0"
+         y="50.717072"
+         x="82.923477"
+         height="20.649973"
+         width="20.649973"
+         id="rect6950-7-8-3-4-85-2-5-2"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         ry="0"
+         y="72.363922"
+         x="104.63178"
+         height="13.012982"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-5"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="87.979187"
+         y="53.774933"
+         id="text7039-7-6-7-1-1-8-4-6-5-47"><tspan
+           id="tspan5002-4-0-1-1-5-2-7-4"
+           sodipodi:role="line"
+           x="87.979187"
+           y="53.774933"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Core State</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="106.66051"
+         y="75.408112"
+         id="text7039-7-6-7-1-1-8-4-6-5-4-4"><tspan
+           id="tspan1116-3"
+           sodipodi:role="line"
+           x="106.66051"
+           y="75.408112"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Sensor A</tspan></text>
+      <rect
+         ry="0"
+         y="50.717072"
+         x="104.63178"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-6"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <rect
+         transform="rotate(-90)"
+         ry="0"
+         y="82.923462"
+         x="-85.438354"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-7-4"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="84.031105"
+         y="75.478836"
+         id="text7039-7-6-7-1-1-8-4-6-5-6-3"><tspan
+           id="tspan1475-4"
+           sodipodi:role="line"
+           x="84.031105"
+           y="75.478836"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Cross-Correlations</tspan></text>
+    </g>
+    <g
+       id="g1311"
+       transform="translate(0,0.2645874)">
+      <rect
+         rx="0"
+         ry="0"
+         y="50.452484"
+         x="121.83028"
+         height="20.649973"
+         width="20.649973"
+         id="rect6950-7-8-3-4-85-2-5-2-8"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         ry="0"
+         y="72.099335"
+         x="143.53859"
+         height="13.012982"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-5-9"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="126.88599"
+         y="53.510345"
+         id="text7039-7-6-7-1-1-8-4-6-5-47-2"><tspan
+           id="tspan5002-4-0-1-1-5-2-7-4-6"
+           sodipodi:role="line"
+           x="126.88599"
+           y="53.510345"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Core State</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="145.56732"
+         y="75.143524"
+         id="text7039-7-6-7-1-1-8-4-6-5-4-4-6"><tspan
+           id="tspan1116-3-4"
+           sodipodi:role="line"
+           x="145.56732"
+           y="75.143524"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Sensor B</tspan></text>
+      <rect
+         ry="0"
+         y="50.452484"
+         x="143.53859"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-6-9"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <rect
+         transform="rotate(-90)"
+         ry="0"
+         y="121.83028"
+         x="-85.173767"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-7-4-5"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="122.93791"
+         y="75.214249"
+         id="text7039-7-6-7-1-1-8-4-6-5-6-3-0"><tspan
+           id="tspan1475-4-4"
+           sodipodi:role="line"
+           x="122.93791"
+           y="75.214249"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Cross-Correlations</tspan></text>
+    </g>
+    <g
+       id="g1323"
+       transform="translate(0,-0.2645874)">
+      <rect
+         rx="0"
+         ry="0"
+         y="50.981659"
+         x="160.73711"
+         height="20.649973"
+         width="20.649973"
+         id="rect6950-7-8-3-4-85-2-5-2-7"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         ry="0"
+         y="72.62851"
+         x="182.4454"
+         height="13.012982"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-5-1"
+         style="fill:#f2a849;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="165.79282"
+         y="54.03952"
+         id="text7039-7-6-7-1-1-8-4-6-5-47-7"><tspan
+           id="tspan5002-4-0-1-1-5-2-7-4-2"
+           sodipodi:role="line"
+           x="165.79282"
+           y="54.03952"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Core State</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="184.47414"
+         y="75.672699"
+         id="text7039-7-6-7-1-1-8-4-6-5-4-4-7"><tspan
+           id="tspan1116-3-2"
+           sodipodi:role="line"
+           x="184.47414"
+           y="75.672699"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Sensor A</tspan></text>
+      <rect
+         ry="0"
+         y="50.981659"
+         x="182.4454"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-6-2"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <rect
+         transform="rotate(-90)"
+         ry="0"
+         y="160.73709"
+         x="-85.702942"
+         height="20.649977"
+         width="13.012982"
+         id="rect6950-7-8-3-4-85-2-5-6-61-7-4-6"
+         style="fill:#9f93c5;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:1.76388896px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:0.85901645;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="161.84473"
+         y="75.743423"
+         id="text7039-7-6-7-1-1-8-4-6-5-6-3-1"><tspan
+           id="tspan1475-4-0"
+           sodipodi:role="line"
+           x="161.84473"
+           y="75.743423"
+           style="font-weight:bold;font-size:1.76388896px;text-align:start;text-anchor:start;fill:#000000;fill-opacity:0.85882353;stroke:none;stroke-width:0.26458332px">Cross-Correlations</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
+       d="m 92.273752,48.89265 c 11.557738,-5.26476 23.298008,-7.82389 35.931788,0.16663"
+       id="path1859"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-0)"
+       d="m 131.90973,49.05928 c 11.55774,-5.26476 23.29801,-7.82389 35.93179,0.16663"
+       id="path1859-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-0-7)"
+       d="m 111.54504,87.23331 c 11.55774,5.26476 64.44072,7.82389 77.0745,-0.16663"
+       id="path1859-1-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>
