@@ -132,7 +132,7 @@ This class structure is designed with simplified user-level interaction. This me
 
 <img src="./resources/modification_levels.png" alt="Modification Levels" style="zoom:33%;" />
 
-If you are interested in how the actual UML diagram for MaRS looks like, you can have a look at the image below or check out the Doxygen dependency graphs described [here](##Code-Documentation).
+If you are interested in how the actual UML diagram for MaRS looks like, you can have a look at the image below or check out the Doxygen dependency graphs described [here](#Code-Documentation).
 
 <img src="./resources/uml/uml_prototype.png" alt="Class Structure" style="zoom:33%;" />
 
@@ -156,7 +156,7 @@ This property is important for the design of the framework because it makes use 
 
 ### Measurement handling
 
-All measurements are handled in the same fashion, which makes it simple for any middleware integration. As described in [this section](##Stand-Alone-Usage-and-Middleware-integration), a dedicated propagation sensor is defined on system start. Based on this, the system can distinguish between propagation and update sensors. To process any measurement, only the following line needs to be called:
+All measurements are handled in the same fashion, which makes it simple for any middleware integration. As described in [this section](#Stand-Alone-Usage-and-Middleware-integration), a dedicated propagation sensor is defined on system start. Based on this, the system can distinguish between propagation and update sensors. To process any measurement, only the following line needs to be called:
 
 ```c++
 // sensor_sptr: Pointer to the corresponding sensor instance
@@ -165,7 +165,7 @@ All measurements are handled in the same fashion, which makes it simple for any 
 core_logic_.ProcessMeasurement(sensor_sptr, timestamp, data)
 ```
 
-This is the content of any MaRS buffer entry and needs to be available on e.g., a callback triggered by a specific sensor. Within the `ProcessMeasurement(...)` function, MaRS divides the process for propagation and updates and performs the routines shown below. At this point, the framework also applies logic to determine if the measurement is still meaningful to the system (e.g., it could be out of order and too old) and processes out of order updates that are within limits accordingly (see [here](###Out-of-order-updates)).
+This is the content of any MaRS buffer entry and needs to be available on e.g., a callback triggered by a specific sensor. Within the `ProcessMeasurement(...)` function, MaRS divides the process for propagation and updates and performs the routines shown below. At this point, the framework also applies logic to determine if the measurement is still meaningful to the system (e.g., it could be out of order and too old) and processes out of order updates that are within limits accordingly (see [here](#Out-of-order-updates)).
 
 #### State Propagation UML
 
@@ -237,7 +237,7 @@ $$-->
 
 ### Provided Sensor Modules (Plug and Play)
 
-New sensor modules can be added in a simple and straightforward fashion. Please consult the [Tutorial](#Tutorials) section on how to use [existing sensor modules](##Sensor-Usage) and how to implement [new sensor modules](##Sensor-Implementation). Please find a list of pre-defined sensor modules below.
+New sensor modules can be added in a simple and straightforward fashion. Please consult the [Tutorial](#Tutorials) section on how to use [existing sensor modules](#Sensor-Usage) and how to implement [new sensor modules](#Sensor-Implementation). Please find a list of pre-defined sensor modules below.
 
 #### Position (3 DoF)
 
@@ -599,7 +599,7 @@ mars::CoreStateType latest_core_state = static_cast<mars::CoreType*>
      (latest_state.data_.core_.get())->state_;
 ```
 
-The last segments cover the call for the latest data entries and their consecutive publishing. After calling the `ProcessMeasurement()` function, the buffer is up to date, and the latest entry contains the latest state. First, we instantiate a variable of the buffer entry type, which will receive the latest state in the next step with `get_latest_state()`. After this, we get the "state" element from the data field of the buffer. Since this is a void type, we need to cast it to the CoreType before usage. The buffer entry data type is described [here](###The-Buffer-and-its-Data-Structure)
+The last segments cover the call for the latest data entries and their consecutive publishing. After calling the `ProcessMeasurement()` function, the buffer is up to date, and the latest entry contains the latest state. First, we instantiate a variable of the buffer entry type, which will receive the latest state in the next step with `get_latest_state()`. After this, we get the "state" element from the data field of the buffer. Since this is a void type, we need to cast it to the CoreType before usage. The buffer entry data type is described [here](#The-Buffer-and-its-Data-Structure)
 
 ```c++
 pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
