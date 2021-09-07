@@ -5,7 +5,16 @@ LABEL description="Mars Test Environment"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y vim g++ build-essential cmake libgtest-dev git doxygen graphviz && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    vim \
+    g++ \
+    build-essential \
+    cmake \
+    libgtest-dev \
+    git \
+    doxygen \
+    graphviz \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY ./deploy/scripts/docker_application_test.sh /
 
