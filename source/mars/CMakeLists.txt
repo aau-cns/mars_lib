@@ -63,6 +63,9 @@ set(headers
     ${include_path}/sensors/gps/gps_measurement_type.h
     ${include_path}/sensors/gps/gps_sensor_class.h
     ${include_path}/sensors/gps/gps_sensor_state_type.h
+    ${include_path}/sensors/gps_w_vel/gps_w_vel_measurement_type.h
+    ${include_path}/sensors/gps_w_vel/gps_w_vel_sensor_class.h
+    ${include_path}/sensors/gps_w_vel/gps_w_vel_sensor_state_type.h
     ${include_path}/sensors/vision/vision_measurement_type.h
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
