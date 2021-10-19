@@ -15,7 +15,22 @@
 
 namespace mars
 {
-CoreState::CoreState() = default;
+CoreState::CoreState()
+{
+  // Set default initial state covariance
+  // Standard deviation
+  Eigen::Vector3d position_std(1, 1, 1);
+  Eigen::Vector3d velocity_std(0.5, 0.5, 0.5);
+  Eigen::Vector3d orientation_std(30 * (M_PI / 180), 30 * (M_PI / 180), 30 * (M_PI / 180));
+  Eigen::Vector3d bias_gyro_std(1 * (M_PI / 180), 1 * (M_PI / 180), 1 * (M_PI / 180));
+  Eigen::Vector3d bias_acc_std(0.05, 0.05, 0.05);
+
+  // Covariance
+  Eigen::Matrix<double, CoreStateType::size_error_, 1> core_std;
+  core_std << position_std, velocity_std, orientation_std, bias_gyro_std, bias_acc_std;
+
+  initial_covariance_ = CoreStateMatrix(core_std.cwiseProduct(core_std).asDiagonal());
+}
 
 void CoreState::set_propagation_sensor(std::shared_ptr<SensorAbsClass> propagation_sensor)
 {
@@ -50,22 +65,19 @@ void CoreState::set_noise_std(const Eigen::Vector3d& n_w, const Eigen::Vector3d&
   n_ba_ = n_ba;
 }
 
+void CoreState::set_initial_covariance(const Eigen::Vector3d& p_cov, const Eigen::Vector3d& v_cov,
+                                       const Eigen::Vector3d& q_cov, const Eigen::Vector3d& bw_cov,
+                                       const Eigen::Vector3d& ba_cov)
+{
+  Eigen::Matrix<double, CoreStateType::size_error_, 1> core_cov;
+  core_cov << p_cov, v_cov, q_cov, bw_cov, ba_cov;
+
+  initial_covariance_ = CoreStateMatrix(core_cov.asDiagonal());
+}
+
 CoreStateMatrix CoreState::InitializeCovariance()
 {
-  // TODO provide method for external parameter parsing
-  // Standard deviation
-  Eigen::Vector3d position_std(1, 1, 1);
-  Eigen::Vector3d velocity_std(0.5, 0.5, 0.5);
-  Eigen::Vector3d orientation_std(15 * (M_PI / 180), 15 * (M_PI / 180), 15 * (M_PI / 180));
-  Eigen::Vector3d bias_gyro_std(5 * (M_PI / 180), 5 * (M_PI / 180), 5 * (M_PI / 180));
-  Eigen::Vector3d bias_acc_std(0.5, 0.5, 0.5);
-
-  // Covariance
-  Eigen::Matrix<double, CoreStateType::size_error_, 1> core_std;
-  core_std << position_std, velocity_std, orientation_std, bias_gyro_std, bias_acc_std;
-
-  CoreStateMatrix init_covariance(core_std.cwiseProduct(core_std).asDiagonal());
-  return init_covariance;
+  return initial_covariance_;
 }
 
 CoreStateType CoreState::PropagateState(const CoreStateType& prior_state, const IMUMeasurementType& measurement,

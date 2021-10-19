@@ -35,6 +35,8 @@ public:
 
   const Eigen::Vector3d g_{ 0, 0, 9.81 };  ///<defined gravity
 
+  CoreStateMatrix initial_covariance_;
+
   std::shared_ptr<SensorAbsClass> propagation_sensor_{ nullptr };  ///< Reference to the propagation sensor
 
   bool fixed_bias_{ false };             ///< bias are not estimated if fixed_bias = true
@@ -76,6 +78,12 @@ public:
   CoreStateType InitializeState(const Eigen::Vector3d& ang_vel, const Eigen::Vector3d& lin_acc,
                                 const Eigen::Vector3d& p_wi, const Eigen::Vector3d& v_wi,
                                 const Eigen::Quaterniond& q_wi, const Eigen::Vector3d& b_w, const Eigen::Vector3d& b_a);
+
+  ///
+  /// \brief set_initial_covariance used to set the initial covariance of the core states
+  /// \return
+  ///
+  void set_initial_covariance(const Eigen::Vector3d& p,const Eigen::Vector3d& v,const Eigen::Vector3d& q,const Eigen::Vector3d& bw,const Eigen::Vector3d& ba);
 
   ///
   /// \brief InitializeCovariance Returnes the initialized core covariance
