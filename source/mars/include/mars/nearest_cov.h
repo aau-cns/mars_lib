@@ -21,9 +21,10 @@ namespace NearestCovMethods
 ///
 enum NearestCovMethod
 {
-  abs,   ///< Correcting negative eigenvaules to their absolut
-  zero,  ///< Correcting negative eigenvaules to zero
-  delta  ///< Correcting negative eigenvaules to a defined delta
+  abs,    ///< Correcting negative eigenvaules to their absolut
+  zero,   ///< Correcting negative eigenvaules to zero
+  delta,  ///< Correcting negative eigenvaules to a defined delta
+  none    ///< No Correction, direct passtrough
 };
 }
 

@@ -87,6 +87,11 @@ Eigen::MatrixXd NearestCov::EigenCorrectionUsingCovariance(NearestCovMethod meth
       }
       break;
 
+    case NearestCovMethod::none:
+      // do not perform any changes
+      return cov_mat_;
+      break;
+
     default:
       std::cout << "Warning: Unexpected method for nearest_cov" << std::endl;
       break;
