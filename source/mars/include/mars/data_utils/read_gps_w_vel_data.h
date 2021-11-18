@@ -8,11 +8,11 @@
 //
 // You can contact the author at <christian.brommer@ieee.org>
 
-#ifndef READ_POSE_DATA_H
-#define READ_POSE_DATA_H
+#ifndef READ_GPS_W_VEL_DATA_H
+#define READ_GPS_W_VEL_DATA_H
 
 #include <mars/data_utils/read_csv.h>
-#include <mars/sensors/pose/pose_measurement_type.h>
+#include <mars/sensors/gps_w_vel/gps_w_vel_measurement_type.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/buffer_entry_type.h>
@@ -21,15 +21,15 @@
 
 namespace mars
 {
-class ReadPoseData
+class ReadGpsWithVelData
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-               const std::string& file_path)
+  ReadGpsWithVelData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
+                     const std::string& file_path, const double& time_offset)
   {
-    constexpr int expected_columns = 8;
+    constexpr int expected_columns = 7;
     CsvDataType sim_data;
     ReadCsv(&sim_data, file_path, expected_columns);
 
@@ -40,13 +40,10 @@ public:
     unsigned long current_index = 0;
     for (auto k : sim_data)
     {
-      Time time = k[0] + 1e-13;
-
-      Eigen::Vector3d position(k[1], k[2], k[3]);
-      Eigen::Quaterniond orientation(k[4], k[5], k[6], k[7]);
+      Time time = k[0] + time_offset;
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<PoseMeasurementType>(position, orientation));
+      data.set_sensor_data(std::make_shared<GpsVelMeasurementType>(k[1], k[2], k[3], k[4], k[5], k[6]));
 
       BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
       data_out->at(current_index) = current_entry;
@@ -54,7 +51,13 @@ public:
       ++current_index;
     }
   }
+
+  ReadGpsWithVelData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
+                     const std::string& file_path)
+  {
+    ReadGpsWithVelData(data_out, sensor, file_path, 0);
+  }
 };
 }
 
-#endif  // READ_POSE_DATA_H
+#endif  // READ_GPS_W_VEL_DATA_H

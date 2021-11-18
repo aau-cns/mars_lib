@@ -86,6 +86,21 @@ public:
     return out;
   }
 
+  static std::string get_csv_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "w_m_x, w_m_y, w_m_z, ";
+    os << "a_m_x, a_m_y, a_m_z, ";
+    os << "p_wi_x, p_wi_y, p_wi_z, ";
+    os << "v_wi_x, v_wi_y, v_wi_z, ";
+    os << "q_wi_w, q_wi_x, q_wi_y, q_wi_z, ";
+    os << "b_w_x, b_w_y, b_w_z, ";
+    os << "b_a_x, b_a_y, b_a_z";
+
+    return os.str();
+  }
+
   ///
   /// \brief to_csv_string export state to single csv string
   /// \param timestamp
