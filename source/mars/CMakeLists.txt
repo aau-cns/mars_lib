@@ -69,6 +69,7 @@ set(headers
     ${include_path}/sensors/mag/mag_measurement_type.h
     ${include_path}/sensors/mag/mag_sensor_class.h
     ${include_path}/sensors/mag/mag_sensor_state_type.h
+    ${include_path}/sensors/mag/mag_utils.h
     ${include_path}/sensors/vision/vision_measurement_type.h
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
@@ -91,6 +92,7 @@ set(sources
     ${source_path}/ekf.cpp
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
+    ${include_path}/sensors/mag/mag_utils.cpp
     #${source_path}/sensor_manager.cpp
 )
 
