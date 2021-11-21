@@ -42,6 +42,7 @@ set(headers
     ${include_path}/nearest_cov.h
     ${include_path}/ekf.h
     ${include_path}/general_functions/utils.h
+    ${include_path}/general_functions/progress_indicator.h
     ${include_path}/type_definitions/base_states.h
     ${include_path}/type_definitions/buffer_entry_type.h
     ${include_path}/type_definitions/buffer_data_type.h
@@ -93,6 +94,7 @@ set(sources
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
     ${include_path}/sensors/mag/mag_utils.cpp
+    ${include_path}/general_functions/progress_indicator.cpp
     #${source_path}/sensor_manager.cpp
 )
 
