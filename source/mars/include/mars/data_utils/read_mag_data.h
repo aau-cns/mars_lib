@@ -27,7 +27,8 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   ReadMagData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-              const std::string& file_path)
+              const std::string& file_path, const double& time_offset)
+
   {
     constexpr int expected_columns = 4;
     CsvDataType sim_data;
@@ -39,7 +40,7 @@ public:
     unsigned long current_index = 0;
     for (auto k : sim_data)
     {
-      Time time = k[0];
+      Time time = k[0] + time_offset;
 
       BufferDataType data;
       data.set_sensor_data(std::make_shared<MagMeasurementType>(Eigen::Vector3d(k[1], k[2], k[3])));
@@ -49,6 +50,12 @@ public:
 
       ++current_index;
     }
+  }
+
+  ReadMagData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
+              const std::string& file_path)
+  {
+    ReadMagData(data_out, sensor, file_path, 0);
   }
 };
 }
