@@ -81,6 +81,7 @@ set(headers
     ${include_path}/data_utils/read_pose_data.h
     ${include_path}/data_utils/read_gps_w_vel_data.h
     ${include_path}/data_utils/read_mag_data.h
+    ${include_path}/data_utils/filesystem.h
 )
 
 set(sources
@@ -96,6 +97,7 @@ set(sources
     ${include_path}/sensors/gps/gps_conversion.cpp
     ${include_path}/sensors/mag/mag_utils.cpp
     ${include_path}/general_functions/progress_indicator.cpp
+    ${include_path}/data_utils/filesystem.cpp
     #${source_path}/sensor_manager.cpp
 )
 
