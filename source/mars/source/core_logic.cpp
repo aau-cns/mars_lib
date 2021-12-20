@@ -388,7 +388,8 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 
     if (oldest_core_state_buffer_entry.timestamp_ > timestamp)
     {
-      std::cout << "Warning: " << sensor.get()->name_ << " Measurement is older than oldest core state. Discarding measurement. "
+      std::cout << "Warning: " << sensor.get()->name_
+                << " Measurement is older than oldest core state. Discarding measurement. "
                 << timestamp - oldest_core_state_buffer_entry.timestamp_ << " sec. older" << std::endl;
       return false;
     }
@@ -415,7 +416,8 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
     {
       if (latest_init_state_buffer_entry.timestamp_ > timestamp)
       {
-        std::cout << "Warning: " << sensor.get()->name_ << " Measurement is older than latest INIT state. Discarding measurement. "
+        std::cout << "Warning: " << sensor.get()->name_
+                  << " Measurement is older than latest INIT state. Discarding measurement. "
                   << timestamp - latest_init_state_buffer_entry.timestamp_ << " sec. older" << std::endl;
         return false;
       }
