@@ -86,7 +86,7 @@ public:
     return out;
   }
 
-  static std::string get_csv_header_string()
+  static std::string get_csv_state_header_string()
   {
     std::stringstream os;
     os << "t, ";
