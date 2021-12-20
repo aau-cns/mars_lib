@@ -33,6 +33,9 @@ using MagSensorData = BindSensorData<MagSensorStateType>;
 
 class MagSensorClass : public UpdateSensorAbsClass
 {
+private:
+  bool normalize_{ false };
+
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -140,7 +143,16 @@ public:
     MagSensorData* prior_sensor_data = static_cast<MagSensorData*>(latest_sensor_data.get());
 
     // Decompose sensor measurement
-    Eigen::Vector3d mag_meas = meas->mag_vector_;
+    Eigen::Vector3d mag_meas;
+
+    if (normalize_)
+    {
+      mag_meas = meas->mag_vector_ / meas->mag_vector_.norm();
+    }
+    else
+    {
+      mag_meas = meas->mag_vector_;
+    }
 
     // Extract sensor state
     MagSensorStateType prior_sensor_state(prior_sensor_data->state_);
@@ -234,6 +246,11 @@ public:
     corrected_sensor_state.q_im_ =
         Utils::ApplySmallAngleQuatCorr(prior_sensor_state.q_im_, correction.block(3, 0, 3, 1));
     return corrected_sensor_state;
+  }
+
+  void set_normalize(const bool& normalize)
+  {
+    normalize_ = normalize;
   }
 };
 }
