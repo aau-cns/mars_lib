@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "mars/data_utils/filesystem.h"
 
 namespace mars
 {
@@ -27,6 +28,12 @@ class ReadCsv
 public:
   ReadCsv(CsvDataType* csv_data, const std::string& file_path, const int& expected_columns)
   {
+    if (!mars::filesystem::IsFile(file_path))
+    {
+      std::cout << "[Warning] File " << file_path << " does not exist." << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
     constexpr char delim(',');
     file_.open(file_path);
 
