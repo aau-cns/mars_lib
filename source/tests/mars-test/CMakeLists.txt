@@ -39,6 +39,7 @@ set(sources
     mars_nearest_cov.cpp
     mars_utils.cpp
     mars_read_csv.cpp
+    mars_write_csv.cpp
     #eigen_runtime_test.cpp
 )
 

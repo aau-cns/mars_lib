@@ -75,6 +75,7 @@ set(headers
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
     ${include_path}/data_utils/read_csv.h
+    ${include_path}/data_utils/write_csv.h
     ${include_path}/data_utils/read_sim_data.h
     ${include_path}/data_utils/read_imu_data.h
     ${include_path}/data_utils/read_pose_data.h
