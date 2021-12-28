@@ -127,7 +127,7 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
 {
   if (verbose_)
   {
-    std::cout << "[CoreLogic]: Perform Sensor Update" << std::endl;
+    std::cout << "[CoreLogic]: Perform Sensor Update (" << sensor->name_ << ")" << std::endl;
   }
 
   // Check if the sensor was initialized
