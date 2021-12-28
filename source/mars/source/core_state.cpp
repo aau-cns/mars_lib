@@ -32,6 +32,16 @@ CoreState::CoreState()
   initial_covariance_ = CoreStateMatrix(core_std.cwiseProduct(core_std).asDiagonal());
 }
 
+void CoreState::set_fixed_acc_bias(const bool& value)
+{
+  fixed_acc_bias_ = value;
+}
+
+void CoreState::set_fixed_gyro_bias(const bool& value)
+{
+  fixed_gyro_bias_ = value;
+}
+
 void CoreState::set_propagation_sensor(std::shared_ptr<SensorAbsClass> propagation_sensor)
 {
   propagation_sensor_ = propagation_sensor;
@@ -92,8 +102,23 @@ CoreStateType CoreState::PropagateState(const CoreStateType& prior_state, const 
   current_state.a_m_ = measurement.linear_acceleration_;
 
   // Zero propagation
-  current_state.b_w_ = prior_state.b_w_;
-  current_state.b_a_ = prior_state.b_a_;
+  if (fixed_gyro_bias_)
+  {
+    current_state.b_w_.setZero();
+  }
+  else
+  {
+    current_state.b_w_ = prior_state.b_w_;
+  }
+
+  if (fixed_acc_bias_)
+  {
+    current_state.b_a_.setZero();
+  }
+  else
+  {
+    current_state.b_a_ = prior_state.b_a_;
+  }
 
   // First order Quaternion integration
   const Eigen::Vector3d ew = current_state.w_m_ - current_state.b_w_;
