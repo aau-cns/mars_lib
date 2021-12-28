@@ -20,6 +20,7 @@
 #include <mars/sensors/update_sensor_abs_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -30,6 +31,11 @@ using GpsVelSensorData = BindSensorData<GpsVelSensorStateType>;
 
 class GpsVelSensorClass : public UpdateSensorAbsClass
 {
+private:
+  Eigen::Vector3d v_rot_axis_{ 1, 0, 0 };
+  bool use_vel_rot_{ false };
+  double vel_rot_thr_{ 0.3 };
+
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -47,6 +53,21 @@ public:
     gps_reference_is_set_ = false;
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
+  }
+
+  void set_v_rot_axis(const Eigen::Vector3d& vec)
+  {
+    v_rot_axis_ = vec.normalized();
+  }
+
+  void set_use_vel_rot(const bool& value)
+  {
+    use_vel_rot_ = value;
+  }
+
+  void set_vel_rot_thr(const double& value)
+  {
+    vel_rot_thr_ = fabs(value);
   }
 
   GpsVelSensorStateType get_state(std::shared_ptr<void> sensor_data)
@@ -138,7 +159,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
@@ -154,7 +175,7 @@ public:
     GpsVelSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
     // Generate measurement noise matrix
-    const Eigen::Matrix<double, 6, 6> R_meas = this->R_.asDiagonal();
+    Eigen::MatrixXd R_meas(R_.asDiagonal());
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -215,15 +236,56 @@ public:
     // Calculate the residual z = z~ - (estimate)
     // Position
     const Eigen::Vector3d p_est = P_gw_w + R_gw_w * (P_wi + R_wi * P_ig);
+    const Eigen::Vector3d res_p = p_meas - p_est;
+
     // Velocity
     const Eigen::Vector3d v_est = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
-
-    const Eigen::Vector3d res_p = p_meas - p_est;
     const Eigen::Vector3d res_v = v_meas - v_est;
 
     // Combine residuals (vertical)
     Eigen::MatrixXd res(res_p.rows() + res_v.rows(), 1);
     res << res_p, res_v;
+
+    if (use_vel_rot_)
+    {
+      if (v_meas.norm() > vel_rot_thr_)
+      {
+        const Eigen::Matrix3d Hvr_pwi = O_3;
+        const Eigen::Matrix3d Hvr_vwi = O_3;
+        const Eigen::Matrix3d Hvr_rwi = -R_wi * Utils::Skew(v_rot_axis_);
+        const Eigen::Matrix3d Hvr_bw = O_3;
+        const Eigen::Matrix3d Hvr_ba = O_3;
+
+        const Eigen::Matrix3d Hvr_pig = O_3;
+        const Eigen::Matrix3d Hvr_pgw_w = O_3;
+        const Eigen::Matrix3d Hvr_rgw_w = O_3;
+
+        // Assemble the jacobian for the velocity rotation (horizontal)
+        Eigen::MatrixXd H_vr(3, Hvr_pwi.cols() + Hvr_vwi.cols() + Hvr_rwi.cols() + Hvr_bw.cols() + Hvr_ba.cols() +
+                                    Hvr_pig.cols() + Hvr_pgw_w.cols() + Hvr_rgw_w.cols());
+
+        H_vr << Hvr_pwi, Hvr_vwi, Hvr_rwi, Hvr_bw, Hvr_ba, Hvr_pig, Hvr_pgw_w, Hvr_rgw_w;
+
+        // Append to jacobians (vertical)
+        H.conservativeResizeLike(Eigen::MatrixXd::Zero(H.rows() + H_vr.rows(), H.cols()));
+        H.bottomRows(H_vr.rows()) = H_vr;
+
+        const Eigen::Vector3d vr_est = R_wi * v_rot_axis_;
+        const Eigen::Vector3d res_vr = v_meas.normalized() - vr_est;
+
+        res.conservativeResize(res.rows() + res_vr.rows(), Eigen::NoChange);
+        res.bottomRows(res_vr.rows()) = res_vr;
+
+        R_meas.conservativeResizeLike(Eigen::MatrixXd::Zero(R_meas.rows() + 3, R_meas.cols() + 3));
+        R_meas.bottomRightCorner(3, 3) = Eigen::Vector3d(0.1, 0.1, 0.1).asDiagonal();
+      }
+      else
+      {
+        std::cout << "Info: [" << name_ << "] " << timestamp.get_seconds()
+                  << " Rotation from Velocity, norm below threshold (" << v_meas.norm() << " < " << vel_rot_thr_ << ")"
+                  << " - meas not used for rotation update" << std::endl;
+      }
+    }
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
