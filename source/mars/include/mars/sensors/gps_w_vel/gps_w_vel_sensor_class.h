@@ -208,26 +208,54 @@ public:
     const Eigen::Matrix3d Hp_pgw_w = O_3;
     const Eigen::Matrix3d Hp_rgw_w = O_3;
 
-    // Velocity
-    const Eigen::Matrix3d Hv_pwi = O_3;
-    const Eigen::Matrix3d Hv_vwi = I_3;
-    const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
-    const Eigen::Matrix3d Hv_bw = O_3;
-    const Eigen::Matrix3d Hv_ba = O_3;
-
-    const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i);
-    const Eigen::Matrix3d Hv_pgw_w = O_3;
-    const Eigen::Matrix3d Hv_rgw_w = O_3;
+    const int num_states = static_cast<int>(Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() +
+                                            Hp_ba.cols() + Hp_pig.cols() + Hp_pgw_w.cols() + Hp_rgw_w.cols());
 
     // Assemble the jacobian for the position (horizontal)
-    Eigen::MatrixXd H_p(3, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pig.cols() +
-                               Hp_pgw_w.cols() + Hp_rgw_w.cols());
-    // Assemble the jacobian for the velocity (horizontal)
-    Eigen::MatrixXd H_v(3, Hv_pwi.cols() + Hv_vwi.cols() + Hv_rwi.cols() + Hv_bw.cols() + Hv_ba.cols() + Hv_pig.cols() +
-                               Hv_pgw_w.cols() + Hv_rgw_w.cols());
-
+    Eigen::MatrixXd H_p(3, num_states);
     H_p << Hp_pwi, Hp_vwi, Hp_rwi, Hp_bw, Hp_ba, Hp_pig, Hp_pgw_w, Hp_rgw_w;
-    H_v << Hv_pwi, Hv_vwi, Hv_rwi, Hv_bw, Hv_ba, Hv_pig, Hv_pgw_w, Hv_rgw_w;
+
+    // Assemble the jacobian for the velocity (horizontal)
+    Eigen::MatrixXd H_v(3, num_states);
+    Eigen::Vector3d v_est;
+
+    if (use_vel_rot_ && (v_meas.norm() > vel_rot_thr_))
+    {
+      // Velocity
+      const Eigen::Vector3d mu = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+      const Eigen::Vector3d d_mu = mu / mu.norm();
+      const Eigen::Vector3d alpha = v_rot_axis_;
+
+      const Eigen::Matrix3d Hv_pwi = O_3;
+      const Eigen::Matrix3d Hv_vwi = R_wi * alpha * d_mu.transpose();
+      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(alpha) * mu.norm() -
+                                     R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+
+      const Eigen::Matrix3d Hv_bw = O_3;
+      const Eigen::Matrix3d Hv_ba = O_3;
+
+      const Eigen::Matrix3d Hv_pig = R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pgw_w = O_3;
+      const Eigen::Matrix3d Hv_rgw_w = O_3;
+
+      H_v << Hv_pwi, Hv_vwi, Hv_rwi, Hv_bw, Hv_ba, Hv_pig, Hv_pgw_w, Hv_rgw_w;
+      v_est = R_wi * alpha * (mu).norm();
+    }
+    else
+    {
+      const Eigen::Matrix3d Hv_pwi = O_3;
+      const Eigen::Matrix3d Hv_vwi = I_3;
+      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+      const Eigen::Matrix3d Hv_bw = O_3;
+      const Eigen::Matrix3d Hv_ba = O_3;
+
+      const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pgw_w = O_3;
+      const Eigen::Matrix3d Hv_rgw_w = O_3;
+
+      H_v << Hv_pwi, Hv_vwi, Hv_rwi, Hv_bw, Hv_ba, Hv_pig, Hv_pgw_w, Hv_rgw_w;
+      v_est = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+    }
 
     // Combine all jacobians (vertical)
     Eigen::MatrixXd H(H_p.rows() + H_v.rows(), H_v.cols());
@@ -239,53 +267,11 @@ public:
     const Eigen::Vector3d res_p = p_meas - p_est;
 
     // Velocity
-    const Eigen::Vector3d v_est = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
     const Eigen::Vector3d res_v = v_meas - v_est;
 
     // Combine residuals (vertical)
     Eigen::MatrixXd res(res_p.rows() + res_v.rows(), 1);
     res << res_p, res_v;
-
-    if (use_vel_rot_)
-    {
-      if (v_meas.norm() > vel_rot_thr_)
-      {
-        const Eigen::Matrix3d Hvr_pwi = O_3;
-        const Eigen::Matrix3d Hvr_vwi = O_3;
-        const Eigen::Matrix3d Hvr_rwi = -R_wi * Utils::Skew(v_rot_axis_);
-        const Eigen::Matrix3d Hvr_bw = O_3;
-        const Eigen::Matrix3d Hvr_ba = O_3;
-
-        const Eigen::Matrix3d Hvr_pig = O_3;
-        const Eigen::Matrix3d Hvr_pgw_w = O_3;
-        const Eigen::Matrix3d Hvr_rgw_w = O_3;
-
-        // Assemble the jacobian for the velocity rotation (horizontal)
-        Eigen::MatrixXd H_vr(3, Hvr_pwi.cols() + Hvr_vwi.cols() + Hvr_rwi.cols() + Hvr_bw.cols() + Hvr_ba.cols() +
-                                    Hvr_pig.cols() + Hvr_pgw_w.cols() + Hvr_rgw_w.cols());
-
-        H_vr << Hvr_pwi, Hvr_vwi, Hvr_rwi, Hvr_bw, Hvr_ba, Hvr_pig, Hvr_pgw_w, Hvr_rgw_w;
-
-        // Append to jacobians (vertical)
-        H.conservativeResizeLike(Eigen::MatrixXd::Zero(H.rows() + H_vr.rows(), H.cols()));
-        H.bottomRows(H_vr.rows()) = H_vr;
-
-        const Eigen::Vector3d vr_est = R_wi * v_rot_axis_;
-        const Eigen::Vector3d res_vr = v_meas.normalized() - vr_est;
-
-        res.conservativeResize(res.rows() + res_vr.rows(), Eigen::NoChange);
-        res.bottomRows(res_vr.rows()) = res_vr;
-
-        R_meas.conservativeResizeLike(Eigen::MatrixXd::Zero(R_meas.rows() + 3, R_meas.cols() + 3));
-        R_meas.bottomRightCorner(3, 3) = Eigen::Vector3d(0.1, 0.1, 0.1).asDiagonal();
-      }
-      else
-      {
-        std::cout << "Info: [" << name_ << "] " << timestamp.get_seconds()
-                  << " Rotation from Velocity, norm below threshold (" << v_meas.norm() << " < " << vel_rot_thr_ << ")"
-                  << " - meas not used for rotation update" << std::endl;
-      }
-    }
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);

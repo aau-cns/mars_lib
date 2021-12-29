@@ -314,6 +314,39 @@ $$-->
 
 ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{P}}_{GW~W}+\text{\textbf{R}}_{GW~W}~\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IG}\right))
 
+#### GNSS with rotational constraints from velocity
+
+Symbols:
+
+| Symbol                                                       | Definition                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{WI}) | Rotation of the IMU/Body frame expressed w.r.t. the world frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{V}}_{WI}) | Velocity of the IMU/Body frame expressed w.r.t. the world frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IG}) | Translation of the GNSS sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+
+![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{Z}}=\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\alpha\left\|\mu\right\|)
+
+with
+
+![](https://latex.codecogs.com/svg.latex?\alpha=\left[1,0,0\right]^T)
+
+for alignment with the x-axis, and
+
+![](https://latex.codecogs.com/svg.latex?\mu=\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG})
+
+Thus
+
+![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\left[1,0,0\right]^T\left\|\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG}\right\|)
+
+Leading to the following derivatives
+
+![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}}=-\textrm{\textbf{R}}_{WI}[\alpha]\left\|\mu\right\|-\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\left[\omega_i\right]\textrm{\textbf{P}}_{IG}\right])
+
+![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\textrm{\textbf{V}}_{WI}}=\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|})
+
+![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\textrm{\textbf{P}}_{IG}}=\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\omega_i\right])
+
 #### Magnetometer (3 DoF)
 
 Symbols:
