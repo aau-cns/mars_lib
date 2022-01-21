@@ -109,6 +109,7 @@ public:
   std::string to_csv_string(const double& timestamp) const
   {
     std::stringstream os;
+    os.precision(17);
     os << timestamp;
 
     os << ", " << w_m_(0) << ", " << w_m_(1) << ", " << w_m_(2);

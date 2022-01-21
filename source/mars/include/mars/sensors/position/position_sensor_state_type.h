@@ -27,6 +27,26 @@ public:
   {
     p_ip_.setZero();
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "p_ip_x, p_ip_y, p_ip_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << p_ip_(0) << ", " << p_ip_(1) << ", " << p_ip_(2);
+
+    return os.str();
+  }
 };
 }
 #endif  // POSITIONSENSORSTATETYPE_H

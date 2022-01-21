@@ -36,9 +36,23 @@ public:
     lambda_ = 1;          // 1
   }
 
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "p_vw_x, p_vw_y, p_vw_z, ";
+    os << "q_vw_w, q_vw_x, q_vw_y, q_vw_z,";
+    os << "p_ic_x, p_ic_y, p_ic_z, ";
+    os << "q_ic_w, q_ic_x, q_ic_y, q_ic_z,";
+    os << "lambda";
+
+    return os.str();
+  }
+
   std::string to_csv_string(const double& timestamp) const
   {
     std::stringstream os;
+    os.precision(17);
     os << timestamp;
 
     os << ", " << p_vw_(0) << ", " << p_vw_(1) << ", " << p_vw_(2);
