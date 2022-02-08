@@ -14,6 +14,7 @@
 #include <mars/core_state.h>
 #include <mars/ekf.h>
 #include <mars/sensors/bind_sensor_data.h>
+#include <mars/sensors/pressure/pressure_conversion.h>
 #include <mars/sensors/pressure/pressure_measurement_type.h>
 #include <mars/sensors/pressure/pressure_sensor_state_type.h>
 #include <mars/sensors/update_sensor_abs_class.h>
@@ -33,12 +34,16 @@ class PressureSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  PressureConversion pressure_conversion_;
+  bool pressure_reference_is_set_;
+
   PressureSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
     core_states_ = core_states;
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
+    pressure_reference_is_set_ = false;
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
@@ -61,10 +66,39 @@ public:
     initial_calib_provided_ = true;
   }
 
+  void set_pressure_reference(const double& pressure, const double& temperature)
+  {
+    set_pressure_reference(mars::Pressure(pressure, temperature, mars::Pressure::Type::GAS));
+  }
+
+  void set_pressure_reference(const mars::Pressure& pressure)
+  {
+    if (!pressure_reference_is_set_)
+    {
+      pressure_conversion_.set_pressure_reference(pressure);
+      pressure_reference_is_set_ = true;
+      std::cout << "Info: [" << name_ << "] Set pressure reference: \n" << pressure << std::endl;
+    }
+    else
+    {
+      std::cout << "Warning: [" << name_ << "] "
+                << "Trying to set pressure reference but reference was already set. Action has no effect." << std::endl;
+    }
+  }
+
   BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
                             std::shared_ptr<CoreType> latest_core_data)
   {
     PressureMeasurementType measurement = *static_cast<PressureMeasurementType*>(sensor_data.get());
+
+    if (!pressure_reference_is_set_)
+    {
+      Pressure pressure(measurement.pressure_.data_, measurement.pressure_.temperature_K_, measurement.pressure_.type_);
+
+      pressure_conversion_.set_pressure_reference(pressure);
+      pressure_reference_is_set_ = true;
+      std::cout << "Info: [" << name_ << "] Set pressure reference: \n" << pressure << std::endl;
+    }
 
     PressureSensorData sensor_state;
     std::string calibration_type;
@@ -103,54 +137,24 @@ public:
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - called" << std::endl;
-
     // Cast the sensor measurement and prior state information
     PressureMeasurementType* meas = static_cast<PressureMeasurementType*>(measurement.get());
     PressureSensorData* prior_sensor_data = static_cast<PressureSensorData*>(latest_sensor_data.get());
 
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - retrieving measurment and prior state" << std::endl;
-
     // Decompose sensor measurement
-    Eigen::Matrix<double, 1, 1> h_meas = meas->height_;
+    Eigen::Matrix<double, 1, 1> h_meas = pressure_conversion_.get_height(meas->pressure_);
 
     // Extract sensor state
     PressureSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - retrieving noise matrix R_meas" << std::endl;
-
     // Generate measurement noise matrix
     const Eigen::Matrix<double, 1, 1> R_meas = this->R_.asDiagonal();
-
-//    std::cout << "[SensorUpdate]: " << name_ << " - ..... " << this->R_.transpose() << std::endl;
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - retrieving prior cov matrix P_prior" << std::endl;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
     const int size_of_full_error_state = size_of_core_state + size_of_sensor_state;
     const Eigen::MatrixXd P = prior_cov;
     assert(P.size() == size_of_full_error_state * size_of_full_error_state);
-
-    {
-      // debugging to circumnvent update
-      CoreType core_data;
-      core_data.cov_ = P.block(0, 0, CoreStateType::size_error_, CoreStateType::size_error_);
-      core_data.state_ = prior_core_state;
-
-      BufferDataType state_entry(std::make_shared<CoreType>(core_data), latest_sensor_data);
-      *new_state_data = state_entry;
-      return true;
-    }
-
-  // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - calculating measurement jacobian H" << std::endl;
-
 
     // Calculate the measurement jacobian H
     //    double a
@@ -176,55 +180,30 @@ public:
     Eigen::MatrixXd H(1, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pip.cols());
 
     H << Hp_pwi, Hp_vwi, Hp_rwi, Hp_bw, Hp_ba, Hp_pip;
-    H.setZero();
-
-//    std::cout << "[SensorUpdate]: " << name_ << " - ..... " << H << std::endl;
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - calculating residual res" << std::endl;
 
     // Calculate the residual z = z~ - (estimate)
     // Position
     const Eigen::Vector3d h_est3 = P_wi + R_wi * P_ip;
     const Eigen::Matrix<double, 1, 1> h_est = I_el3 * h_est3;
-    const Eigen::Matrix<double, 1, 1> res = Eigen::Matrix<double, 1, 1>(0.0); //h_meas - h_est;
-//    std::cout << "[SensorUpdate]: " << name_ << " - .... " << res << std::endl;
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - calculate EKF correction" << std::endl;
+    const Eigen::Matrix<double, 1, 1> res = h_meas - h_est;
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
     Eigen::MatrixXd correction = ekf.CalculateCorrection();
     assert(correction.size() == size_of_full_error_state * 1);
-    correction.setZero();
-//    std::cout << "[SensorUpdate]: " << name_ << " - ..... " << correction.transpose() << std::endl;
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - calculate EKF COV Update" << std::endl;
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
     P_updated = Utils::EnforceMatrixSymmetry(P_updated);
     P_updated = P;
-//    std::cout << "[SensorUpdate]: " << name_ << " - .....\n " << P << std::endl;
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - apply core correction" << std::endl;
 
     // Apply Core Correction
     CoreStateVector core_correction = correction.block(0, 0, CoreStateType::size_error_, 1);
     CoreStateType corrected_core_state = CoreStateType::ApplyCorrection(prior_core_state, core_correction);
 
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - apply sensor correction" << std::endl;
-
     // Apply Sensor Correction
     const Eigen::MatrixXd sensor_correction = correction.block(size_of_core_state, 0, size_of_sensor_state, 1);
     const PressureSensorStateType corrected_sensor_state = ApplyCorrection(prior_sensor_state, sensor_correction);
-
-    // DEBUG
-//    std::cout << "[SensorUpdate]: " << name_ << " - return results" << std::endl;
 
     // Return Results
     // CoreState data

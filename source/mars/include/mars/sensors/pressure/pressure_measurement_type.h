@@ -13,6 +13,8 @@
 #ifndef PRESSUREMEASUREMENTTYPE_H
 #define PRESSUREMEASUREMENTTYPE_H
 
+#include <mars/sensors/pressure/pressure_conversion.h>
+
 #include <Eigen/Dense>
 
 namespace mars
@@ -20,15 +22,24 @@ namespace mars
 class PressureMeasurementType
 {
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  typedef Eigen::Matrix<double, 1, 1> Matrix1d_t;
-
-  Matrix1d_t height_;  ///< height [z]
+  Pressure pressure_;
 
   PressureMeasurementType(double height)  // : height_(height)
   {
-    height_ = Matrix1d_t{ height };
+    pressure_.type_ = Pressure::Type::HEIGHT;
+    pressure_.data_ = height;
+  }
+
+  PressureMeasurementType(double pressure, double temperature)
+    : PressureMeasurementType(pressure, temperature, Pressure::Type::GAS)
+  {
+  }
+
+  PressureMeasurementType(double pressure, double temperature, Pressure::Type type)
+  {
+    pressure_.type_ = Pressure::Type::GAS;
+    pressure_.data_ = pressure;
+    pressure_.temperature_K_ = temperature;
   }
 };
 }  // namespace mars
