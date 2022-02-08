@@ -426,29 +426,47 @@ void Buffer::RemoveOverflowEntrys()
         }
         else
         {
+          *data_.erase(data_.begin() + delete_idx);
           break;
         }
       }
     }
-
-    // Delet one element only
-    *data_.erase(data_.begin() + delete_idx);
+    else
+    {
+      *data_.erase(data_.begin() + delete_idx);
+    }
   }
 }
 
 bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sensor_handle)
 {
   int num_found_handle = 0;
+  int num_found_meas = 0;
 
-  for (int k = this->get_length() - 1; k >= 0; k--)
+  for (int k = 0; k < this->get_length(); k++)
   {
     if (data_[k].sensor_ == sensor_handle)
     {
-      num_found_handle++;
-
-      if (num_found_handle > 1)
+      if (data_[k].metadata_ == BufferMetadataType::measurement)
       {
-        return false;
+        num_found_meas++;
+
+        if (num_found_meas > 1)
+        {
+          return true;
+        }
+      }
+      else
+      {
+        if (data_[k].metadata_ == BufferMetadataType::sensor_state)
+        {
+          num_found_handle++;
+
+          if (num_found_handle > 1 || num_found_meas > 0)
+          {
+            return false;
+          }
+        }
       }
     }
   }
