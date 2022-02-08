@@ -310,7 +310,7 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
 
   if (this->get_length() > max_buffer_size_)
   {
-    data_.pop_front();
+    RemoveOverflowEntrys();
     index = index - 1;
   }
 
@@ -424,10 +424,15 @@ void Buffer::RemoveOverflowEntrys()
         {
           delete_idx++;
         }
+        else
+        {
+          break;
+        }
       }
-
-      *data_.erase(data_.begin() + delete_idx);
     }
+
+    // Delet one element only
+    *data_.erase(data_.begin() + delete_idx);
   }
 }
 
