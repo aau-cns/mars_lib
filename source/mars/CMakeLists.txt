@@ -75,6 +75,7 @@ set(headers
     ${include_path}/sensors/pressure/pressure_measurement_type.h
     ${include_path}/sensors/pressure/pressure_sensor_class.h
     ${include_path}/sensors/pressure/pressure_sensor_state_type.h
+    ${include_path}/sensors/pressure/pressure_utils.h
     ${include_path}/sensors/vision/vision_measurement_type.h
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
@@ -111,6 +112,7 @@ set(sources
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
     ${include_path}/sensors/pressure/pressure_conversion.cpp
+    ${include_path}/sensors/pressure/pressure_utils.cpp
     ${include_path}/sensors/mag/mag_utils.cpp
     ${include_path}/general_functions/progress_indicator.cpp
     ${include_path}/data_utils/filesystem.cpp

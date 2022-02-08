@@ -35,6 +35,27 @@ struct Pressure
   Type type_{ Type::GAS };
 
   friend std::ostream& operator<<(std::ostream& out, const Pressure& pressure);
+
+  inline Pressure operator+(const Pressure& pressure)
+  {
+    return {data_ + pressure.data_, temperature_K_ + pressure.temperature_K_, type_};
+  }
+
+  inline void operator+=(const Pressure& pressure)
+  {
+    data_ += pressure.data_;
+    temperature_K_ += pressure.temperature_K_;
+  }
+
+  inline void operator/=(const double& n)
+  {
+    if (n == 0)
+    {
+      throw std::overflow_error("Divide by zero exception");
+    }
+    data_ /= n;
+    temperature_K_ /= n;
+  }
 };
 
 struct GasPressureOptions
