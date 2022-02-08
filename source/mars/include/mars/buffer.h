@@ -214,7 +214,7 @@ public:
   ///
   /// \brief RemoveOverflowEntrys Removes the oldest entries if max buffer size is reached
   ///
-  void RemoveOverflowEntrys();
+  int RemoveOverflowEntrys();
 
 private:
   ///

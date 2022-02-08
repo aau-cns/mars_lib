@@ -310,8 +310,11 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
 
   if (this->get_length() > max_buffer_size_)
   {
-    RemoveOverflowEntrys();
-    index = index - 1;
+    int del_idx = RemoveOverflowEntrys();
+    if (del_idx < 0)
+      index = -1;
+    else
+      index -= del_idx < index ? 1 : 0;
   }
 
   return index;
@@ -409,7 +412,7 @@ bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& inde
   return true;
 }
 
-void Buffer::RemoveOverflowEntrys()
+int Buffer::RemoveOverflowEntrys()
 {
   if (this->get_length() > this->max_buffer_size_)
   {
@@ -427,15 +430,18 @@ void Buffer::RemoveOverflowEntrys()
         else
         {
           *data_.erase(data_.begin() + delete_idx);
-          break;
+          return delete_idx;
         }
       }
     }
     else
     {
       *data_.erase(data_.begin() + delete_idx);
+      return delete_idx;
     }
   }
+
+  return -1;
 }
 
 bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sensor_handle)
