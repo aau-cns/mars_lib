@@ -143,6 +143,7 @@ public:
 
     // Decompose sensor measurement
     Eigen::Matrix<double, 1, 1> h_meas = pressure_conversion_.get_height(meas->pressure_);
+    //    std::cout << "[PressureUpdate]: got height " << h_meas << " (P=" << meas->pressure_.data_ << ")" << std::endl;
 
     // Extract sensor state
     PressureSensorStateType prior_sensor_state(prior_sensor_data->state_);
@@ -176,7 +177,7 @@ public:
     const Matrix13d_t Hp_pip = I_el3 * Hp_pip3;
 
     // Assemble the jacobian for the position (horizontal)
-    // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_pig ];
+    // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_pip ];
     Eigen::MatrixXd H(1, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pip.cols());
 
     H << Hp_pwi, Hp_vwi, Hp_rwi, Hp_bw, Hp_ba, Hp_pip;
@@ -195,7 +196,6 @@ public:
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
     P_updated = Utils::EnforceMatrixSymmetry(P_updated);
-    P_updated = P;
 
     // Apply Core Correction
     CoreStateVector core_correction = correction.block(0, 0, CoreStateType::size_error_, 1);

@@ -12,6 +12,7 @@
 #define PRESSURECONVERSION_H
 
 #include <Eigen/Dense>
+#include <iostream>
 
 namespace mars
 {
@@ -87,6 +88,17 @@ struct GasPressureOptions
   void update_constants(Pressure p0)
   {
     ln_P0PslT = (std::log(p0.data_) - ln_Psl) * p0.temperature_K_;
+  }
+
+  void PrintGasOptions()
+  {
+    std::cout << "Gas Options:\n"
+              << "\tP_sl:       " << P_sl << " Pa\n"
+              << "\tM:          " << M << " Kg*mol\n"
+              << "\tr:          " << r << " Nm/mol*K\n"
+              << "\tg:          " << g << " m/s^2\n"
+              << "\trOverMg:    " << rOverMg << " Nm s^2 / mol^2 Kg Km\n"
+              << "\tln_Psl:     " << ln_Psl << " log(Pa)\n" << std::endl;
   }
 };
 

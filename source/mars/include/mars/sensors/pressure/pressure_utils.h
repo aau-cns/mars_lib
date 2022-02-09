@@ -22,6 +22,7 @@ class PressureInit
 private:
   double init_duration_{ 1.0 };
   bool b_is_initialized_{ false };
+  bool b_verbose_{ false };
 
 public:
   PressureInit() = default;
@@ -33,8 +34,11 @@ public:
   }
 
   Pressure get_press_mean(const std::shared_ptr<SensorAbsClass> sensor_handle, const Buffer& buffer,
-                        const Pressure& cur_meas, const Time& cur_time)
+                          const Pressure& cur_meas, const Time& cur_time)
   {
+    if (b_verbose_)
+      std::cout << "[PressureInit]: trying to initialize pressure" << std::endl;
+
     // if the init duration is smaller than 0.0 then only use 'current' measurement
     if (init_duration_ < 0.0)
     {
@@ -47,8 +51,14 @@ public:
     buffer.get_sensor_handle_measurements(sensor_handle, pressure_entries);
 
     // check if enough measurements where recorded
-    if ((cur_time - pressure_entries.at(0)->timestamp_).get_seconds() < init_duration_ )
+    if (pressure_entries.empty() || (cur_time - pressure_entries.at(0)->timestamp_).get_seconds() < init_duration_)
+    {
+      if (b_verbose_)
+      {
+        std::cout << "[PressureInit]: could not init sensor (empty? " << pressure_entries.empty() << ")" << std::endl;
+      }
       return cur_meas;
+    }
 
     // calcualte average pressure/height
     Pressure avg_pressure = cur_meas;
@@ -73,6 +83,11 @@ public:
     // compute average
     avg_pressure /= cnt_meas;
     b_is_initialized_ = true;
+
+    if (b_verbose_)
+    {
+      std::cout << "[PressureInit]: finished initialization" << std::endl;
+    }
 
     return avg_pressure;
   }

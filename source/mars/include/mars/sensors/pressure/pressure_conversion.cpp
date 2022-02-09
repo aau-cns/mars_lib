@@ -48,6 +48,9 @@ void PressureConversion::set_pressure_reference(Pressure pressure)
 {
   // set pressure reference
   reference_ = pressure;
+  gas_options_.update_constants(reference_);
+  reference_is_set_ = true;
+  gas_options_.PrintGasOptions();
 }
 
 PressureConversion::Matrix1d PressureConversion::get_height(Pressure pressure)
