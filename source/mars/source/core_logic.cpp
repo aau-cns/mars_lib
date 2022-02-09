@@ -333,7 +333,7 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 {
   if (verbose_)
   {
-    std::cout << "[CoreLogic]: Process Measurement" << std::endl;
+    std::cout << "[CoreLogic]: Process Measurement (" << sensor->name_ << ")" << std::endl;
   }
 
   // Generate buffer entry element for the measurement

@@ -244,7 +244,7 @@ bool Buffer::get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sens
   entries.clear();
 
   // iterate forwards (oldest to newest)
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (int k = 0; k < data_.size(); ++k)
   {
     if (data_[k].IsMeasurement())
     {

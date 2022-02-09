@@ -732,11 +732,13 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
   mars::PoseMeasurementType meas_pose1(Eigen::Vector3d(1,1,1), Eigen::Quaterniond::Identity());
+  std::shared_ptr<mars::PoseMeasurementType> meas_pose1_ptr = std::make_shared<mars::PoseMeasurementType>(meas_pose1);
   mars::BufferDataType data_pose1;
-  data_pose1.set_sensor_data(std::make_shared<mars::PoseMeasurementType>(meas_pose1));
+  data_pose1.set_sensor_data(meas_pose1_ptr);
   mars::PoseMeasurementType meas_pose2(Eigen::Vector3d(5,4,3), Eigen::Quaterniond::Identity());
+  std::shared_ptr<mars::PoseMeasurementType> meas_pose2_ptr = std::make_shared<mars::PoseMeasurementType>(meas_pose2);
   mars::BufferDataType data_pose2;
-  data_pose2.set_sensor_data(std::make_shared<mars::PoseMeasurementType>(meas_pose2));
+  data_pose2.set_sensor_data(meas_pose2_ptr);
 
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::init_state));
   buffer.AddEntrySorted(mars::BufferEntryType(5, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
@@ -745,42 +747,55 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   buffer.AddEntrySorted(mars::BufferEntryType(8, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(9, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_2_sptr, mars::BufferMetadataType::init_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(5, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(6, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(11, data, pose_sensor_2_sptr, mars::BufferMetadataType::init_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(9, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(8, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(8, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(9, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(10, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(5, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
 
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, position_sensor_1_sptr, mars::BufferMetadataType::init_state));
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, position_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  // test return measurements
+  // test return measurements size1
   std::vector<const mars::BufferEntryType*> entries_return;
   buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, entries_return);
 
   ASSERT_EQ(entries_return.size(), 2);
 
-  // iterate over buffer
+  // iterate over buffer and test elements1
+  int ts = 5;
   for(const auto &it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose1_meas: " << meas.position_.transpose() << std::endl;
+    // value
     ASSERT_EQ((meas.position_ - Eigen::Vector3d(1,1,1)).norm(), 0);
+    // timestamp
+    ASSERT_EQ(it->timestamp_, ts);
+    ts += 3;
+    // check if pointer is corresponding to correct one
+    ASSERT_EQ(it->data_.sensor_, meas_pose1_ptr);
   }
 
-  // test return measurements
+  // test return measurements size2
   buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return);
 
   ASSERT_EQ(entries_return.size(), 3);
 
-  // iterate over buffer
+  // iterate over buffer and test elements2
+  ts = 1;
   for(const auto &it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose2_meas: " << meas.position_.transpose() << std::endl;
     ASSERT_EQ((meas.position_ - Eigen::Vector3d(5,4,3)).norm(), 0);
+    // timestamp
+    ASSERT_EQ(it->timestamp_, ts);
+    ts += 4;
+    // check if pointer is corresponding to correct one
+    ASSERT_EQ(it->data_.sensor_, meas_pose2_ptr);
   }
 
   // change value one item, retreive values again, should still be the same
@@ -791,11 +806,14 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   // get all entries again and rerun above test case
   buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return);
   ASSERT_EQ(entries_return.size(), 3);
+  ts = 1;
   for(const auto &it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose2_meas: " << meas.position_.transpose() << std::endl;
     ASSERT_EQ((meas.position_ - Eigen::Vector3d(5,4,3)).norm(), 0);
+    ASSERT_EQ(it->timestamp_, ts);
+    ts += 4;
   }
   // if this succeeds then the entries are unchangable in the buffer (as they should be)!
 
@@ -803,6 +821,7 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   buffer.get_sensor_handle_measurements(position_sensor_1_sptr, entries_return);
 
   ASSERT_EQ(entries_return.size(), 0);
+  ASSERT_TRUE(entries_return.empty());
 
   // test return success status
   ASSERT_EQ(buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, entries_return), 1);
@@ -844,6 +863,7 @@ TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)
   ASSERT_EQ(pose_sensor_2_sptr, last_state.sensor_);
 }
 
+
 TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
 {
   const int max_buffer_size = 5;
@@ -874,6 +894,11 @@ TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
   ASSERT_EQ(oldest_entry_return.timestamp_, 1);
 }
 
+///
+/// \brief Tests if buffer returning indices works for adding entries
+///
+/// \author Martin Scheiber <martin.scheiber@ieee.org>
+///
 TEST_F(mars_buffer_test, ADD_INDEX_TEST)
 {
   const int max_buffer_size = 5;
@@ -908,6 +933,14 @@ TEST_F(mars_buffer_test, ADD_INDEX_TEST)
   ASSERT_EQ(idx, 1);
 }
 
+///
+/// \brief Tests if given more sensors than buffer size, the buffer will still keep at least one state per sensor
+/// if it is the last.
+///
+/// This requires the buffer to 'grow' larger than its allowed size, which is a desired functionality
+///
+/// \author Martin Scheiber <martin.scheiber@ieee.org>
+///
 TEST_F(mars_buffer_test, SIZE_TEST)
 {
   const int max_buffer_size = 2;
