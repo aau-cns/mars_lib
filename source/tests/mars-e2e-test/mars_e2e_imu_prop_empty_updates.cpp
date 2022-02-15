@@ -74,7 +74,9 @@ public:
 
 TEST_F(mars_e2e_imu_prop_empty_update, END_2_END_IMU_PROPAGATION)
 {
-  bool test_with_dummy_imu_only_ = false;
+  const double req_precission =
+      (1.5 / 100);  /// Required precision for the comparison of the estimate and the ground truth
+  const bool test_with_dummy_imu_only_ = false;
 
   std::string test_data_path = std::string(MARS_LIB_TEST_DATA_PATH);
 
@@ -227,7 +229,7 @@ TEST_F(mars_e2e_imu_prop_empty_update, END_2_END_IMU_PROPAGATION)
   std::cout << "euler angle error [deg]: ["
             << (q_wi_error.toRotationMatrix().eulerAngles(0, 1, 2) * (180 / M_PI)).transpose() << " ]" << std::endl;
 
-  EXPECT_TRUE(last_state.p_wi_.isApprox(true_p_wi, 1e-5));
-  EXPECT_TRUE(last_state.v_wi_.isApprox(true_v_wi, 1e-5));
-  EXPECT_TRUE(last_state.q_wi_.coeffs().isApprox(true_q_wi.coeffs(), 1e-5));
+  EXPECT_TRUE(last_state.p_wi_.isApprox(true_p_wi, req_precission));
+  EXPECT_TRUE(last_state.v_wi_.isApprox(true_v_wi, req_precission));
+  EXPECT_TRUE(last_state.q_wi_.coeffs().isApprox(true_q_wi.coeffs(), req_precission));
 }
