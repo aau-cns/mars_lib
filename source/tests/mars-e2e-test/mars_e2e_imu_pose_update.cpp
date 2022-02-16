@@ -109,7 +109,7 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
     mars::ReadSimData(&measurement_data_imu, imu_sensor_sptr, test_data_path + traj_file_name);
 
     std::vector<mars::BufferEntryType> measurement_data_pose;
-    mars::ReadPoseData(&measurement_data_pose, pose_sensor_sptr, test_data_path + pose_file_name);
+    mars::ReadPoseData(&measurement_data_pose, pose_sensor_sptr, test_data_path + pose_file_name, 1e-13);
 
     measurement_data.insert(measurement_data.end(), measurement_data_imu.begin(), measurement_data_imu.end());
     measurement_data.insert(measurement_data.end(), measurement_data_pose.begin(), measurement_data_pose.end());

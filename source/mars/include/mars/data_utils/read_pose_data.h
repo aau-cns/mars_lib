@@ -27,7 +27,7 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-               const std::string& file_path)
+               const std::string& file_path, const double& time_offset)
   {
     constexpr int expected_columns = 8;
     CsvDataType sim_data;
@@ -40,7 +40,7 @@ public:
     unsigned long current_index = 0;
     for (auto k : sim_data)
     {
-      Time time = k[0] + 1e-13;
+      Time time = k[0] + time_offset;
 
       Eigen::Vector3d position(k[1], k[2], k[3]);
       Eigen::Quaterniond orientation(k[4], k[5], k[6], k[7]);
@@ -53,6 +53,12 @@ public:
 
       ++current_index;
     }
+  }
+
+  ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
+               const std::string& file_path)
+  {
+    ReadPoseData(data_out, sensor, file_path, 0);
   }
 };
 }
