@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt,
+// Austria.
 //
 // All rights reserved.
 //
@@ -12,10 +13,10 @@
 #include <gmock/gmock.h>
 #include <mars/buffer.h>
 #include <mars/sensors/imu/imu_sensor_class.h>
-#include <mars/sensors/pose/pose_sensor_class.h>
-#include <mars/sensors/position/position_sensor_class.h>
 #include <mars/sensors/pose/pose_measurement_type.h>
+#include <mars/sensors/pose/pose_sensor_class.h>
 #include <mars/sensors/position/position_measurement_type.h>
+#include <mars/sensors/position/position_sensor_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_entry_type.h>
 
@@ -724,36 +725,40 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
       std::make_shared<mars::PoseSensorClass>("Pose_2", core_states_sptr);
   std::shared_ptr<mars::PositionSensorClass> position_sensor_1_sptr =
       std::make_shared<mars::PositionSensorClass>("Position", core_states_sptr);
-  std::shared_ptr<mars::ImuSensorClass> imu_sensor_sptr =
-      std::make_shared<mars::ImuSensorClass>("IMU");
+  std::shared_ptr<mars::ImuSensorClass> imu_sensor_sptr = std::make_shared<mars::ImuSensorClass>("IMU");
 
   int core_dummy = 13;
   int sensor_dummy = 15;
   mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
-  mars::PoseMeasurementType meas_pose1(Eigen::Vector3d(1,1,1), Eigen::Quaterniond::Identity());
+  mars::PoseMeasurementType meas_pose1(Eigen::Vector3d(1, 1, 1), Eigen::Quaterniond::Identity());
   std::shared_ptr<mars::PoseMeasurementType> meas_pose1_ptr = std::make_shared<mars::PoseMeasurementType>(meas_pose1);
   mars::BufferDataType data_pose1;
   data_pose1.set_sensor_data(meas_pose1_ptr);
-  mars::PoseMeasurementType meas_pose2(Eigen::Vector3d(5,4,3), Eigen::Quaterniond::Identity());
+  mars::PoseMeasurementType meas_pose2(Eigen::Vector3d(5, 4, 3), Eigen::Quaterniond::Identity());
   std::shared_ptr<mars::PoseMeasurementType> meas_pose2_ptr = std::make_shared<mars::PoseMeasurementType>(meas_pose2);
   mars::BufferDataType data_pose2;
   data_pose2.set_sensor_data(meas_pose2_ptr);
 
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::init_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(5, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(5, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(6, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(8, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(8, data_pose1, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(9, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
   buffer.AddEntrySorted(mars::BufferEntryType(11, data, pose_sensor_2_sptr, mars::BufferMetadataType::init_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(9, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(9, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(8, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(5, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(5, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(1, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(1, data_pose2, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
 
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, position_sensor_1_sptr, mars::BufferMetadataType::init_state));
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, position_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
@@ -766,12 +771,12 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
 
   // iterate over buffer and test elements1
   int ts = 5;
-  for(const auto &it : entries_return)
+  for (const auto& it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose1_meas: " << meas.position_.transpose() << std::endl;
     // value
-    ASSERT_EQ((meas.position_ - Eigen::Vector3d(1,1,1)).norm(), 0);
+    ASSERT_EQ((meas.position_ - Eigen::Vector3d(1, 1, 1)).norm(), 0);
     // timestamp
     ASSERT_EQ(it->timestamp_, ts);
     ts += 3;
@@ -786,11 +791,11 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
 
   // iterate over buffer and test elements2
   ts = 1;
-  for(const auto &it : entries_return)
+  for (const auto& it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose2_meas: " << meas.position_.transpose() << std::endl;
-    ASSERT_EQ((meas.position_ - Eigen::Vector3d(5,4,3)).norm(), 0);
+    ASSERT_EQ((meas.position_ - Eigen::Vector3d(5, 4, 3)).norm(), 0);
     // timestamp
     ASSERT_EQ(it->timestamp_, ts);
     ts += 4;
@@ -800,18 +805,18 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
 
   // change value one item, retreive values again, should still be the same
   mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(entries_return.at(1)->data_.sensor_.get());
-  meas.position_ = Eigen::Vector3d(1,1,1);
-  ASSERT_EQ((meas.position_ - Eigen::Vector3d(1,1,1)).norm(), 0);
+  meas.position_ = Eigen::Vector3d(1, 1, 1);
+  ASSERT_EQ((meas.position_ - Eigen::Vector3d(1, 1, 1)).norm(), 0);
 
   // get all entries again and rerun above test case
   buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return);
   ASSERT_EQ(entries_return.size(), 3);
   ts = 1;
-  for(const auto &it : entries_return)
+  for (const auto& it : entries_return)
   {
     mars::PoseMeasurementType meas = *static_cast<mars::PoseMeasurementType*>(it->data_.sensor_.get());
     std::cout << "pose2_meas: " << meas.position_.transpose() << std::endl;
-    ASSERT_EQ((meas.position_ - Eigen::Vector3d(5,4,3)).norm(), 0);
+    ASSERT_EQ((meas.position_ - Eigen::Vector3d(5, 4, 3)).norm(), 0);
     ASSERT_EQ(it->timestamp_, ts);
     ts += 4;
   }
@@ -862,7 +867,6 @@ TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)
 
   ASSERT_EQ(pose_sensor_2_sptr, last_state.sensor_);
 }
-
 
 TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
 {
@@ -922,7 +926,8 @@ TEST_F(mars_buffer_test, ADD_INDEX_TEST)
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
 
-  int idx = buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_3_sptr, mars::BufferMetadataType::measurement));
+  int idx =
+      buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_3_sptr, mars::BufferMetadataType::measurement));
 
   ASSERT_EQ(buffer.get_length(), 5);
 
