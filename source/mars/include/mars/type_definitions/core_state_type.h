@@ -68,6 +68,10 @@ public:
     corrected_state.b_w_ = state_prior.b_w_ + correction.block(9, 0, 3, 1);
     corrected_state.b_a_ = state_prior.b_a_ + correction.block(12, 0, 3, 1);
 
+    // Pass through IMU measurements
+    corrected_state.a_m_ = state_prior.a_m_;
+    corrected_state.w_m_ = state_prior.w_m_;
+
     return corrected_state;
   }
 

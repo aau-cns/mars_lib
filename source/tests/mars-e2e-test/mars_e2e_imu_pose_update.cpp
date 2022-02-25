@@ -187,14 +187,13 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
   Eigen::Vector3d true_v_wi(15.924719563070044, -20.483884216740151, 11.455154466026718);
   Eigen::Quaterniond true_q_wi(0.98996033625708202, 0.048830414166879263, -0.02917972697860232, -0.12939345742158029);
 
-  EXPECT_TRUE(last_state.p_wi_.isApprox(true_p_wi, 1e-5));
-  EXPECT_TRUE(last_state.v_wi_.isApprox(true_v_wi, 1e-5));
-  EXPECT_TRUE(last_state.q_wi_.coeffs().isApprox(true_q_wi.coeffs(), 1e-5));
-
   std::cout << "p_wi error [m]: [" << (last_state.p_wi_ - true_p_wi).transpose() << " ]" << std::endl;
   std::cout << "v_wi error [m/s]: [" << (last_state.v_wi_ - true_v_wi).transpose() << " ]" << std::endl;
 
   Eigen::Quaterniond q_wi_error(last_state.q_wi_.conjugate() * true_q_wi);
-
   std::cout << "q_wi error [w,x,y,z]: [" << q_wi_error.w() << " " << q_wi_error.vec().transpose() << " ]" << std::endl;
+
+  EXPECT_TRUE(last_state.p_wi_.isApprox(true_p_wi, 1e-5));
+  EXPECT_TRUE(last_state.v_wi_.isApprox(true_v_wi, 1e-5));
+  EXPECT_TRUE(last_state.q_wi_.coeffs().isApprox(true_q_wi.coeffs(), 1e-5));
 }

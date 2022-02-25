@@ -472,16 +472,6 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
     mars::BufferEntryType latest_state_buffer_entry;
     buffer_.get_latest_state(&latest_state_buffer_entry);
 
-    // Zero-order hold for IMU measurement. Copy imu measurement from latest state to current sensor state
-    mars::BufferEntryType latest_prop_meas_entry;
-    buffer_.get_latest_sensor_handle_state(core_states_->propagation_sensor_, &latest_prop_meas_entry);
-
-    CoreType core_now = *static_cast<CoreType*>(latest_state_buffer_entry.data_.core_.get());
-    CoreType core_prev = *static_cast<CoreType*>(latest_prop_meas_entry.data_.core_.get());
-    core_now.state_.a_m_ = core_prev.state_.a_m_;
-    core_now.state_.w_m_ = core_prev.state_.w_m_;
-    latest_state_buffer_entry.data_.set_core_data(std::make_shared<CoreType>(core_now));
-
     mars::BufferEntryType new_core_state_entry;
     new_core_state_entry = PerformCoreStatePropagation(sensor, timestamp, std::make_shared<BufferDataType>(data),
                                                        std::make_shared<BufferEntryType>(latest_state_buffer_entry));
