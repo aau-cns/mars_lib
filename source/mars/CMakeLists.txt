@@ -82,6 +82,7 @@ set(headers
     ${include_path}/data_utils/read_sim_data.h
     ${include_path}/data_utils/read_imu_data.h
     ${include_path}/data_utils/read_pose_data.h
+    ${include_path}/data_utils/read_position_data.h
     ${include_path}/data_utils/read_gps_w_vel_data.h
     ${include_path}/data_utils/read_mag_data.h
     ${include_path}/data_utils/filesystem.h
