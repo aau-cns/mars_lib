@@ -24,6 +24,7 @@ set(sources
     mars_time.cpp
     mars_buffer_type.cpp
     mars_ekf.cpp
+    mars_m_perf.cpp
     mars_core_state.cpp
     mars_buffer.cpp
     mars_bind_sensor_data.cpp
