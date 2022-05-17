@@ -359,10 +359,10 @@ Symbols:
 Measurement equation:
 
 <!--$$
-z = \text{\textbf{R}}_{IM}^\mathsf{T} + \text{\textbf{R}}_{WI}^\mathsf{T} ~ {}_W\text{\textbf{mag}}
+z = \text{\textbf{R}}_{IM}^\mathsf{T} ~ \text{\textbf{R}}_{WI}^\mathsf{T} ~ {}_W\text{\textbf{mag}}
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IM}^\mathsf{T}+\text{\textbf{R}}_{WI}^\mathsf{T}~{}_W\text{\textbf{mag}})
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IM}^\mathsf{T}~\text{\textbf{R}}_{WI}^\mathsf{T}~{}_W\text{\textbf{mag}})
 
 #### Barometric Pressure (1 DoF)
 
