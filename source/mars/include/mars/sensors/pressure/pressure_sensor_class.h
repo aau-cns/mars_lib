@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Martin Scheiber, Christian Brommer,
+// Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -6,7 +7,8 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <christian.brommer@ieee.org>
+// You can contact the authors at <christian.brommer@ieee.org>
+// and <martin.scheiber@ieee.org>
 
 #ifndef PRESSURESENSORCLASS_H
 #define PRESSURESENSORCLASS_H
@@ -143,7 +145,6 @@ public:
 
     // Decompose sensor measurement
     Eigen::Matrix<double, 1, 1> h_meas = pressure_conversion_.get_height(meas->pressure_);
-    //    std::cout << "[PressureUpdate]: got height " << h_meas << " (P=" << meas->pressure_.data_ << ")" << std::endl;
 
     // Extract sensor state
     PressureSensorStateType prior_sensor_state(prior_sensor_data->state_);

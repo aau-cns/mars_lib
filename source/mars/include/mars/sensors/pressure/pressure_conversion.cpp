@@ -16,8 +16,8 @@ std::ostream& operator<<(std::ostream& out, const Pressure::Type& type)
 {
   switch (type)
   {
-    case Pressure::Type::FLUID:
-      out << "FLUID";
+    case Pressure::Type::LIQUID:
+      out << "LIQUID";
       break;
     case Pressure::Type::GAS:
       out << "GAS";
@@ -39,7 +39,8 @@ std::ostream& operator<<(std::ostream& out, const Pressure& pressure)
   return out;
 }
 
-PressureConversion::PressureConversion(Pressure pressure, GasPressureOptions gas_options) : gas_options_(gas_options)
+PressureConversion::PressureConversion(Pressure pressure, MediumPressureOptions medium_options)
+  : medium_options_(medium_options)
 {
   set_pressure_reference(pressure);
 }
@@ -48,17 +49,17 @@ void PressureConversion::set_pressure_reference(Pressure pressure)
 {
   // set pressure reference
   reference_ = pressure;
-  gas_options_.update_constants(reference_);
+  medium_options_.update_constants(reference_);
   reference_is_set_ = true;
-  gas_options_.PrintGasOptions();
+  medium_options_.PrintGasOptions();
 }
 
 PressureConversion::Matrix1d PressureConversion::get_height(Pressure pressure)
 {
   switch (pressure.type_)
   {
-    case mars::Pressure::Type::FLUID:
-      return Matrix1d(get_height_fluid(pressure));
+    case mars::Pressure::Type::LIQUID:
+      return Matrix1d(get_height_liquid(pressure));
     case mars::Pressure::Type::GAS:
       return Matrix1d(get_height_gas(pressure));
     case mars::Pressure::Type::HEIGHT:
@@ -66,15 +67,14 @@ PressureConversion::Matrix1d PressureConversion::get_height(Pressure pressure)
   }
 }
 
-double PressureConversion::get_height_fluid(const Pressure& pressure)
+double PressureConversion::get_height_liquid(const Pressure& pressure)
 {
-  /// \todo TODO(scm): implement this
-  return -1.0;
+  return medium_options_.OneOverGRho * pressure.data_;
 }
 
 double PressureConversion::get_height_gas(const Pressure& pressure)
 {
-  return gas_options_.rOverMg *
-         (gas_options_.ln_P0PslT - (std::log(pressure.data_) - gas_options_.ln_Psl) * pressure.temperature_K_);
+  return medium_options_.rOverMg *
+         (medium_options_.ln_P0PslT - (std::log(pressure.data_) - medium_options_.ln_Psl) * pressure.temperature_K_);
 }
 }  // namespace mars

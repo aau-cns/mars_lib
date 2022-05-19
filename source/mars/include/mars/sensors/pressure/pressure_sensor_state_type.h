@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Martin Scheiber, Christian Brommer,
+// Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -6,12 +7,14 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <christian.brommer@ieee.org>
+// You can contact the authors at <christian.brommer@ieee.org>
+// and <martin.scheiber@ieee.org>
 
 #ifndef PRESSURESENSORSTATETYPE_H
 #define PRESSURESENSORSTATETYPE_H
 
 #include <mars/type_definitions/base_states.h>
+
 #include <Eigen/Dense>
 
 namespace mars
@@ -29,5 +32,5 @@ public:
     p_ip_.setZero();
   }
 };
-}
+}  // namespace mars
 #endif  // PRESSURESENSORSTATETYPE_H

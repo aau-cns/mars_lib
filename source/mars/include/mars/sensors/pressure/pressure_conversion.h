@@ -16,11 +16,17 @@
 
 namespace mars
 {
+///
+/// \brief The Pressure struct describes the raw pressure measurement used for conversion later
+///
 struct Pressure
 {
+  ///
+  /// \brief The Type enum determines the type of pressure measurement used for conversion.
+  ///
   enum class Type
   {
-    FLUID,
+    LIQUID,
     GAS,
     HEIGHT
   };
@@ -39,7 +45,7 @@ struct Pressure
 
   inline Pressure operator+(const Pressure& pressure)
   {
-    return {data_ + pressure.data_, temperature_K_ + pressure.temperature_K_, type_};
+    return { data_ + pressure.data_, temperature_K_ + pressure.temperature_K_, type_ };
   }
 
   inline void operator+=(const Pressure& pressure)
@@ -59,30 +65,45 @@ struct Pressure
   }
 };
 
-struct GasPressureOptions
+///
+/// \brief The MediumPressureOptions struct contains all medium-related (gas, liquid, fluid, etc.) variables needed for
+/// pressure calculation.
+///
+struct MediumPressureOptions
 {
-  GasPressureOptions()
+  MediumPressureOptions()
   {
     set_constants();
   }
-  GasPressureOptions(double P_sl, double M, double r, double g) : P_sl(P_sl), M(M), r(r), g(g)
+  MediumPressureOptions(double P_sl, double M, double r, double g) : P_sl(P_sl), M(M), r(r), g(g)
   {
     set_constants();
   }
 
-  const double P_sl{ 101325 };  // Pascal
-  const double M{ 0.0289644 };  // Kg*mol
-  const double r{ 8.31432 };    // Nm/mol*K
-  const double g{ 9.80665 };
+  // general constants
+  const double g{ 9.80665 };  //!< gravity constant [m/s^2]
 
+  // gas constants
+  const double P_sl{ 101325 };  //!< (gas) pressure at sealevel [Pascal]
+  const double M{ 0.0289644 };  //!< (gas) [Kg*mol]
+  const double r{ 8.31432 };    //!< (gas) [Nm/mol*K]
+
+  // liquid constants
+  const double rho{ 997 };  //!< (liquid) density of the medium [kg/m^2]
+
+  // gas variables
   double rOverMg;
   double ln_Psl;
   double ln_P0PslT;
+
+  // liquid variables
+  double OneOverGRho;
 
   void set_constants()
   {
     rOverMg = r / (M * g);
     ln_Psl = std::log(P_sl);
+    OneOverGRho = 1.0 / (g * rho);
   }
 
   void update_constants(Pressure p0)
@@ -92,13 +113,18 @@ struct GasPressureOptions
 
   void PrintGasOptions()
   {
-    std::cout << "Gas Options:\n"
-              << "\tP_sl:       " << P_sl << " Pa\n"
-              << "\tM:          " << M << " Kg*mol\n"
-              << "\tr:          " << r << " Nm/mol*K\n"
+    std::cout << "Medium Options:\n"
               << "\tg:          " << g << " m/s^2\n"
-              << "\trOverMg:    " << rOverMg << " Nm s^2 / mol^2 Kg Km\n"
-              << "\tln_Psl:     " << ln_Psl << " log(Pa)\n" << std::endl;
+              << "\tGas Options:\n"
+              << "\t  P_sl:     " << P_sl << " Pa\n"
+              << "\t  M:        " << M << " Kg*mol\n"
+              << "\t  r:        " << r << " Nm/mol*K\n"
+              << "\t  rOverMg:  " << rOverMg << " Nm s^2 / mol^2 Kg Km\n"
+              << "\t  ln_Psl:   " << ln_Psl << " log(Pa)\n"
+              << "\tLiquid Options:\n"
+              << "\t  rho:      " << rho << " Pa\n"
+              << "\t  1/gRho:   " << OneOverGRho << " Pa\n"
+              << std::endl;
   }
 };
 
@@ -108,8 +134,8 @@ public:
   typedef Eigen::Matrix<double, 1, 1> Matrix1d;
 
   PressureConversion() = default;
-  PressureConversion(Pressure pressure) : PressureConversion(pressure, GasPressureOptions()){};
-  PressureConversion(Pressure pressure, GasPressureOptions gas_options);
+  PressureConversion(Pressure pressure) : PressureConversion(pressure, MediumPressureOptions()){};
+  PressureConversion(Pressure pressure, MediumPressureOptions gas_options);
 
   void set_pressure_reference(Pressure pressure);
 
@@ -117,10 +143,10 @@ public:
 
 private:
   Pressure reference_;
-  GasPressureOptions gas_options_;
+  MediumPressureOptions medium_options_;
   bool reference_is_set_{ false };
 
-  double get_height_fluid(const Pressure& pressure);
+  double get_height_liquid(const Pressure& pressure);
   double get_height_gas(const Pressure& pressure);
 };
 
