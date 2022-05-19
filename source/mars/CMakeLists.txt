@@ -207,6 +207,7 @@ target_link_libraries(${target}
     ${DEFAULT_LIBRARIES}
     Eigen
     yaml-cpp
+    Boost
     #kindr
     #Sophus
     INTERFACE
