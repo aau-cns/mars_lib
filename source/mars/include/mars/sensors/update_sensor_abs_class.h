@@ -12,6 +12,7 @@
 #define UPDATE_SENSOR_ABS_CLASS_H
 
 #include <mars/core_state.h>
+#include <mars/ekf.h>
 #include <mars/sensors/sensor_abs_class.h>
 #include <mars/sensors/sensor_interface.h>
 #include <mars/type_definitions/base_states.h>
@@ -36,6 +37,8 @@ public:
   std::shared_ptr<void> initial_calib_{ nullptr };
   bool initial_calib_provided_{ false };  ///< True if an initial calibration was provided
   bool const_ref_to_nav_{ true };         ///< True if the reference should not be estimated
+
+  Chi2 chi2_;
 
   std::shared_ptr<CoreState> core_states_;
 };
