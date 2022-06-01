@@ -47,10 +47,8 @@ public:
     os.precision(17);
     os << timestamp;
 
-    Eigen::Vector4d q_aw = q_aw_.coeffs();  // x y z w
-    Eigen::Vector4d q_ib = q_ib_.coeffs();  // x y z w
-    os << ", " << q_aw(3) << ", " << q_aw(0) << ", " << q_aw(1) << ", " << q_aw(2);
-    os << ", " << q_ib(3) << ", " << q_ib(0) << ", " << q_ib(1) << ", " << q_ib(2);
+    os << ", " << q_aw_.w() << ", " << q_aw_.x() << ", " << q_aw_.y() << ", " << q_aw_.z();
+    os << ", " << q_ib_.w() << ", " << q_ib_.x() << ", " << q_ib_.y() << ", " << q_ib_.z();
 
     return os.str();
   }

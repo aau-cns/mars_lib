@@ -64,6 +64,13 @@ public:
                                                     const Eigen::Vector3d& correction);
 
   ///
+  /// \brief RPYFromRotMat derives the roll pitch and yaw angle from a rotation matrix (in that order)
+  /// \param rot_mat 3x3 rotation matrix
+  /// \return Vector with [roll, pitch, yaw]
+  ///
+  static Eigen::Vector3d RPYFromRotMat(const Eigen::Matrix3d& rot_mat);
+
+  ///
   /// \brief check_cov Performs tests for the properties of a given covariance matrix
   /// \param cov_mat
   /// \param description Used to associate the warning with the given covariance
@@ -73,6 +80,6 @@ public:
 
   static Eigen::MatrixXd EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in);
 };
-}
+}  // namespace mars
 
 #endif  // UTILS_H
