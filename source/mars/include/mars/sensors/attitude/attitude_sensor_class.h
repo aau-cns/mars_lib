@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Martin Scheiber, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Martin Scheiber and Christian Brommer, Control of Networked Systems, University of Klagenfurt,
+// Austria.
 //
 // All rights reserved.
 //
@@ -6,7 +7,8 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <martin.scheiber@ieee.org>
+// You can contact the authors at <martin.scheiber@ieee.org>
+// and <christian.brommer@ieee.org>.
 
 #ifndef ATTITUDE_SENSOR_CLASS_H
 #define ATTITUDE_SENSOR_CLASS_H
@@ -207,20 +209,19 @@ public:
     const Eigen::Matrix3d R_ib = prior_sensor_state.q_ib_.toRotationMatrix();
 
     // Orientation
-    const Matrix23d_t Hm_pwi = Z_23;
-    const Matrix23d_t Hm_vwi = Z_23;
-    const Matrix23d_t Hm_rwi = I_23;
+    const Matrix23d_t Hr_pwi = Z_23;
+    const Matrix23d_t Hr_vwi = Z_23;
     const Matrix23d_t Hr_rwi = R_ib.transpose().block(0, 0, 2, 3);
-    const Matrix23d_t Hm_bw = Z_23;
-    const Matrix23d_t Hm_ba = Z_23;
+    const Matrix23d_t Hr_bw = Z_23;
+    const Matrix23d_t Hr_ba = Z_23;
 
     const Matrix23d_t Hr_raw = (R_ib.transpose() * R_wi.transpose()).block(0, 0, 2, 3);
     const Matrix23d_t Hr_rib = I_23;
 
     // Assemble the jacobian for the orientation (horizontal)
     // H_r = [Hr_pwi Hr_vwi Hr_rwi Hr_bw Hr_ba Hr_mag Hr_rim];
-    Eigen::MatrixXd H(2, Hm_pwi.cols() + Hm_vwi.cols() + Hm_rwi.cols() + Hm_bw.cols() + Hm_ba.cols() + Hr_raw.cols() +
-                             Hr_rib.cols);
+    Eigen::MatrixXd H(2, Hr_pwi.cols() + Hr_vwi.cols() + Hr_rwi.cols() + Hr_bw.cols() + Hr_ba.cols() + Hr_raw.cols() +
+                             Hr_rib.cols());
     H << Hr_pwi, Hr_vwi, Hr_rwi, Hr_bw, Hr_ba, Hr_raw, Hr_rib;
 
     // Calculate the residual z = z~ - (estimate)
@@ -315,7 +316,7 @@ public:
     // Assemble the jacobian for the orientation (horizontal)
     // H_r = [Hr_pwi Hr_vwi Hr_rwi Hr_bw Hr_ba Hr_raw];
     Eigen::MatrixXd H(3, Hr_pwi.cols() + Hr_vwi.cols() + Hr_rwi.cols() + Hr_bw.cols() + Hr_ba.cols() + Hr_raw.cols() +
-                             Hr_rib.cols);
+                             Hr_rib.cols());
     H << Hr_pwi, Hr_vwi, Hr_rwi, Hr_bw, Hr_ba, Hr_raw, Hr_rib;
 
     // Calculate the residual z = z~ - (estimate)

@@ -11,7 +11,7 @@
 #ifndef ATTITUDE_CONVERSION_H
 #define ATTITUDE_CONVERSION_H
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 namespace mars
 {
