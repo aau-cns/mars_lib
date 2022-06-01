@@ -31,15 +31,24 @@ public:
     q_ib_.setIdentity();
   }
 
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "p_ib_x, p_ib_y, p_ib_z, ";
+    os << "q_ib_w, q_ib_x, q_ib_y, q_ib_z";
+
+    return os.str();
+  }
+
   std::string to_csv_string(const double& timestamp) const
   {
     std::stringstream os;
+    os.precision(17);
     os << timestamp;
 
     os << ", " << p_ib_(0) << ", " << p_ib_(1) << ", " << p_ib_(2);
-
-    Eigen::Vector4d q_ib = q_ib_.coeffs();  // x y z w
-    os << ", " << q_ib(3) << ", " << q_ib(0) << ", " << q_ib(1) << ", " << q_ib(2);
+    os << ", " << q_ib_.w() << ", " << q_ib_.x() << ", " << q_ib_.y() << ", " << q_ib_.z();
 
     return os.str();
   }

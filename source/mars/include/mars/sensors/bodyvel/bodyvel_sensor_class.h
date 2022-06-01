@@ -192,9 +192,6 @@ public:
     const Eigen::Vector3d v_est = R_ib.transpose() * R_wi.transpose() * V_wi + R_ib.transpose() * w_wi_skew * P_ib;
     const Eigen::Vector3d res = v_meas - v_est;
 
-    // std::cout << "INFO: [" << name_ << "] Residual: (cross-term)" << std::endl;
-    // std::cout << "        " << res.transpose() << " (" << res.norm() << ")" << std::endl;
-
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection();
