@@ -54,6 +54,12 @@ public:
   void set_max_buffer_size(const int& size);
 
   ///
+  /// \brief set_keep_last_sensor_handle
+  /// \param value enables or disables the mechanism to keep the last sensor handle
+  ///
+  void set_keep_last_sensor_handle(const bool& value);
+
+  ///
   /// \brief get_max_buffer_size
   /// \return current setting for the highest buffer size
   ///
@@ -244,11 +250,9 @@ private:
   /// \brief If true, the last entry of a sensor state entry will be keept in the buffer.
   /// \note This only keeps sensor states, not measurements or core states
   ///
-  bool keep_last_sensor_handle_{ true };
+  bool keep_last_sensor_handle_{ false };
 
   bool verbose_{ false };  ///< Increased cmd output
-
-  // new_entry_idx = AppendDataEntry(data_entry)
 };
 }  // namespace mars
 

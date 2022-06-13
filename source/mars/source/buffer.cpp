@@ -27,6 +27,11 @@ void Buffer::set_max_buffer_size(const int& size)
   max_buffer_size_ = std::abs(size);
 }
 
+void Buffer::set_keep_last_sensor_handle(const bool& value)
+{
+  keep_last_sensor_handle_ = value;
+}
+
 int Buffer::get_max_buffer_size() const
 {
   return max_buffer_size_;

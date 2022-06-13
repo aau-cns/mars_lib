@@ -839,6 +839,7 @@ TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)
 {
   const int max_buffer_size = 5;
   mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
 
   std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
   std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
@@ -872,6 +873,7 @@ TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
 {
   const int max_buffer_size = 5;
   mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
 
   std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
   std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
@@ -907,6 +909,7 @@ TEST_F(mars_buffer_test, ADD_INDEX_TEST)
 {
   const int max_buffer_size = 5;
   mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
 
   std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
   std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
@@ -950,6 +953,7 @@ TEST_F(mars_buffer_test, SIZE_TEST)
 {
   const int max_buffer_size = 2;
   mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
 
   std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
   std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
