@@ -159,7 +159,6 @@ public:
     assert(P.size() == size_of_full_error_state * size_of_full_error_state);
 
     // Calculate the measurement jacobian H
-    //    double a
     typedef Eigen::Matrix<double, 1, 3> Matrix13d_t;
     const Matrix13d_t I_el3{ 0, 0, 1 };
     const Matrix13d_t Z_el3{ 0, 0, 0 };

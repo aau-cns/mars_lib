@@ -12,6 +12,7 @@
 #define PRESSURE_UTILS_H
 
 #include <mars/buffer.h>
+#include <mars/sensors/pressure/pressure_conversion.h>
 #include <mars/sensors/pressure/pressure_measurement_type.h>
 #include <mars/sensors/sensor_abs_class.h>
 
@@ -26,76 +27,14 @@ private:
 
 public:
   PressureInit() = default;
-  PressureInit(double init_duration) : init_duration_(init_duration){};
+  PressureInit(const double& init_duration);
 
-  void Reset()
-  {
-    b_is_initialized_ = false;
-  }
+  void Reset();
 
-  Pressure get_press_mean(const std::shared_ptr<SensorAbsClass> sensor_handle, const Buffer& buffer,
-                          const Pressure& cur_meas, const Time& cur_time)
-  {
-    if (b_verbose_)
-      std::cout << "[PressureInit]: trying to initialize pressure" << std::endl;
+  Pressure get_press_mean(const std::shared_ptr<SensorAbsClass>& sensor_handle, const Buffer& buffer,
+                          const Pressure& cur_meas, const Time& cur_time);
 
-    // if the init duration is smaller than 0.0 then only use 'current' measurement
-    if (init_duration_ < 0.0)
-    {
-      b_is_initialized_;
-      return cur_meas;
-    }
-
-    // get ordered values from buffer
-    std::vector<const mars::BufferEntryType*> pressure_entries;
-    buffer.get_sensor_handle_measurements(sensor_handle, pressure_entries);
-
-    // check if enough measurements where recorded
-    if (pressure_entries.empty() || (cur_time - pressure_entries.at(0)->timestamp_).get_seconds() < init_duration_)
-    {
-      if (b_verbose_)
-      {
-        std::cout << "[PressureInit]: could not init sensor (empty? " << pressure_entries.empty() << ")" << std::endl;
-      }
-      return cur_meas;
-    }
-
-    // calcualte average pressure/height
-    Pressure avg_pressure = cur_meas;
-    uint cnt_meas = 1;
-    for (std::vector<const mars::BufferEntryType*>::reverse_iterator it = pressure_entries.rbegin();
-         it != pressure_entries.rend(); ++it)
-    {
-      if ((cur_time - (*it)->timestamp_).get_seconds() <= init_duration_)
-      {
-        const PressureMeasurementType meas = *static_cast<PressureMeasurementType*>((*it)->data_.sensor_.get());
-
-        avg_pressure += meas.pressure_;
-        cnt_meas++;
-      }
-      else
-      {
-        // in this case all other entries will not fullfill requirement of buffer so break early
-        break;
-      }
-    }
-
-    // compute average
-    avg_pressure /= cnt_meas;
-    b_is_initialized_ = true;
-
-    if (b_verbose_)
-    {
-      std::cout << "[PressureInit]: finished initialization" << std::endl;
-    }
-
-    return avg_pressure;
-  }
-
-  bool IsDone()
-  {
-    return b_is_initialized_;
-  }
+  bool IsDone();
 };  // class PressureInit
 }  // namespace mars
 

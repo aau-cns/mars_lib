@@ -24,7 +24,7 @@ class PressureMeasurementType
 public:
   Pressure pressure_;
 
-  PressureMeasurementType(double height)  // : height_(height)
+  PressureMeasurementType(double height)
   {
     pressure_.type_ = Pressure::Type::HEIGHT;
     pressure_.data_ = height;
