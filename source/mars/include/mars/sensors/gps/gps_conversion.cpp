@@ -114,4 +114,4 @@ Eigen::Matrix<double, 3, 1> GpsConversion::WGS84ToECEF(const mars::GpsCoordinate
 
   return ecef;
 }
-}
+}  // namespace mars

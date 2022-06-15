@@ -232,4 +232,4 @@ CoreStateMatrix CoreState::GenerateFdSmallAngleApprox(const Eigen::Quaterniond& 
   F_d.block(6, 9, 3, 3) = F;
   return F_d;
 }
-}
+}  // namespace mars

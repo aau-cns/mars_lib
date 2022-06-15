@@ -492,4 +492,4 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 
   return true;
 }
-}
+}  // namespace mars

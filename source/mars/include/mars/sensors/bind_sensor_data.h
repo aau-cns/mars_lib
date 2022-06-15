@@ -83,6 +83,6 @@ public:
     return full_cov;
   }
 };
-}
+}  // namespace mars
 
 #endif  // BASESENSORDATA_H

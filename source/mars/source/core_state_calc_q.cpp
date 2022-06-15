@@ -2362,4 +2362,4 @@ CoreStateMatrix CoreState::CalcQSmallAngleApprox(const double& dt_lim, const Eig
 
   return Q_d;
 }
-}
+}  // namespace mars

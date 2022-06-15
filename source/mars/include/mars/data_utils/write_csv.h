@@ -72,6 +72,6 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 
 #endif  // WRITE_CSV_H

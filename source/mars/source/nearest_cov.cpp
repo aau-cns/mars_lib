@@ -106,4 +106,4 @@ Eigen::MatrixXd NearestCov::EigenCorrectionUsingCorrelation(NearestCovMethod met
   // TODO
   return {};
 }
-}
+}  // namespace mars

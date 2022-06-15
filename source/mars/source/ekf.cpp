@@ -113,4 +113,4 @@ void Chi2::PrintReport(std::string name)
     std::cout << "X2 = " << last_X2_ << ", ucv = " << ucv_ << std::endl;
   }
 }
-}
+}  // namespace mars

@@ -29,6 +29,6 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 
 #endif  // MAG_MEASUREMENT_TYPE_H

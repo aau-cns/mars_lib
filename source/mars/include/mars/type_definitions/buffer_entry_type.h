@@ -32,7 +32,7 @@ enum BufferMetadataType
   measurement,     ///< regular measurement
   measurement_ooo  ///< out of order measurement
 };
-}
+}  // namespace BufferMetadataTypes
 
 namespace mars
 {
@@ -74,5 +74,5 @@ private:
   std::set<int> metadata_state_filter_;
   std::set<int> metadata_measurement_filter_;
 };
-}
+}  // namespace mars
 #endif  // BUFFERENTRYTYPE_H

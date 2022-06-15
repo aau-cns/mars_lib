@@ -38,5 +38,5 @@ public:
 private:
   double seconds_{ 0.0 };
 };
-}
+}  // namespace mars
 #endif  // TIME_H

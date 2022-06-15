@@ -134,6 +134,6 @@ private:
   ///
   Eigen::MatrixXd CalculateStateCorrection();
 };
-}
+}  // namespace mars
 
 #endif  // EKF_HPP

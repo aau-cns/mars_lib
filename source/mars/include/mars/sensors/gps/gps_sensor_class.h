@@ -261,6 +261,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}   // namespace mars
 
 #endif  // GPSSENSORCLASS_H

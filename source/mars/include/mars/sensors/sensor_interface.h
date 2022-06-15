@@ -65,5 +65,5 @@ public:
 protected:
   // SensorInterface(); // construction for child classes only
 };
-}
+}  // namespace mars
 #endif  // SENSORINTERFACE_H

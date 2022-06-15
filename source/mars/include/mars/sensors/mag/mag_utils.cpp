@@ -87,4 +87,4 @@ Eigen::Quaterniond MagnetometerInit::get_quat() const
 {
   return Eigen::Quaterniond(get_rot());
 }
-}
+}  // namespace mars

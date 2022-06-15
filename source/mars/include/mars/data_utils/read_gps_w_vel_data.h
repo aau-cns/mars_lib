@@ -58,6 +58,6 @@ public:
     ReadGpsWithVelData(data_out, sensor, file_path, 0);
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_GPS_W_VEL_DATA_H

@@ -115,6 +115,6 @@ private:
     return count;
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_CSV_H

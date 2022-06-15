@@ -50,6 +50,6 @@ public:
     return false;
   }
 };
-}
+}  // namespace mars
 
 #endif  // IMU_SENSOR_CLASS_H

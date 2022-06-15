@@ -267,6 +267,6 @@ public:
     mag_intr_transform_ = m_transform;
   }
 };
-}
+}  // namespace mars
 
 #endif  // MAG_SENSOR_CLASS_H

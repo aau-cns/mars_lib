@@ -27,5 +27,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // GPSVELMEASUREMENTTYPE_H

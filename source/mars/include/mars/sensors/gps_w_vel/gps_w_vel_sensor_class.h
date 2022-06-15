@@ -343,6 +343,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSVELSENSORCLASS_H

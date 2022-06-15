@@ -96,5 +96,5 @@ private:
   ///
   Eigen::Matrix<double, 3, 1> WGS84ToENU(const mars::GpsCoordinates& coordinates);
 };
-}
+}  // namespace mars
 #endif  // GPS_CONVERSION_H

@@ -168,6 +168,6 @@ public:
                                                const Eigen::Vector3d& w_m, const Eigen::Vector3d& n_w,
                                                const Eigen::Vector3d& b_w, const Eigen::Vector3d& n_bw);
 };
-}
+}  // namespace mars
 
 #endif  // CORESTATE_H

@@ -54,5 +54,5 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 #endif  // POSESENSORSTATETYPE_H

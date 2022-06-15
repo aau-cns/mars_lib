@@ -75,4 +75,4 @@ bool filesystem::MakeDir(const std::string& name)
     }
   }
 }
-}
+}  // namespace mars

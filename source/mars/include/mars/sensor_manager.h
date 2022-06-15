@@ -18,6 +18,6 @@ class SensorManager
 public:
   SensorManager() = default;
 };
-}
+}  // namespace mars
 
 #endif  // SENSORMANAGER_HPP

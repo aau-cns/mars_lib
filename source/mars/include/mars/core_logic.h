@@ -120,6 +120,6 @@ public:
   ///
   bool ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp, const BufferDataType& data);
 };
-}
+}  // namespace mars
 
 #endif  // CORELOGIC_H

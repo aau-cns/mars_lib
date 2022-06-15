@@ -255,6 +255,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // POSESENSORCLASS_H
