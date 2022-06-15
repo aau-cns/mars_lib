@@ -16,7 +16,7 @@
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/buffer_entry_type.h>
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 class mars_attitude_sensor_test : public testing::Test
 {
