@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Martin Scheiber, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Martin Scheiber and Christian Brommer, Control of Networked Systems, University of Klagenfurt,
+// Austria.
 //
 // All rights reserved.
 //
@@ -6,12 +7,13 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <martin.scheiber@ieee.org>
+// You can contact the authors at <martin.scheiber@ieee.org>
+// and <christian.brommer@ieee.org>.
 
 #ifndef BODYVELMEASUREMENTTYPE_H
 #define BODYVELMEASUREMENTTYPE_H
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <utility>
 
 namespace mars
