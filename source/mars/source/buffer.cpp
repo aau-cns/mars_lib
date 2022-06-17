@@ -11,7 +11,6 @@
 // and <martin.scheiber@ieee.org>
 
 #include <mars/buffer.h>
-
 #include <utility>
 
 namespace mars

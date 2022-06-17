@@ -16,13 +16,13 @@
 
 namespace mars
 {
-filesystem::filesystem()
-{
-}
+filesystem::filesystem() = default;
 
 bool filesystem::IsDir(const std::string& name)
 {
-  struct stat info;
+  struct stat info
+  {
+  };
 
   if (stat(name.c_str(), &info) != 0)
   {
@@ -38,7 +38,9 @@ bool filesystem::IsDir(const std::string& name)
 
 bool filesystem::IsFile(const std::string& name)
 {
-  struct stat info;
+  struct stat info
+  {
+  };
 
   if (stat(name.c_str(), &info) != 0)
   {

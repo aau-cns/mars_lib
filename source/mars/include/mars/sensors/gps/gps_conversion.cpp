@@ -9,13 +9,15 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include "gps_conversion.h"
-#include <cmath>
 #include <Eigen/Dense>
+#include <cmath>
+#include <iomanip>  // std::setprecision
 
 namespace mars
 {
 std::ostream& operator<<(std::ostream& out, const GpsCoordinates& coordinates)
 {
+  out << std::setprecision(4);
   out << "Lat:\t" << coordinates.latitude_ << std::endl;
   out << "Long:\t" << coordinates.longitude_ << std::endl;
   out << "Alt:\t" << coordinates.altitude_ << std::endl;
