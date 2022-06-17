@@ -11,7 +11,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <gmock/gmock.h>
 #include <mars/core_logic.h>
 #include <mars/core_state.h>
 #include <mars/data_utils/read_pose_data.h>
