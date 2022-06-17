@@ -47,6 +47,9 @@ public:
     initial_calib_provided_ = false;
     pressure_reference_is_set_ = false;
 
+    // chi2
+    chi2_.set_dof(1);
+
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
@@ -190,8 +193,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
