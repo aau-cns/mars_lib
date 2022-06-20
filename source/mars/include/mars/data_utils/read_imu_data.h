@@ -27,7 +27,7 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   ReadImuData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-              const std::string& file_path)
+              const std::string& file_path, const double& time_offset)
   {
     constexpr int expected_columns = 7;
     CsvDataType imu_data;
@@ -41,7 +41,7 @@ public:
     unsigned long current_index = 0;
     for (auto k : imu_data)
     {
-      Time time = k[0];
+      Time time = k[0] + time_offset;
       Eigen::Vector3d linear_acceleration(k[1], k[2], k[3]);
       Eigen::Vector3d angular_velocity(k[4], k[5], k[6]);
 
@@ -53,6 +53,12 @@ public:
 
       ++current_index;
     }
+  }
+
+  ReadImuData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
+              const std::string& file_path)
+  {
+    ReadImuData(data_out, sensor, file_path, 0);
   }
 };
 }
