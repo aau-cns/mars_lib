@@ -52,6 +52,10 @@ public:
     using_external_gps_reference_ = false;
     gps_reference_is_set_ = false;
 
+    chi2_.set_dof(6);
+    chi2_.set_chi_value(0.05);
+    chi2_.ActivateTest(true);
+
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
@@ -275,8 +279,14 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    if (!chi2_.passed_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);

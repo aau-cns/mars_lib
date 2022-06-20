@@ -14,7 +14,7 @@
 
 namespace mars
 {
-Eigen::MatrixXd Ekf::CalculateCorrection()
+Eigen::MatrixXd Ekf::CalculateStateCorrection()
 {
   // Calculate innovation
   S_ = H_ * P_ * H_.transpose() + R_;
@@ -29,6 +29,23 @@ Eigen::MatrixXd Ekf::CalculateCorrection()
   return correction;
 }
 
+Eigen::MatrixXd Ekf::CalculateCorrection()
+{
+  return CalculateStateCorrection();
+}
+
+Eigen::MatrixXd Ekf::CalculateCorrection(Chi2& chi2)
+{
+  Eigen::MatrixXd corr = CalculateStateCorrection();
+
+  if (chi2.do_test_)
+  {
+    chi2.CalculateChi2(res_, S_);
+  }
+
+  return corr;
+}
+
 Eigen::MatrixXd Ekf::CalculateCovUpdate()
 {
   // Calculate ErrorState Covariance
@@ -40,5 +57,60 @@ Eigen::MatrixXd Ekf::CalculateCovUpdate()
   Eigen::MatrixXd updated_P = KH * P_ * KH.transpose() + K_ * R_ * K_.transpose();
 
   return updated_P;
+}
+
+Chi2::Chi2() : dist_(3)  // Using 3 as a dummy value
+{
+}
+
+Chi2::Chi2(const int& dof, const double& chi_value) : dist_(dof)
+{
+  set_dof(dof);
+  set_chi_value(chi_value);
+  CalculateUcv();
+}
+
+void Chi2::set_dof(const int& value)
+{
+  dof_ = abs(value);
+  dist_ = boost::math::chi_squared(dof_);
+  CalculateUcv();
+}
+
+void Chi2::set_chi_value(const double& value)
+{
+  chi_value_ = value;
+  CalculateUcv();
+}
+
+void Chi2::CalculateUcv()
+{
+  ucv_ = boost::math::quantile(complement(dist_, chi_value_));
+}
+
+void Chi2::ActivateTest(const bool& value)
+{
+  this->do_test_ = value;
+}
+
+bool Chi2::CalculateChi2(const Eigen::MatrixXd& res, const Eigen::MatrixXd& S)
+{
+  // Determine whether or not the test passed
+  double X2 = (res.transpose() * S.inverse() * res).value();
+  passed_ = (X2 < ucv_) ? true : false;
+
+  last_res_ = res;
+  last_X2_ = X2;
+  return passed_;
+}
+
+void Chi2::PrintReport(std::string name)
+{
+  if (do_test_)
+  {
+    std::cout << name << " - Chi Squared Detected" << std::endl;
+    std::cout << "Res: " << last_res_.transpose() << std::endl;
+    std::cout << "X2 = " << last_X2_ << ", ucv = " << ucv_ << std::endl;
+  }
 }
 }
