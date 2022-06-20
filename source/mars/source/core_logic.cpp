@@ -167,8 +167,22 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
     return false;
   }
 
+  // Since the measurement was not out of order, get latest state is valid
+  mars::BufferEntryType latest_state_buffer_entry;
+  buffer_.get_latest_state(&latest_state_buffer_entry);
+
+  CoreType core_prev = *static_cast<CoreType*>(latest_state_buffer_entry.data_.core_.get());
+  IMUMeasurementType imu_meas_curr(core_prev.state_.a_m_, core_prev.state_.w_m_);
+  BufferDataType interm_prop;
+  interm_prop.set_sensor_data(std::make_shared<IMUMeasurementType>(imu_meas_curr));
+
+  mars::BufferEntryType new_core_state_entry;
+  new_core_state_entry = PerformCoreStatePropagation(latest_state_buffer_entry.sensor_, timestamp,
+                                                     std::make_shared<BufferDataType>(interm_prop),
+                                                     std::make_shared<BufferEntryType>(latest_state_buffer_entry));
+
   // Extract prior information from buffer entry
-  CoreType prior_core_data = *static_cast<CoreType*>(prior_core_state_entry.data_.core_.get());
+  CoreType prior_core_data = *static_cast<CoreType*>(new_core_state_entry.data_.core_.get());
 
   Eigen::MatrixXd prior_sensor_covariance = sensor->get_covariance(prior_sensor_state_entry.data_.sensor_);
 
@@ -457,16 +471,6 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
     // Since the measurement was not out of order, get latest state is valid
     mars::BufferEntryType latest_state_buffer_entry;
     buffer_.get_latest_state(&latest_state_buffer_entry);
-
-    // Zero-order hold for IMU measurement. Copy imu measurement from latest state to current sensor state
-    mars::BufferEntryType latest_prop_meas_entry;
-    buffer_.get_latest_sensor_handle_state(core_states_->propagation_sensor_, &latest_prop_meas_entry);
-
-    CoreType core_now = *static_cast<CoreType*>(latest_state_buffer_entry.data_.core_.get());
-    CoreType core_prev = *static_cast<CoreType*>(latest_prop_meas_entry.data_.core_.get());
-    core_now.state_.a_m_ = core_prev.state_.a_m_;
-    core_now.state_.w_m_ = core_prev.state_.w_m_;
-    latest_state_buffer_entry.data_.set_core_data(std::make_shared<CoreType>(core_now));
 
     mars::BufferEntryType new_core_state_entry;
     new_core_state_entry = PerformCoreStatePropagation(sensor, timestamp, std::make_shared<BufferDataType>(data),
