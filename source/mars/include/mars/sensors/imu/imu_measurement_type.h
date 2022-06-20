@@ -39,6 +39,28 @@ public:
   {
     return !(*this == rhs);
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "a_x, a_y, a_z, ";
+    os << "w_x, w_y, w_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << linear_acceleration_(0) << ", " << linear_acceleration_(1) << ", " << linear_acceleration_(2);
+    os << ", " << angular_velocity_(0) << ", " << angular_velocity_(1) << ", " << angular_velocity_(2);
+
+    return os.str();
+  }
 };
 }
 #endif  // IMU_MEASUREMENT_TYPE_H
