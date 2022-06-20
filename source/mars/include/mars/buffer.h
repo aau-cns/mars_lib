@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt,
+// Austria.
 //
 // All rights reserved.
 //
@@ -6,7 +7,8 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <christian.brommer@ieee.org>
+// You can contact the authors at <christian.brommer@ieee.org>
+// and <martin.scheiber@ieee.org>.
 
 #ifndef BUFFER_H
 #define BUFFER_H
@@ -14,11 +16,13 @@
 #include <mars/sensors/sensor_abs_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_entry_type.h>
+
 #include <algorithm>
 #include <cmath>
 #include <deque>
 #include <iostream>
 #include <set>
+#include <vector>
 
 namespace mars
 {
@@ -135,11 +139,20 @@ public:
   /// \brief get_latest_sensor_handle_measurement
   /// \param sensor_handle seach parameter for the latest associated measurement entry
   /// \param entry output parameter for the latest sensor handle measurement entry
-  /// \param index, returns the current index of this entry
   /// \return true if the operation was performed, false otherwise
   ///
   bool get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass> sensor_handle,
                                             BufferEntryType* entry) const;
+
+  ///
+  /// \brief get_sensor_handle_measurements
+  /// \param sensor_handle seach parameter for the all associated measurement entries
+  /// \param entries output parameter for the sensor handle measurement entries
+  /// \return true if the operation was performed and values are returned, false otherwise
+  /// \author Martin Scheiber <martin.scheiber@ieee.org>
+  ///
+  bool get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sensor_handle,
+                                      std::vector<const BufferEntryType*>& entries) const;
 
   ///
   /// \brief get_closest_state
@@ -237,6 +250,6 @@ private:
 
   // new_entry_idx = AppendDataEntry(data_entry)
 };
-}
+}  // namespace mars
 
 #endif  // BUFFER_H

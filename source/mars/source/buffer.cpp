@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2021 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt,
+// Austria.
 //
 // All rights reserved.
 //
@@ -6,7 +7,8 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <christian.brommer@ieee.org>
+// You can contact the authors at <christian.brommer@ieee.org>
+// and <martin.scheiber@ieee.org>
 
 #include <mars/buffer.h>
 
@@ -228,6 +230,33 @@ bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass
   }
 
   return false;
+}
+
+bool Buffer::get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sensor_handle,
+                                            std::vector<const BufferEntryType*>& entries) const
+{
+  if (this->IsEmpty())
+  {
+    return false;
+  }
+
+  // reset return value
+  entries.clear();
+
+  // iterate forwards (oldest to newest)
+  for (int k = 0; k < data_.size(); ++k)
+  {
+    if (data_[k].IsMeasurement())
+    {
+      if (data_[k].sensor_.get() == sensor_handle.get())
+      {
+        entries.push_back(&data_[k]);
+      }
+    }
+  }
+
+  // return false if vector is emtpy
+  return !entries.empty();
 }
 
 bool Buffer::get_closest_state(const Time& timestamp, BufferEntryType* entry) const
@@ -479,4 +508,4 @@ bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sen
 
   return true;
 }
-}
+}  // namespace mars
