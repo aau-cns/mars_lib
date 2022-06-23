@@ -13,6 +13,7 @@
 
 #include <Eigen/Dense>
 #include <string>
+#include <vector>
 
 namespace mars
 {
@@ -43,7 +44,7 @@ public:
   /// \param v
   /// \return
   ///
-  /// \note Reference: Solar - Quaternion Kinematics - Equation(199)
+  /// \note Reference: Joan Sola - Quaternion Kinematics for the error-state kalman filter - Equation(199)
   ///
   static Eigen::Matrix4d OmegaMat(const Eigen::Vector3d& v);
 
@@ -78,7 +79,22 @@ public:
   ///
   static bool CheckCov(const Eigen::MatrixXd& cov_mat, const std::string& description, const bool& check_cond = false);
 
+  ///
+  /// \brief EnforceMatrixSymmetry
+  /// \param mat_in
+  /// \return
+  ///
   static Eigen::MatrixXd EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in);
+
+  ///
+  /// \brief quaternionAverage without weights
+  /// \param std::vector<Eigen::Quaterniond> vector of quaternion being averaged
+  /// \return Eigen::Quaterniond averaged quaternion
+  ///
+  /// \note Reference: Markley et al., Averaging Quaternions, Journal of Guidance, Control, and Dynamics, 30(4):1193-1196, June 2007
+  ///
+  static Eigen::Quaterniond quaternionAverage(const std::vector<Eigen::Quaterniond>& quats);
+
 };
 }  // namespace mars
 

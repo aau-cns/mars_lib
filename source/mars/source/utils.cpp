@@ -17,6 +17,7 @@
 
 namespace mars
 {
+
 Utils::Utils() = default;
 
 Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in)
@@ -124,4 +125,46 @@ Eigen::Vector3d Utils::RPYFromRotMat(const Eigen::Matrix3d& rot_mat)
   Eigen::Vector3d ypr = rot_mat.eulerAngles(2, 1, 0);
   return Eigen::Vector3d(ypr(2), ypr(1), ypr(0));
 }
+
+Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond>& quats)
+{
+  // Define matrix A
+  Eigen::Matrix4d A = Eigen::Matrix4d::Zero();
+
+  // Loop through quaternions
+  for (const auto& it : quats) {
+
+    // Assign quaternion
+    Eigen::Quaterniond q = it.normalized();
+
+    // Flip is w coefficient is negative
+    if (q.w() < 0)
+    {
+      q = Eigen::Quaterniond(-q.w(), -q.x(), -q.y(), -q.z());
+    }
+
+    // Build matrix A (A = A + q*q')
+    A = A + q.coeffs() * q.coeffs().transpose();
+
+  }
+
+  // Scale A
+  A = (1.0/quats.size())*A;
+
+  // Compute Eigenvalues and Eigenvectors
+  Eigen::EigenSolver<Eigen::Matrix4d> eigs(A);
+  Eigen::Matrix4d D = eigs.pseudoEigenvalueMatrix();
+  Eigen::Matrix4d V = eigs.pseudoEigenvectors();
+
+  // Get max eigenvalue
+  int col_index, row_index;
+  D.maxCoeff(&row_index, &col_index);
+  assert(row_index == col_index);
+
+  // Get averaged quaternion
+  Eigen::Quaterniond qavg = Eigen::Quaterniond(V.col(col_index));
+
+  return qavg;
+}
+
 }  // namespace mars
