@@ -17,7 +17,6 @@
 
 namespace mars
 {
-
 Utils::Utils() = default;
 
 Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in)
@@ -132,8 +131,8 @@ Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond
   Eigen::Matrix4d A = Eigen::Matrix4d::Zero();
 
   // Loop through quaternions
-  for (const auto& it : quats) {
-
+  for (const auto& it : quats)
+  {
     // Assign quaternion
     Eigen::Quaterniond q = it.normalized();
 
@@ -145,11 +144,10 @@ Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond
 
     // Build matrix A (A = A + q*q')
     A = A + q.coeffs() * q.coeffs().transpose();
-
   }
 
   // Scale A
-  A = (1.0/quats.size())*A;
+  A = (1.0 / quats.size()) * A;
 
   // Compute Eigenvalues and Eigenvectors
   Eigen::EigenSolver<Eigen::Matrix4d> eigs(A);

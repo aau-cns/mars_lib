@@ -91,10 +91,10 @@ public:
   /// \param std::vector<Eigen::Quaterniond> vector of quaternion being averaged
   /// \return Eigen::Quaterniond averaged quaternion
   ///
-  /// \note Reference: Markley et al., Averaging Quaternions, Journal of Guidance, Control, and Dynamics, 30(4):1193-1196, June 2007
+  /// \note Reference: Markley et al., Averaging Quaternions, Journal of Guidance, Control, and Dynamics,
+  /// 30(4):1193-1196, June 2007
   ///
   static Eigen::Quaterniond quaternionAverage(const std::vector<Eigen::Quaterniond>& quats);
-
 };
 }  // namespace mars
 
