@@ -400,6 +400,26 @@ $$-->
 ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB})
 
 
+#### Attitude (2-3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AW}) | Orientation of the attitude origin w.r.t. the world/global frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{IB}) | Orientation of the attitude sensor w.r.t. the robot IMU/body frame |
+
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{AW}\text{\textbf{R}}_{WI}\text{\textbf{R}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{q}}_{AW}\otimes\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IB})
+
+
 ## Package Layout/Codebase
 
 Generated with `tree -a -L 3 --noreport --charset unicode > layout.md`
