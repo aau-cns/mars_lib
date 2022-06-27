@@ -268,7 +268,7 @@ Measurement equation:
 
 <!--$$
 \begin{align}
-z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\ 
+z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\
 z_{q} =& \text{\textbf{q}}_{WI} \otimes \text{\textbf{q}}_{IP}
 \end{align}
 $$-->
@@ -379,6 +379,26 @@ z = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}^\mathsf{T} \left(\text{\textbf{P}}
 $$-->
 
 ![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}^\mathsf{T}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+
+#### Body Velocity (3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IB}) | Translation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{IB}) | Orientation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{IB}^\mathsf{T} \text{\textbf{R}}_{WI}^\mathsf{T} \text{\textbf{V}}_{WI} + \text{\textbf{R}}_{IB}^\mathsf{T} \omega_{I} \times \text{\textbf{P}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB})
+
 
 ## Package Layout/Codebase
 
@@ -583,10 +603,10 @@ void MarsWrapperPose::ImuMeasurementCallback(const sensor_msgs::ImuConstPtr& mea
   {
      mars::BufferEntryType latest_state;
      core_logic_.buffer_.get_latest_state(&latest_state);
-      
+
      mars::CoreStateType latest_core_state = static_cast<mars::CoreType*>
          (latest_state.data_.core_.get())->state_;
-      
+
      pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
           latest_state.timestamp_.get_seconds(), latest_core_state));
   }
@@ -647,7 +667,7 @@ In the final step, we convert the state information to a ROS message and publish
 
 ```c++
 void MarsWrapperPose::PoseMeasurementUpdate(
-std::shared_ptr<mars::PoseSensorClass> sensor_sptr, 
+std::shared_ptr<mars::PoseSensorClass> sensor_sptr,
 const PoseMeasurementType& pose_meas, const Time& timestamp)
 {
   // TMP feedback init pose
@@ -673,8 +693,8 @@ const PoseMeasurementType& pose_meas, const Time& timestamp)
      (latest_state.data_.core_.get())->state_;
   pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
      latest_state.timestamp_.get_seconds(), latest_core_state));
-    
-  mars::PoseSensorStateType pose_sensor_state = 
+
+  mars::PoseSensorStateType pose_sensor_state =
      sensor_sptr.get()->get_state(latest_result.data_.sensor_);
   pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
      latest_result.timestamp_.get_seconds(), pose_sensor_state));
@@ -728,7 +748,7 @@ pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
 Here we use the buffer entry from the previous step and extract the core state information, which is part of the buffer entry data field. The core state MaRS data type is then converted to a ROS message and published.
 
 ```c++
-mars::PoseSensorStateType pose_sensor_state = 
+mars::PoseSensorStateType pose_sensor_state =
    sensor_sptr.get()->get_state(latest_result.data_.sensor_);
 pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
    latest_result.timestamp_.get_seconds(), pose_sensor_state));
