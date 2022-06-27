@@ -43,11 +43,12 @@ $ qtcreator .    # Run QT-Creator and press 'Configure Project'
 
 ### Dependencies
 
-MaRS has three dependencies which are automatically downloaded and linked against:
+MaRS has four dependencies which are automatically downloaded and linked against:
 
 - Eigen
 - yaml-cpp
 - G-Test
+- Boost
 
 Thus, no dependencies need to be installed by hand.
 
@@ -378,7 +379,7 @@ Measurement equation:
 z = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}^\mathsf{T} \left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \right)
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}^\mathsf{T}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
 
 #### Body Velocity (3 DoF)
 
