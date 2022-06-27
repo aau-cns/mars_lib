@@ -84,8 +84,8 @@ public:
   /// handle the data structure of the propagation sensor.
   ///
   BufferEntryType PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
-                                              std::shared_ptr<BufferDataType> data_measurement,
-                                              std::shared_ptr<BufferEntryType> prior_state_entry);
+                                              const std::shared_ptr<BufferDataType>& data_measurement,
+                                              const std::shared_ptr<BufferEntryType>& prior_state_entry);
   ///
   /// \brief ReworkBufferStartingAtIndex Reprocesses the buffer after an out of order update,
   /// starting at given 'idx'

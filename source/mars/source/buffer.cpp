@@ -156,14 +156,15 @@ bool Buffer::get_latest_init_state(BufferEntryType* entry) const
   return false;
 }
 
-bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const
+bool Buffer::get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry) const
 {
   int none;
-  return this->get_latest_sensor_handle_state(std::move(sensor_handle), entry, &none);
+  return this->get_latest_sensor_handle_state(sensor_handle, entry, &none);
 }
 
-bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry,
-                                            int* index) const
+bool Buffer::get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry, int* index) const
 {
   if (this->IsEmpty())
   {
@@ -189,7 +190,8 @@ bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sens
   return false;
 }
 
-bool Buffer::get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const
+bool Buffer::get_oldest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry) const
 {
   if (this->IsEmpty())
   {
@@ -212,7 +214,7 @@ bool Buffer::get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sens
   return false;
 }
 
-bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass> sensor_handle,
+bool Buffer::get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                                   BufferEntryType* entry) const
 {
   if (this->IsEmpty())
@@ -236,7 +238,7 @@ bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass
   return false;
 }
 
-bool Buffer::get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sensor_handle,
+bool Buffer::get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                             std::vector<const BufferEntryType*>& entries) const
 {
   if (this->IsEmpty())

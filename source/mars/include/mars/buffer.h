@@ -129,8 +129,9 @@ public:
   /// \param index, returns the current index of this entry
   /// \return true if the operation was performed, false otherwise
   ///
-  bool get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const;
-  bool get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry,
+  bool get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                      BufferEntryType* entry) const;
+  bool get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle, BufferEntryType* entry,
                                       int* index) const;
 
   ///
@@ -139,7 +140,8 @@ public:
   /// \param entry output parameter for the oldest sensor handle state entry
   /// \return true if the operation was successfully, false otherwise
   ///
-  bool get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const;
+  bool get_oldest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                      BufferEntryType* entry) const;
 
   ///
   /// \brief get_latest_sensor_handle_measurement
@@ -147,7 +149,7 @@ public:
   /// \param entry output parameter for the latest sensor handle measurement entry
   /// \return true if the operation was performed, false otherwise
   ///
-  bool get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass> sensor_handle,
+  bool get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                             BufferEntryType* entry) const;
 
   ///
@@ -157,7 +159,7 @@ public:
   /// \return true if the operation was performed and values are returned, false otherwise
   /// \author Martin Scheiber <martin.scheiber@ieee.org>
   ///
-  bool get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sensor_handle,
+  bool get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                       std::vector<const BufferEntryType*>& entries) const;
 
   ///

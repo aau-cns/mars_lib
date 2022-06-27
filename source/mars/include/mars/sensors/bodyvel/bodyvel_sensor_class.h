@@ -54,13 +54,13 @@ public:
 
   virtual ~BodyvelSensorClass() = default;
 
-  BodyvelSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  BodyvelSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     BodyvelSensorData data = *static_cast<BodyvelSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     BodyvelSensorData data = *static_cast<BodyvelSensorData*>(sensor_data.get());
     return data.get_full_cov();

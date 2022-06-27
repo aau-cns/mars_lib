@@ -60,7 +60,7 @@ public:
   /// \param sensor_data
   /// \return Covariance matrix contained in the sensor data struct
   ///
-  virtual Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data) = 0;
+  virtual Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data) = 0;
 
 protected:
   // SensorInterface(); // construction for child classes only

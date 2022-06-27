@@ -90,13 +90,13 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor (type: " << attitude_type_ << ")" << std::endl;
   }
 
-  AttitudeSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  AttitudeSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     AttitudeSensorData data = *static_cast<AttitudeSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     AttitudeSensorData data = *static_cast<AttitudeSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -292,8 +292,8 @@ public:
     return true;
   }
 
-  bool CalcUpdateRPY(const Time& /*timestamp*/, std::shared_ptr<void> measurement,
-                     const CoreStateType& prior_core_state, std::shared_ptr<void> latest_sensor_data,
+  bool CalcUpdateRPY(const Time& /*timestamp*/, const std::shared_ptr<void>& measurement,
+                     const CoreStateType& prior_core_state, const std::shared_ptr<void>& latest_sensor_data,
                      const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information

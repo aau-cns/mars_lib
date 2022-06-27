@@ -45,13 +45,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  PositionSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~PositionSensorClass() = default;
+
+  PositionSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     PositionSensorData data = *static_cast<PositionSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PositionSensorData data = *static_cast<PositionSensorData*>(sensor_data.get());
     return data.get_full_cov();

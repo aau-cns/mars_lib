@@ -222,8 +222,8 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
 }
 
 BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
-                                                       std::shared_ptr<BufferDataType> data_measurement,
-                                                       std::shared_ptr<BufferEntryType> prior_state_entry)
+                                                       const std::shared_ptr<BufferDataType>& data_measurement,
+                                                       const std::shared_ptr<BufferEntryType>& prior_state_entry)
 {
   if (verbose_)
   {

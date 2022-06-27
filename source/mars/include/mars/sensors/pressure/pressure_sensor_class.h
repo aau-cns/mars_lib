@@ -59,7 +59,7 @@ public:
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PressureSensorData data = *static_cast<PressureSensorData*>(sensor_data.get());
     return data.get_full_cov();

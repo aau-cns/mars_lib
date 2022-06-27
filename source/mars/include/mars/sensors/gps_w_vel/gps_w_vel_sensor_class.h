@@ -72,13 +72,13 @@ public:
     vel_rot_thr_ = fabs(value);
   }
 
-  GpsVelSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  GpsVelSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.get_full_cov();
