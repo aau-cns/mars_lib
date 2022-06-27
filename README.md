@@ -546,6 +546,10 @@ pose_cov.setZero();
 pose_cov.diagonal() << 0.0025, 0.0025, 0.0025, 0.0076, 0.0076, 0.0076;  // 5cm, 5deg
 pose_calibration.sensor_cov_ = pose_cov;
 pose1_sensor_sptr_->set_initial_calib(std::make_shared<PoseSensorData>(pose_calibration));
+
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
 ```
 
 #### The code explained
@@ -593,6 +597,14 @@ pose1_sensor_sptr_->set_initial_calib(std::make_shared<PoseSensorData>(pose_cali
 Each sensor, given that it has calibration states, has the option to initialize this calibration. Depending on the sensor module definition, the calibration states are automatically calibrated if `sensor->set_initial_calib( ..)` was not called.
 
 The first lines instantiate a sensor state object that is set in consecutive lines. The second part of these lines generates the covariance matrix and map it to the state object. In the last line, the state object is passed to the sensor instance to set the calibration parameter.
+
+```c++
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
+```
+
+Finally, a Chi2 test can be activated per sensor to perform a measurement validation and possible rejection at the update stage. These two options set the confidence value of the check and activate it. The Chi2-rejection test is deactivated by default.
 
 ### Navigation State Propagation
 
