@@ -185,6 +185,8 @@ public:
         return CalcUpdateRPY(timestamp, measurement, prior_core_state, latest_sensor_data, prior_cov, new_state_data);
         break;
     }
+
+    return false;
   }
 
   bool CalcUpdateRP(const Time& /*timestamp*/, const std::shared_ptr<void>& measurement,

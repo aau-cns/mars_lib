@@ -163,7 +163,7 @@ Eigen::Vector3d Utils::RPYFromRotMat(const Eigen::Matrix3d& rot_mat)
 {
   // according to this post, mat.eulerAngles returns the correct angles
   Eigen::Vector3d ypr = rot_mat.eulerAngles(2, 1, 0);
-  return Eigen::Vector3d(ypr(2), ypr(1), ypr(0));
+  return {ypr(2), ypr(1), ypr(0)};
 }
 
 Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond>& quats)
