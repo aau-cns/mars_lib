@@ -235,7 +235,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;

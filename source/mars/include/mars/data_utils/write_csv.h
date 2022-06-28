@@ -23,7 +23,7 @@ public:
   inline static std::string vec_to_csv(const Eigen::VectorXd& a)
   {
     std::stringstream os;
-    // TODO option to pre or post add comma
+    // TODO(chb) option to pre or post add comma
     for (int k = 0; k < a.size(); k++)
     {
       os << ", " << a(k);

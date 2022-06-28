@@ -192,10 +192,13 @@ public:
     const Eigen::Matrix3d Hp_ric = Eigen::Matrix3d::Zero();
     Eigen::Vector3d Hp_lambda;
     if (update_scale_)
+    {
       Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
+    }
     else
+    {
       Hp_lambda = Eigen::Vector3d::Zero();
-
+    }
     // Assemble the jacobian for the position (horizontal)
     // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_ip Hp_rip];
     Eigen::MatrixXd H_p(3, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pvw.cols() +
@@ -284,7 +287,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;

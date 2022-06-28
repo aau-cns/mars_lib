@@ -347,9 +347,13 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
   {
     int del_idx = RemoveOverflowEntrys();
     if (del_idx < 0)
+    {
       index = -1;
+    }
     else
+    {
       index -= del_idx < index ? 1 : 0;
+    }
   }
 
   return index;
@@ -357,7 +361,7 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
 
 int Buffer::FindClosestTimestamp(const Time& /*timestamp*/) const
 {
-  // TODO
+  // TODO(chb)
   return false;
 }
 

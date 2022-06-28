@@ -105,7 +105,7 @@ public:
     BufferDataType result(std::make_shared<CoreType>(*latest_core_data.get()),
                           std::make_shared<MagSensorData>(sensor_state));
 
-    // TODO
+    // TODO (chb)
     // sensor_data.ref_to_nav = 0; //obj.calc_ref_to_nav(measurement, latest_core_state);
 
     is_initialized_ = true;
@@ -229,7 +229,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;

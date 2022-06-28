@@ -69,10 +69,12 @@ bool filesystem::MakeDir(const std::string& name)
 
     if (ret == 0)
     {
+      std::cout << "[Info] Created directory " << name << std::endl;
       return true;
     }
     else
     {
+      std::cout << "[Warning] Could not created directory " << name << " error code " << ret << std::endl;
       return false;
     }
   }

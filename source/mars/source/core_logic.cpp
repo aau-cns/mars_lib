@@ -264,7 +264,7 @@ bool CoreLogic::ReworkBufferStartingAtIndex(const int& index)
 {
   if (verbose_)
   {
-    std::cout << "[CoreLogic]: Rework Buffer Starting At Index" << std::endl;
+    std::cout << "[CoreLogic]: Rework Buffer Starting At Index " << index << std::endl;
   }
 
   assert(index >= 0);
