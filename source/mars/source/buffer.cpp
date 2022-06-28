@@ -239,7 +239,7 @@ bool Buffer::get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAb
 }
 
 bool Buffer::get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass>& sensor_handle,
-                                            std::vector<const BufferEntryType*>& entries) const
+                                            std::vector<const BufferEntryType*>* entries) const
 {
   if (this->IsEmpty())
   {
@@ -247,22 +247,22 @@ bool Buffer::get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass
   }
 
   // reset return value
-  entries.clear();
+  entries->clear();
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsMeasurement())
+    if (k.IsMeasurement())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k.sensor_.get() == sensor_handle.get())
       {
-        entries.push_back(&data_[k]);
+        entries->push_back(&k);
       }
     }
   }
 
   // return false if vector is emtpy
-  return !entries.empty();
+  return !entries->empty();
 }
 
 bool Buffer::get_closest_state(const Time& timestamp, BufferEntryType* entry) const

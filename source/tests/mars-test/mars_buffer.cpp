@@ -765,7 +765,7 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
 
   // test return measurements size1
   std::vector<const mars::BufferEntryType*> entries_return;
-  buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, entries_return);
+  buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, &entries_return);
 
   ASSERT_EQ(entries_return.size(), 2);
 
@@ -785,7 +785,7 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   }
 
   // test return measurements size2
-  buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return);
+  buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, &entries_return);
 
   ASSERT_EQ(entries_return.size(), 3);
 
@@ -809,7 +809,7 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   ASSERT_EQ((meas.position_ - Eigen::Vector3d(1, 1, 1)).norm(), 0);
 
   // get all entries again and rerun above test case
-  buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return);
+  buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, &entries_return);
   ASSERT_EQ(entries_return.size(), 3);
   ts = 1;
   for (const auto& it : entries_return)
@@ -823,16 +823,16 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   // if this succeeds then the entries are unchangable in the buffer (as they should be)!
 
   // test return measurements
-  buffer.get_sensor_handle_measurements(position_sensor_1_sptr, entries_return);
+  buffer.get_sensor_handle_measurements(position_sensor_1_sptr, &entries_return);
 
   ASSERT_EQ(entries_return.size(), 0);
   ASSERT_TRUE(entries_return.empty());
 
   // test return success status
-  ASSERT_EQ(buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, entries_return), 1);
-  ASSERT_EQ(buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, entries_return), 1);
-  ASSERT_EQ(buffer.get_sensor_handle_measurements(position_sensor_1_sptr, entries_return), 0);
-  ASSERT_EQ(buffer.get_sensor_handle_measurements(imu_sensor_sptr, entries_return), 0);
+  ASSERT_EQ(buffer.get_sensor_handle_measurements(pose_sensor_1_sptr, &entries_return), 1);
+  ASSERT_EQ(buffer.get_sensor_handle_measurements(pose_sensor_2_sptr, &entries_return), 1);
+  ASSERT_EQ(buffer.get_sensor_handle_measurements(position_sensor_1_sptr, &entries_return), 0);
+  ASSERT_EQ(buffer.get_sensor_handle_measurements(imu_sensor_sptr, &entries_return), 0);
 }
 
 TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)

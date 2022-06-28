@@ -120,7 +120,7 @@ public:
   /// \param chi2 'Chi2' class based on the sensor measurement
   /// \return
   ///
-  Eigen::MatrixXd CalculateCorrection(Chi2& chi2);
+  Eigen::MatrixXd CalculateCorrection(Chi2* chi2);
   ///
   /// \brief CalculateCovUpdate Updating the state covariance after the state update
   /// \return Updated state covariance matrix

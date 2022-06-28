@@ -34,13 +34,13 @@ Eigen::MatrixXd Ekf::CalculateCorrection()
   return CalculateStateCorrection();
 }
 
-Eigen::MatrixXd Ekf::CalculateCorrection(Chi2& chi2)
+Eigen::MatrixXd Ekf::CalculateCorrection(Chi2* chi2)
 {
   Eigen::MatrixXd corr = CalculateStateCorrection();
 
-  if (chi2.do_test_)
+  if (chi2->do_test_)
   {
-    chi2.CalculateChi2(res_, S_);
+    chi2->CalculateChi2(res_, S_);
   }
 
   return corr;

@@ -160,7 +160,7 @@ public:
   /// \author Martin Scheiber <martin.scheiber@ieee.org>
   ///
   bool get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass>& sensor_handle,
-                                      std::vector<const BufferEntryType*>& entries) const;
+                                      std::vector<const BufferEntryType*>* entries) const;
 
   ///
   /// \brief get_closest_state
