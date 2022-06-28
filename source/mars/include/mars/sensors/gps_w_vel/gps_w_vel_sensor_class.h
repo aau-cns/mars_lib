@@ -58,6 +58,8 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
+  virtual ~GpsVelSensorClass() = default;
+
   void set_v_rot_axis(const Eigen::Vector3d& vec)
   {
     v_rot_axis_ = vec.normalized();

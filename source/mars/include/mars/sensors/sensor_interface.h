@@ -24,7 +24,7 @@ class SensorInterface
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // virtual ~SensorInterface();
+  virtual ~SensorInterface() = default;
 
   ///
   /// \brief set_initial_calib Sets the calibration of an individual sensor

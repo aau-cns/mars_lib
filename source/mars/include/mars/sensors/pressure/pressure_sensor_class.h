@@ -53,6 +53,8 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
+  virtual ~PressureSensorClass() = default;
+
   PressureSensorStateType get_state(std::shared_ptr<void> sensor_data)
   {
     PressureSensorData data = *static_cast<PressureSensorData*>(sensor_data.get());

@@ -90,6 +90,8 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor (type: " << attitude_type_ << ")" << std::endl;
   }
 
+  virtual ~AttitudeSensorClass() = default;
+
   AttitudeSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     AttitudeSensorData data = *static_cast<AttitudeSensorData*>(sensor_data.get());
