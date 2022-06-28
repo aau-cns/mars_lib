@@ -81,11 +81,11 @@ bool Buffer::get_latest_state(BufferEntryType* entry) const
   }
 
   // iterate backwards
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsState())
+    if (k->IsState())
     {
-      *entry = data_[k];
+      *entry = *k;
       return true;
     }
   }
@@ -141,13 +141,13 @@ bool Buffer::get_latest_init_state(BufferEntryType* entry) const
   }
 
   // iterate backwards (newest to oldest)
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsState())
+    if (k->IsState())
     {
-      if (data_[k].metadata_ == BufferMetadataType::init_state)
+      if (k->metadata_ == BufferMetadataType::init_state)
       {
-        *entry = data_[k];
+        *entry = *k;
         return true;
       }
     }
@@ -223,13 +223,13 @@ bool Buffer::get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAb
   }
 
   // iterate backwards (newest to oldest)
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsMeasurement())
+    if (k->IsMeasurement())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k->sensor_.get() == sensor_handle.get())
       {
-        *entry = data_[k];
+        *entry = *k;
         return true;
       }
     }
