@@ -71,6 +71,6 @@ public:
     }
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_SIM_DATA_H

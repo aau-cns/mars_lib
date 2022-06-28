@@ -23,7 +23,8 @@ public:
   Eigen::Vector3d velocity_;
 
   GpsVelMeasurementType(double latitude, double longitude, double altitude, double vel_x, double vel_y, double vel_z)
-    : coordinates_(latitude, longitude, altitude), velocity_(vel_x, vel_y, vel_z)
+    : coordinates_(std::move(latitude), std::move(longitude), std::move(altitude))
+    , velocity_(std::move(vel_x), std::move(vel_y), std::move(vel_z))
   {
   }
 };

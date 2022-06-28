@@ -17,6 +17,7 @@
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/buffer_entry_type.h>
 #include <Eigen/Dense>
+#include <utility>
 #include <vector>
 
 namespace mars
@@ -58,9 +59,9 @@ public:
   ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
                const std::string& file_path)
   {
-    ReadPoseData(data_out, sensor, file_path, 0);
+    ReadPoseData(data_out, std::move(sensor), file_path, 0);
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_POSE_DATA_H

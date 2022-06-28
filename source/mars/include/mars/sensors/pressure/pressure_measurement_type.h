@@ -16,6 +16,7 @@
 #include <mars/sensors/pressure/pressure_conversion.h>
 
 #include <Eigen/Dense>
+#include <utility>
 
 namespace mars
 {
@@ -27,19 +28,19 @@ public:
   PressureMeasurementType(double height)
   {
     pressure_.type_ = Pressure::Type::HEIGHT;
-    pressure_.data_ = height;
+    pressure_.data_ = std::move(height);
   }
 
   PressureMeasurementType(double pressure, double temperature)
-    : PressureMeasurementType(pressure, temperature, Pressure::Type::GAS)
+    : PressureMeasurementType(std::move(pressure), std::move(temperature), Pressure::Type::GAS)
   {
   }
 
-  PressureMeasurementType(double pressure, double temperature, Pressure::Type type)
+  PressureMeasurementType(double pressure, double temperature, Pressure::Type /*type*/)
   {
     pressure_.type_ = Pressure::Type::GAS;
-    pressure_.data_ = pressure;
-    pressure_.temperature_K_ = temperature;
+    pressure_.data_ = std::move(pressure);
+    pressure_.temperature_K_ = std::move(temperature);
   }
 };
 }  // namespace mars

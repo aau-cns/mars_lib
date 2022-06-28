@@ -11,6 +11,8 @@
 #ifndef EMPTYMEASUREMENTTYPE_H
 #define EMPTYMEASUREMENTTYPE_H
 
+#include <utility>
+
 namespace mars
 {
 class EmptyMeasurementType
@@ -18,9 +20,9 @@ class EmptyMeasurementType
 public:
   double value_;
 
-  EmptyMeasurementType(const double& value) : value_(value)
+  EmptyMeasurementType(double value) : value_(std::move(value))
   {
   }
 };
-}
+}  // namespace mars
 #endif  // EMPTYMEASUREMENTTYPE_H

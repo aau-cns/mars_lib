@@ -13,6 +13,8 @@
 #include <mars/time.h>
 #include <mars/type_definitions/core_state_type.h>
 
+#include <utility>
+
 namespace mars
 {
 CoreState::CoreState()
@@ -44,7 +46,7 @@ void CoreState::set_fixed_gyro_bias(const bool& value)
 
 void CoreState::set_propagation_sensor(std::shared_ptr<SensorAbsClass> propagation_sensor)
 {
-  propagation_sensor_ = propagation_sensor;
+  propagation_sensor_ = std::move(propagation_sensor);
 }
 
 CoreStateType CoreState::InitializeState(const Eigen::Vector3d& ang_vel, const Eigen::Vector3d& lin_acc,

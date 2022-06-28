@@ -23,6 +23,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -34,10 +35,10 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  EmptySensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  EmptySensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -142,6 +143,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSVELSENSORCLASS_H

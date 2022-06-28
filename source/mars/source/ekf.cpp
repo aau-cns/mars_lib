@@ -97,14 +97,14 @@ bool Chi2::CalculateChi2(const Eigen::MatrixXd& res, const Eigen::MatrixXd& S)
 {
   // Determine whether or not the test passed
   double X2 = (res.transpose() * S.inverse() * res).value();
-  passed_ = (X2 < ucv_) ? true : false;
+  passed_ = X2 < ucv_;  // boolean expression
 
   last_res_ = res;
   last_X2_ = X2;
   return passed_;
 }
 
-void Chi2::PrintReport(std::string name)
+void Chi2::PrintReport(const std::string& name)
 {
   if (do_test_)
   {

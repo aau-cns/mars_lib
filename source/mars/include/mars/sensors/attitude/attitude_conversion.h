@@ -21,13 +21,13 @@ namespace mars
 struct Attitude
 {
   Attitude() = default;
-  Attitude(Eigen::Quaterniond quaternion) : quaternion_(quaternion)
+  Attitude(const Eigen::Quaterniond& quaternion) : quaternion_(quaternion)
   {
   }
-  Attitude(Eigen::Matrix3d rotation_matrix) : quaternion_(rotation_matrix)
+  Attitude(const Eigen::Matrix3d& rotation_matrix) : quaternion_(rotation_matrix)
   {
   }
-  Attitude(Eigen::Vector3d vec, std::string order = "XYZ")
+  Attitude(const Eigen::Vector3d& vec, const std::string& order = "XYZ")
   {
     // scoping
     using AAd = Eigen::AngleAxisd;

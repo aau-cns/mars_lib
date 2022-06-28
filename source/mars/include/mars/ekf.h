@@ -68,7 +68,7 @@ public:
   /// \brief PrintReport Print a formated report e.g. if the test did not pass
   /// \param name Name of the sensor, used in the print
   ///
-  void PrintReport(std::string name);
+  void PrintReport(const std::string& name);
 
   boost::math::chi_squared dist_;  /// Chi2 distribution, generated based on the DoF
   int dof_{ 3 };                   /// Degrees of freedom for the setup

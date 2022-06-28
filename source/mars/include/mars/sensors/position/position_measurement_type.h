@@ -12,6 +12,7 @@
 #define POSITIONMEASUREMENTTYPE_H
 
 #include <Eigen/Dense>
+#include <utility>
 
 namespace mars
 {
@@ -22,9 +23,9 @@ public:
 
   Eigen::Vector3d position_;  ///< Position [x y z]
 
-  PositionMeasurementType(Eigen::Vector3d position) : position_(position)
+  PositionMeasurementType(Eigen::Vector3d position) : position_(std::move(position))
   {
   }
 };
-}
+}  // namespace mars
 #endif  // POSITIONMEASUREMENTTYPE_H

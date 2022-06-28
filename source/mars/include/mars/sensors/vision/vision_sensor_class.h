@@ -39,10 +39,10 @@ public:
 
   bool update_scale_{ true };
 
-  VisionSensorClass(std::string name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
+  VisionSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     update_scale_ = update_scale;

@@ -24,6 +24,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -43,10 +44,10 @@ public:
   bool using_external_gps_reference_;
   bool gps_reference_is_set_;
 
-  GpsVelSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  GpsVelSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     using_external_gps_reference_ = false;

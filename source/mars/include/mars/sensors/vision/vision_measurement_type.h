@@ -26,10 +26,10 @@ public:
 
   VisionMeasurementType() = default;
 
-  VisionMeasurementType(Eigen::Vector3d position, const Eigen::Quaternion<double>& orientation)
-    : position_(std::move(position)), orientation_(orientation)
+  VisionMeasurementType(Eigen::Vector3d position, Eigen::Quaternion<double> orientation)
+    : position_(std::move(position)), orientation_(std::move(orientation))
   {
   }
 };
-}
+}  // namespace mars
 #endif  // VISIONMEASUREMENTTYPE_H

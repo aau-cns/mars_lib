@@ -12,6 +12,7 @@
 #define GPSMEASUREMENTTYPE_H
 
 #include <mars/sensors/gps/gps_conversion.h>
+#include <utility>
 
 namespace mars
 {
@@ -20,7 +21,8 @@ class GpsMeasurementType
 public:
   GpsCoordinates coordinates_;
 
-  GpsMeasurementType(double latitude, double longitude, double altitude) : coordinates_(latitude, longitude, altitude)
+  GpsMeasurementType(double latitude, double longitude, double altitude)
+    : coordinates_(std::move(latitude), std::move(longitude), std::move(altitude))
   {
   }
 };

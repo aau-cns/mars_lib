@@ -63,11 +63,11 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  AttitudeSensorClass(std::string name, std::shared_ptr<CoreState> core_states,
+  AttitudeSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states,
                       AttitudeSensorType type = AttitudeSensorType::RPY_TYPE)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
