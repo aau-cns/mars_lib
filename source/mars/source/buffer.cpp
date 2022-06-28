@@ -56,7 +56,7 @@ void Buffer::PrintBufferEntrys() const
   std::cout << "Idx \t Sensor Name \t Timestamp \t Metadata " << std::endl;
 
   // iterate forwards
-  for (int k = 0; k < data_.size(); ++k)
+  for (size_t k = 0; k < data_.size(); ++k)
   {
     std::cout << k << " " << data_[k] << std::endl;
   }
@@ -101,11 +101,11 @@ bool Buffer::get_oldest_state(BufferEntryType* entry) const
   }
 
   // iterate forwards
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsState())
+    if (k.IsState())
     {
-      *entry = data_[k];
+      *entry = k;
       return true;
     }
   }
@@ -121,11 +121,11 @@ bool Buffer::get_oldest_core_state(BufferEntryType* entry) const
   }
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].metadata_ == mars::BufferMetadataType::core_state)
+    if (k.metadata_ == mars::BufferMetadataType::core_state)
     {
-      *entry = data_[k];
+      *entry = k;
       return true;
     }
   }
@@ -199,13 +199,13 @@ bool Buffer::get_oldest_sensor_handle_state(const std::shared_ptr<SensorAbsClass
   }
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsState())
+    if (k.IsState())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k.sensor_.get() == sensor_handle.get())
       {
-        *entry = data_[k];
+        *entry = k;
         return true;
       }
     }
@@ -488,11 +488,11 @@ bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sen
   int num_found_handle = 0;
   int num_found_meas = 0;
 
-  for (int k = 0; k < this->get_length(); k++)
+  for (const auto& k : data_)
   {
-    if (data_[k].sensor_ == sensor_handle)
+    if (k.sensor_ == sensor_handle)
     {
-      if (data_[k].metadata_ == BufferMetadataType::measurement)
+      if (k.metadata_ == BufferMetadataType::measurement)
       {
         num_found_meas++;
 
@@ -503,7 +503,7 @@ bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sen
       }
       else
       {
-        if (data_[k].metadata_ == BufferMetadataType::sensor_state)
+        if (k.metadata_ == BufferMetadataType::sensor_state)
         {
           num_found_handle++;
 
