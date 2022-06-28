@@ -66,10 +66,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    PositionMeasurementType measurement = *static_cast<PositionMeasurementType*>(sensor_data.get());
+    // PositionMeasurementType measurement = *static_cast<PositionMeasurementType*>(sensor_data.get());
 
     PositionSensorData sensor_state;
     std::string calibration_type;

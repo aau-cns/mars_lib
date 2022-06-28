@@ -108,10 +108,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    AttitudeMeasurementType measurement = *static_cast<AttitudeMeasurementType*>(sensor_data.get());
+    // AttitudeMeasurementType measurement = *static_cast<AttitudeMeasurementType*>(sensor_data.get());
 
     AttitudeSensorData sensor_state;
     std::string calibration_type;
@@ -187,9 +187,9 @@ public:
     }
   }
 
-  bool CalcUpdateRP(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
-                    std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
-                    BufferDataType* new_state_data)
+  bool CalcUpdateRP(const Time& /*timestamp*/, const std::shared_ptr<void>& measurement,
+                    const CoreStateType& prior_core_state, const std::shared_ptr<void>& latest_sensor_data,
+                    const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information
     AttitudeMeasurementType* meas = static_cast<AttitudeMeasurementType*>(measurement.get());
@@ -318,7 +318,7 @@ public:
     const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
     const Eigen::Matrix3d Z_3 = Eigen::Matrix3d::Zero();
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
-    const Eigen::Matrix3d R_aw = prior_sensor_state.q_aw_.toRotationMatrix();
+    // const Eigen::Matrix3d R_aw = prior_sensor_state.q_aw_.toRotationMatrix();
     const Eigen::Matrix3d R_ib = prior_sensor_state.q_ib_.toRotationMatrix();
 
     // Orientation

@@ -101,9 +101,9 @@ Eigen::MatrixXd NearestCov::EigenCorrectionUsingCovariance(NearestCovMethod meth
   return result;
 }
 
-Eigen::MatrixXd NearestCov::EigenCorrectionUsingCorrelation(NearestCovMethod method)
+Eigen::MatrixXd NearestCov::EigenCorrectionUsingCorrelation(NearestCovMethod /*method*/)
 {
-  // TODO
+  // TODO (CHB)
   return {};
 }
 }  // namespace mars

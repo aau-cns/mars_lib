@@ -77,10 +77,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
+    // MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
 
     MagSensorData sensor_state;
     std::string calibration_type;

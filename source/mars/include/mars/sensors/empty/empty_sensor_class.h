@@ -65,10 +65,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    EmptyMeasurementType measurement = *static_cast<EmptyMeasurementType*>(sensor_data.get());
+    // EmptyMeasurementType measurement = *static_cast<EmptyMeasurementType*>(sensor_data.get());
 
     EmptySensorData sensor_state;
     std::string calibration_type;
@@ -103,12 +103,12 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
-                  std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
-                  BufferDataType* new_state_data)
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> /*measurement*/,
+                  const CoreStateType& prior_core_state, std::shared_ptr<void> latest_sensor_data,
+                  const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information
-    EmptyMeasurementType* meas = static_cast<EmptyMeasurementType*>(measurement.get());
+    // EmptyMeasurementType* meas = static_cast<EmptyMeasurementType*>(measurement.get());
     EmptySensorData* prior_sensor_data = static_cast<EmptySensorData*>(latest_sensor_data.get());
 
     // Extract sensor state

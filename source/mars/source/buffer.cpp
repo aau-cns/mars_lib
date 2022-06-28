@@ -355,7 +355,7 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
   return index;
 }
 
-int Buffer::FindClosestTimestamp(const Time& timestamp) const
+int Buffer::FindClosestTimestamp(const Time& /*timestamp*/) const
 {
   // TODO
   return false;

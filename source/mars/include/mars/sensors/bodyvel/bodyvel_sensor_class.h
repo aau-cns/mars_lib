@@ -72,10 +72,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    BodyvelMeasurementType measurement = *static_cast<BodyvelMeasurementType*>(sensor_data.get());
+    // BodyvelMeasurementType measurement = *static_cast<BodyvelMeasurementType*>(sensor_data.get());
 
     BodyvelSensorData sensor_state;
     std::string calibration_type;
@@ -142,9 +142,9 @@ public:
     assert(P.size() == size_of_full_error_state * size_of_full_error_state);
 
     // Calculate the measurement jacobian H
-    const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
+    // const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
     const Eigen::Matrix3d Z_3 = Eigen::Matrix3d::Zero();
-    const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
+    // const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
     const Eigen::Vector3d V_wi = prior_core_state.v_wi_;
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
     const Eigen::Vector3d P_ib = prior_sensor_state.p_ib_;

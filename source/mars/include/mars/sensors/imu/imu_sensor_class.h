@@ -37,19 +37,19 @@ public:
     return {};
   }
 
-  void set_initial_calib(std::shared_ptr<void> calibration)
+  void set_initial_calib(std::shared_ptr<void> /*calibration*/)
   {
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> measurement,
-                            std::shared_ptr<CoreType> latest_core_data)
+  BufferDataType Initialize(const Time& /*timestamp*/, std::shared_ptr<void> /*measurement*/,
+                            std::shared_ptr<CoreType> /*latest_core_data*/)
   {
     return {};
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state_data,
-                  std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
-                  BufferDataType* new_state_data)
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> /*measurement*/,
+                  const CoreStateType& /*prior_core_state_data*/, std::shared_ptr<void> /*latest_sensor_data*/,
+                  const Eigen::MatrixXd& /*prior_cov*/, BufferDataType* /*new_state_data*/)
   {
     return false;
   }
