@@ -20,7 +20,7 @@ class EmptyMeasurementType
 public:
   double value_;
 
-  EmptyMeasurementType(double value) : value_(std::move(value))
+  EmptyMeasurementType(const double& value) : value_(value)
   {
   }
 };

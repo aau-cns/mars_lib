@@ -25,22 +25,22 @@ class PressureMeasurementType
 public:
   Pressure pressure_;
 
-  PressureMeasurementType(double height)
+  PressureMeasurementType(const double& height)
   {
     pressure_.type_ = Pressure::Type::HEIGHT;
-    pressure_.data_ = std::move(height);
+    pressure_.data_ = height;
   }
 
-  PressureMeasurementType(double pressure, double temperature)
-    : PressureMeasurementType(std::move(pressure), std::move(temperature), Pressure::Type::GAS)
+  PressureMeasurementType(const double& pressure, const double& temperature)
+    : PressureMeasurementType(pressure, temperature, Pressure::Type::GAS)
   {
   }
 
-  PressureMeasurementType(double pressure, double temperature, Pressure::Type /*type*/)
+  PressureMeasurementType(const double& pressure, const double& temperature, const Pressure::Type& /*type*/)
   {
     pressure_.type_ = Pressure::Type::GAS;
-    pressure_.data_ = std::move(pressure);
-    pressure_.temperature_K_ = std::move(temperature);
+    pressure_.data_ = pressure;
+    pressure_.temperature_K_ = temperature;
   }
 };
 }  // namespace mars

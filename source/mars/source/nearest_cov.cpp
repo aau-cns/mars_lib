@@ -10,10 +10,11 @@
 
 #include <mars/nearest_cov.h>
 #include <Eigen/Dense>
+#include <utility>
 
 namespace mars
 {
-NearestCov::NearestCov(const Eigen::MatrixXd& covariance) : cov_mat_(covariance)
+NearestCov::NearestCov(Eigen::MatrixXd  covariance) : cov_mat_(std::move(covariance))
 {
   // Ensure the matrix is square
   assert(covariance.rows() == covariance.cols());
