@@ -282,7 +282,8 @@ public:
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
-    if (!chi2_.passed_)
+    // Check Chi2 test results
+    if (!chi2_.passed_ && chi2_.do_test_)
     {
       chi2_.PrintReport(name_);
       return false;
