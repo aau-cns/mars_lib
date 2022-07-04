@@ -50,6 +50,9 @@ inline std::ostream& operator<<(std::ostream& os, AttitudeSensorType type)
     case AttitudeSensorType::RPY_TYPE:
       os << "ROLL/PITCH/YAW";
       break;
+    default:
+      os << "UNKNOWN";
+      break;
   }
   return os;
 }
@@ -81,6 +84,14 @@ public:
         chi2_.set_dof(2);
         break;
       case AttitudeSensorType::RPY_TYPE:
+        chi2_.set_dof(3);
+        break;
+      default:
+        std::cout << "Warning: [" << this->name_
+                  << "] Unexpected type for AttitudeSensorClass.\n"
+                     "Assuming roll-pitch-yaw measurement."
+                  << std::endl;
+        attitude_type_ = AttitudeSensorType::RPY_TYPE;
         chi2_.set_dof(3);
         break;
     }
@@ -182,10 +193,11 @@ public:
     {
       case AttitudeSensorType::RP_TYPE:
         return CalcUpdateRP(timestamp, measurement, prior_core_state, latest_sensor_data, prior_cov, new_state_data);
-        break;
       case AttitudeSensorType::RPY_TYPE:
         return CalcUpdateRPY(timestamp, measurement, prior_core_state, latest_sensor_data, prior_cov, new_state_data);
-        break;
+      default:
+        std::cout << "Error: [" << this->name_ << "] Cannot perform update (unknown type)" << std::endl;
+        return false;
     }
 
     return false;
@@ -420,6 +432,11 @@ public:
       case AttitudeSensorType::RPY_TYPE:
         q_aw_correction = correction.block(0, 0, 3, 1);
         q_ib_correction = correction.block(3, 0, 3, 1);
+        break;
+      default:
+        std::cout << "Error: [" << this->name_ << "] Cannot perform correction (unknown type)" << std::endl;
+        q_aw_correction = Eigen::Vector3d::Zero();
+        q_ib_correction = Eigen::Vector3d::Zero();
         break;
     }
 
