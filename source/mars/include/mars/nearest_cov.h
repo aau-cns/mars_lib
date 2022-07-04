@@ -49,7 +49,7 @@ public:
   /// \brief NearestCov Constructor
   /// \param covariance Input pseudo covariance
   ///
-  NearestCov(Eigen::MatrixXd  covariance);
+  NearestCov(const Eigen::MatrixXd& covariance);
 
   ///
   /// \brief EigenCorrectionUsingCovariance

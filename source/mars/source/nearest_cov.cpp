@@ -14,7 +14,7 @@
 
 namespace mars
 {
-NearestCov::NearestCov(Eigen::MatrixXd  covariance) : cov_mat_(std::move(covariance))
+NearestCov::NearestCov(const Eigen::MatrixXd& covariance) : cov_mat_(covariance)
 {
   // Ensure the matrix is square
   assert(covariance.rows() == covariance.cols());
