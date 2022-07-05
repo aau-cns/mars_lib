@@ -68,6 +68,7 @@ set(headers
     ${include_path}/sensors/gps/gps_measurement_type.h
     ${include_path}/sensors/gps/gps_sensor_class.h
     ${include_path}/sensors/gps/gps_sensor_state_type.h
+    ${include_path}/sensors/gps/gps_utils.h
     ${include_path}/sensors/gps_w_vel/gps_w_vel_measurement_type.h
     ${include_path}/sensors/gps_w_vel/gps_w_vel_sensor_class.h
     ${include_path}/sensors/gps_w_vel/gps_w_vel_sensor_state_type.h
@@ -119,6 +120,7 @@ set(sources
     ${source_path}/m_perf.cpp
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
+    ${include_path}/sensors/gps/gps_utils.cpp
     ${include_path}/sensors/pressure/pressure_conversion.cpp
     ${include_path}/sensors/pressure/pressure_utils.cpp
     ${include_path}/sensors/mag/mag_utils.cpp

@@ -30,6 +30,31 @@ struct GpsCoordinates
   double altitude_{ 0 };
 
   friend std::ostream& operator<<(std::ostream& out, const GpsCoordinates& coordinates);
+
+  inline GpsCoordinates operator+(const GpsCoordinates& coordinates)
+  {
+    return { latitude_ + coordinates.latitude_, longitude_ + coordinates.longitude_,
+             altitude_ + coordinates.altitude_ };
+  }
+
+  inline void operator+=(const GpsCoordinates& coordinates)
+  {
+    latitude_ += coordinates.latitude_;
+    longitude_ += coordinates.longitude_;
+    altitude_ += coordinates.altitude_;
+  }
+
+  inline void operator/=(const double& n)
+  {
+    if (n == 0)
+    {
+      throw std::overflow_error("Divide by zero exception");
+    }
+
+    latitude_ /= n;
+    longitude_ /= n;
+    altitude_ /= n;
+  }
 };
 
 ///
