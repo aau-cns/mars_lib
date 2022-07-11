@@ -53,8 +53,6 @@ public:
     gps_reference_is_set_ = false;
 
     chi2_.set_dof(6);
-    chi2_.set_chi_value(0.05);
-    chi2_.ActivateTest(true);
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
