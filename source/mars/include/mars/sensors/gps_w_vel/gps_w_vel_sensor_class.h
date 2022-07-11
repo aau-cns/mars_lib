@@ -193,6 +193,7 @@ public:
 
     const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
     const Eigen::Vector3d V_wi = prior_core_state.v_wi_;
+    const Eigen::Vector3d b_w = prior_core_state.b_w_;
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
     const Eigen::Vector3d P_ig = prior_sensor_state.p_ig_;
 
@@ -224,19 +225,20 @@ public:
     if (use_vel_rot_ && (v_meas.norm() > vel_rot_thr_))
     {
       // Velocity
-      const Eigen::Vector3d mu = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+      const Eigen::Vector3d mu = V_wi + R_wi * Utils::Skew(omega_i - b_w) * P_ig;
       const Eigen::Vector3d d_mu = mu / mu.norm();
       const Eigen::Vector3d alpha = v_rot_axis_;
 
       const Eigen::Matrix3d Hv_pwi = O_3;
       const Eigen::Matrix3d Hv_vwi = R_wi * alpha * d_mu.transpose();
-      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(alpha) * mu.norm() -
-                                     R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+      const Eigen::Matrix3d Hv_rwi =
+          -R_wi * Utils::Skew(alpha) * mu.norm() -
+          R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(Utils::Skew(omega_i - b_w) * P_ig);
 
       const Eigen::Matrix3d Hv_bw = O_3;
       const Eigen::Matrix3d Hv_ba = O_3;
 
-      const Eigen::Matrix3d Hv_pig = R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pig = R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(omega_i - b_w);
       const Eigen::Matrix3d Hv_pgw_w = O_3;
       const Eigen::Matrix3d Hv_rgw_w = O_3;
 
@@ -247,16 +249,16 @@ public:
     {
       const Eigen::Matrix3d Hv_pwi = O_3;
       const Eigen::Matrix3d Hv_vwi = I_3;
-      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i - b_w) * P_ig);
       const Eigen::Matrix3d Hv_bw = O_3;
       const Eigen::Matrix3d Hv_ba = O_3;
 
-      const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i - b_w);
       const Eigen::Matrix3d Hv_pgw_w = O_3;
       const Eigen::Matrix3d Hv_rgw_w = O_3;
 
       H_v << Hv_pwi, Hv_vwi, Hv_rwi, Hv_bw, Hv_ba, Hv_pig, Hv_pgw_w, Hv_rgw_w;
-      v_est = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+      v_est = V_wi + R_wi * Utils::Skew(omega_i - b_w) * P_ig;
     }
 
     // Combine all jacobians (vertical)
