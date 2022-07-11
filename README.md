@@ -2,7 +2,7 @@
 
 # Introduction
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5185909.svg)](https://doi.org/10.5281/zenodo.5185909) [![IEEE](https://img.shields.io/badge/IEEE-10.1109/LRA.2020.3043195-00498d.svg)](https://ieeexplore.ieee.org/document/9286578) [![License](https://img.shields.io/badge/License-AAUCNS-green.svg)](./LICENSE)
+[![CMake-Release](https://github.com/aau-cns/mars_lib/actions/workflows/cmake_release.yml/badge.svg)](https://github.com/aau-cns/mars_lib/actions/workflows/cmake_release.yml) [![CMake-Debug](https://github.com/aau-cns/mars_lib/actions/workflows/cmake_debug.yml/badge.svg)](https://github.com/aau-cns/mars_lib/actions/workflows/cmake_debug.yml) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5185909.svg)](https://doi.org/10.5281/zenodo.5185909) [![IEEE](https://img.shields.io/badge/IEEE-10.1109/LRA.2020.3043195-00498d.svg)](https://ieeexplore.ieee.org/document/9286578) [![License](https://img.shields.io/badge/License-AAUCNS-green.svg)](./LICENSE)
 
 The Modular and Robust State-Estimation Framework, or short, MaRS, is a recursive filtering framework that allows for truly modular multi-sensor integration. The framework further enables the handling of multiple sensors dynamically and performs self-calibration if auxiliary states are defined for the respective sensor module.
 
