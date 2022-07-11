@@ -34,7 +34,10 @@ using MagSensorData = BindSensorData<MagSensorStateType>;
 class MagSensorClass : public UpdateSensorAbsClass
 {
 private:
-  bool normalize_{ false };
+  bool normalize_{ false };                                     ///< The measurement will be normalized if True
+  bool apply_intrinsic_{ false };                               ///< The intrinsic calibration will be aplied if True
+  Eigen::Vector3d mag_intr_offset_{ Eigen::Vector3d::Zero() };  ///< Intrinsic cal offset
+  Eigen::Matrix3d mag_intr_transform_{ Eigen::Matrix3d::Identity() };  ///< Intrinsic cal distortion
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -146,15 +149,18 @@ public:
     MagSensorData* prior_sensor_data = static_cast<MagSensorData*>(latest_sensor_data.get());
 
     // Decompose sensor measurement
-    Eigen::Vector3d mag_meas;
+    Eigen::Vector3d mag_meas(meas->mag_vector_);
 
+    // Correct measurement with intrinsic calibration
+    if (apply_intrinsic_)
+    {
+      mag_meas = mag_intr_transform_ * (mag_meas - mag_intr_offset_);
+    }
+
+    // Perform normalization
     if (normalize_)
     {
-      mag_meas = meas->mag_vector_ / meas->mag_vector_.norm();
-    }
-    else
-    {
-      mag_meas = meas->mag_vector_;
+      mag_meas = mag_meas / mag_meas.norm();
     }
 
     // Extract sensor state
@@ -258,9 +264,24 @@ public:
     return corrected_sensor_state;
   }
 
-  void set_normalize(const bool& normalize)
+  void set_normalize(const bool& value)
   {
-    normalize_ = normalize;
+    normalize_ = value;
+  }
+
+  void set_apply_intrinsic(const bool& value)
+  {
+    apply_intrinsic_ = value;
+  }
+
+  void set_intr_offset(const Eigen::Vector3d& v_offset)
+  {
+    mag_intr_offset_ = v_offset;
+  }
+
+  void set_intr_transform(const Eigen::Matrix3d& m_transform)
+  {
+    mag_intr_transform_ = m_transform;
   }
 };
 }
