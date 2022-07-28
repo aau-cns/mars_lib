@@ -38,6 +38,20 @@ void MagnetometerInit::Reset()
   rot_init_vec_.clear();
 }
 
+Eigen::Vector3d MagnetometerInit::mag_var_ang_to_vec(const double& dec, const double& inc, const double& r)
+{
+  const double dec_rad = dec * (M_PI / 180);
+  const double inc_rad = inc * (M_PI / 180);
+  const double dec_gnss = dec_rad + (M_PI / 2);
+
+  const double rcos = r * cos(inc_rad);
+  const double x = rcos * cos(dec_gnss);
+  const double y = rcos * sin(dec_gnss);
+  const double z = r * sin(inc_rad);
+
+  return { x, y, z };
+}
+
 MagnetometerInit::MagImuData MagnetometerInit::get_vec_mean() const
 {
   Eigen::Vector3d mag_vec_sum(0, 0, 0);

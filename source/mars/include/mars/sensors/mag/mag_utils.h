@@ -66,6 +66,18 @@ public:
   void Reset();
 
   ///
+  /// \brief mag_var_ang_to_vec Perform Spherical to Cartesian conversion for a vector in the GNSS world frame
+  ///
+  /// The GNSS world frame is rotated -90deg w.r.t. the magnetic world frame.
+  ///
+  /// \param dec Declination or azimuth (in degree) of the magnetic field vector
+  /// \param inc Inclination or elevation (in degree) of the magnetic field vector
+  /// \param r magnitude of the magnetic field (defaults to 1)
+  /// \return Carthesian vector
+  ///
+  static Eigen::Vector3d mag_var_ang_to_vec(const double& dec, const double& inc, const double& r = 1);
+
+  ///
   /// \brief The MagImuData class keeps a pair of magnetometer and imu linear acceleration measurements
   ///
   class MagImuData
