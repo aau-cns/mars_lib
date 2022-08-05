@@ -141,6 +141,7 @@ public:
     }
     else
     {
+      calibration_type = "Auto";
       std::cout << "GPS calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }

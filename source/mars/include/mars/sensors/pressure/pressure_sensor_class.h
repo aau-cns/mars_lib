@@ -119,6 +119,7 @@ public:
     }
     else
     {
+      calibration_type = "Auto";
       std::cout << "Pressure calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }

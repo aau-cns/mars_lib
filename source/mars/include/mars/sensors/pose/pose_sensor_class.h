@@ -88,27 +88,7 @@ public:
     }
     else
     {
-      //      calibration_type = "Auto";
-
-      //      Eigen::Vector3d p_wp(measurement.position_);
-      //      Eigen::Quaterniond q_wp(measurement.orientation_);
-
-      //      Eigen::Vector3d p_wi(latest_core_data->state_.p_wi_);
-      //      Eigen::Quaterniond q_wi(latest_core_data->state_.q_wi_);
-      //      Eigen::Matrix3d r_wi(q_wi.toRotationMatrix());
-
-      //      Eigen::Vector3d p_ip = r_wi.transpose() * (p_wp - p_wi);
-      //      Eigen::Quaterniond q_ip = q_wi.conjugate() * q_wp;
-
-      //      // Calibration, position / rotation imu-pose
-      //      sensor_state.state_.p_ip_ = p_ip;
-      //      sensor_state.state_.q_ip_ = q_ip;
-
-      //      // The covariance should enclose the initialization with a 3 Sigma bound
-      //      Eigen::Matrix<double, 6, 1> std;
-      //      std << 1, 1, 1, (35 * M_PI / 180), (35 * M_PI / 180), (35 * M_PI / 180);
-      //      sensor_state.sensor_cov_ = std.cwiseProduct(std).asDiagonal();
-
+      calibration_type = "Auto";
       std::cout << "Pose calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }
