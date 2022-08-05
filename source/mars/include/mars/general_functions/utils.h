@@ -126,6 +126,25 @@ public:
   /// 30(4):1193-1196, June 2007
   ///
   static Eigen::Quaterniond quaternionAverage(const std::vector<Eigen::Quaterniond>& quats);
+
+  ///
+  /// \brief VecExtractEveryNthElm Takes a vector and returns a new vector which only contains every n'th element
+  /// \param data Vector with a number of entries
+  /// \param nth Defines the reduction of entries to only every n'th
+  /// \return Vector with reduced entries
+  ///
+  template <typename T, typename A>
+  static std::vector<T> VecExtractEveryNthElm(std::vector<T, A> const& data, const int& nth)
+  {
+    std::vector<T> every_nth_data;
+    const int len = data.size();
+
+    for (int k = 0; k < len - nth; k += nth)
+    {
+      every_nth_data.push_back(data[k]);
+    }
+    return every_nth_data;
+  }
 };
 }  // namespace mars
 
