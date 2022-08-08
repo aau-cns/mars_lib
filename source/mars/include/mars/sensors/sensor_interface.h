@@ -48,6 +48,7 @@ public:
   /// \param prior_core_state_data
   /// \param latest_sensor_data
   /// \param prior_cov Prior covariance containing core, sensor and sensor cross covariance
+  /// \param new_state_data Updated state data
   /// \return True if the update was successful, false if the update was rejected
   ///
   virtual bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement,

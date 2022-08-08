@@ -60,8 +60,8 @@ void Utils::TransformImu(const IMUMeasurementType& prev, const IMUMeasurementTyp
 void Utils::TransformImu(const IMUMeasurementType& now, const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab,
                          IMUMeasurementType& result)
 {
-  const double dt = 0; // Setting dt=0 ignores angular acceleration
-  const IMUMeasurementType prev; // Empty previous IMU measurement
+  const double dt = 0;            // Setting dt=0 ignores angular acceleration
+  const IMUMeasurementType prev;  // Empty previous IMU measurement
 
   TransformImu(prev, now, dt, p_ab, q_ab, result);
 }
@@ -163,7 +163,7 @@ Eigen::Vector3d Utils::RPYFromRotMat(const Eigen::Matrix3d& rot_mat)
 {
   // according to this post, mat.eulerAngles returns the correct angles
   Eigen::Vector3d ypr = rot_mat.eulerAngles(2, 1, 0);
-  return {ypr(2), ypr(1), ypr(0)};
+  return { ypr(2), ypr(1), ypr(0) };
 }
 
 Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond>& quats)

@@ -165,7 +165,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {

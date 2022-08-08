@@ -88,49 +88,56 @@ public:
   void PrintBufferEntrys() const;
 
   ///
-  /// \brief get_latest_entry returns the last buffer entry
-  /// \param output parameter for the latest entry
-  /// \return true if the operation was performed, false otherwise
+  /// \brief get_latest_entry Returns the last buffer entry
+  /// \param entry Output parameter for the latest entry
+  /// \return True if the operation was performed, false otherwise
   ///
   bool get_latest_entry(BufferEntryType* entry) const;
 
   ///
   /// \brief get_latest_state returns the most recent state entry
-  /// \param output parameter for the latest state entry
-  /// \return true if the operation was performed, false otherwise
+  /// \param entry Output parameter for the latest state entry
+  /// \return True if the operation was performed, false otherwise
   ///
   bool get_latest_state(BufferEntryType* entry) const;
 
   ///
   /// \brief get_oldest_state Gets the oldest entry with metadata in the state group
-  /// \param entry
+  /// \param entry Output variable for the oldest state entry
   /// \return true if the operation was successfully, false otherwise
   ///
   bool get_oldest_state(BufferEntryType* entry) const;
 
   ///
   /// \brief get_oldest_core_state Gets the oldest entry with metadata_ core_state
-  /// \param entry output variable for the oldest state entry
+  /// \param entry Output variable for the oldest core state entry
   /// \return true if the operation was successfully, false otherwise
   ///
   bool get_oldest_core_state(BufferEntryType* entry) const;
 
   ///
   /// \brief Gets the latest entry with init_state as metadata
-  /// \param entry output parameter for the latest init_state entry
+  /// \param entry Output parameter for the latest init_state entry
   /// \return true if the operation was performed, false otherwise
   ///
   bool get_latest_init_state(BufferEntryType* entry) const;
 
   ///
   /// \brief get_latest_sensor_handle_state
-  /// \param sensor_handle seach parameter for the latest assosiated state entry
-  /// \param entry output parameter for the latest sensor handle state entry
-  /// \param index, returns the current index of this entry
+  /// \param sensor_handle Seach parameter for the latest assosiated state entry
+  /// \param entry Output parameter for the latest sensor handle state entry
   /// \return true if the operation was performed, false otherwise
   ///
   bool get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                       BufferEntryType* entry) const;
+
+  ///
+  /// \brief get_latest_sensor_handle_state
+  /// \param sensor_handle Seach parameter for the latest assosiated state entry
+  /// \param entry Output parameter for the latest sensor handle state entry
+  /// \param index Returns the current index of this entry
+  /// \return true if the operation was performed, false otherwise
+  ///
   bool get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle, BufferEntryType* entry,
                                       int* index) const;
 
@@ -198,7 +205,7 @@ public:
 
   ///
   /// \brief Deletes all states after, and including the given index
-  /// \param start index after which all states are deleted
+  /// \param idx Start index after which all states are deleted
   /// \return true if function was performed correct, false otherwise
   ///
   bool DeleteStatesStartingAtIdx(const int& idx);
@@ -211,7 +218,7 @@ public:
 
   ///
   /// \brief Inserting new element before the element at the specified position
-  /// \param entry that is added to the buffer
+  /// \param new_entry ntry that is added to the buffer
   ///
   /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
   /// elements. It then determines if the entry needs to be added before or after the closest entry.
@@ -220,7 +227,7 @@ public:
 
   ///
   /// \brief InsertDataAtIndex Adds 'entry' at buffer position 'index'
-  /// \param entry buffer entry to be added
+  /// \param new_entry Entry buffer entry to be added
   /// \param index position at which the entry is added
   ///
   bool InsertDataAtIndex(const BufferEntryType& new_entry, const int& index);
