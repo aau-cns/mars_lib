@@ -423,33 +423,33 @@ $$-->
 
 ## CSV file formats for sensor data
 
-Individual symbols are described in section [Symbols](#Symbols) and sensor states are described in section [Provided Sensor Modules (Plug and Play)](###Provided Sensor Modules (Plug and Play))
+Individual symbols are described in section [Symbols](#Symbols) and sensor states are described in section [Provided Sensor Modules (Plug and Play)](#provided-sensor-modules-plug-and-play)
 
 ### Input Files
 
 | Sensor                                                       | CSV File Column Entries                   |
 | ------------------------------------------------------------ | ----------------------------------------- |
 | IMU                                                          | [time, a_x, a_y, a_z, w_x, w_y, w_z]      |
-| [Position Sensor](####Position (3 DoF))                      | [time, p_x, p_y, p_z]                     |
-| [Pose Sensor](####Pose (6 DoF))                              | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
-| [Vision Sensor](####Loosely-Coupled Vision (6 DoF))          | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
-| [GNSS](####GNSS with local coordinate transforms (3 DoF))    | [time, lat, long, alt]                    |
-| [GNSS with Velocity](####GNSS with rotational constraints from velocity) | [time, lat, long, alt, v_x, v_y, v_z]     |
-| [Magnetometer](####Magnetometer (3 DoF))                     | [time, m_x, m_y, m_z]                     |
-| [Pressure Sensor](####Barometric Pressure (1 DoF))           | [time, pressure]                          |
+| [Position Sensor](#position-3-dof)                           | [time, p_x, p_y, p_z]                     |
+| [Pose Sensor](#pose-6-dof)                                   | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
+| [Vision Sensor](#loosely-coupled-vision-6-dof)               | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
+| [GNSS](#gnss-with-local-coordinate-transforms-3-dof)         | [time, lat, long, alt]                    |
+| [GNSS with Velocity](#gnss-with-rotational-constraints-from-velocity) | [time, lat, long, alt, v_x, v_y, v_z]     |
+| [Magnetometer](#magnetometer-3-dof)                          | [time, m_x, m_y, m_z]                     |
+| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, pressure]                          |
 
 ### Output Files
 
 | Sensor                                                       | CSV File Column Entries                                      |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [Core States](###State-Definition)                              | [time, w_x, w_y, w_z, a_x, a_y, a_z, p_wi_x, p_wi_y, p_wi_z, v_x, v_y, v_z,<br />q_wi_w, q_wi_x, q_wi_y, q_wi_z, bw_x, bw_y, bw_z, ba_x, ba_y, ba_z] |
-| [Position Sensor](####Position (3 DoF))                        | [time, p_ip_x, p_ip_y, p_ip_z]                               |
-| [Pose Sensor](####Pose (6 DoF))                                | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
-| [Vision Sensor](####Loosely-Coupled Vision (6 DoF))          | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
-| [GNSS](####GNSS with local coordinate transforms (3 DoF))        | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
-| [GNSS with Velocity](####GNSS with rotational constraints from velocity) | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
-| [Magnetometer](####Magnetometer (3 DoF))                         | [time, mag_w_x, mag_w_y, mag_w_z, q_im_w, q_im_x, q_im_y, q_im_z] |
-| [Pressure Sensor](####Barometric Pressure (1 DoF))               | [time, p_ip_x, p_ip_y, p_ip_z]                               |
+| [Core States](#state-definition)                             | [time, w_x, w_y, w_z, a_x, a_y, a_z, p_wi_x, p_wi_y, p_wi_z, v_x, v_y, v_z,<br />q_wi_w, q_wi_x, q_wi_y, q_wi_z, bw_x, bw_y, bw_z, ba_x, ba_y, ba_z] |
+| [Position Sensor](#position-3-dof)                           | [time, p_ip_x, p_ip_y, p_ip_z]                               |
+| [Pose Sensor](#pose-6-dof)                                   | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
+| [Vision Sensor](#loosely-coupled-vision-6-dof)               | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
+| [GNSS](#gnss-with-local-coordinate-transforms-3-dof)         | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
+| [GNSS with Velocity](#gnss-with-rotational-constraints-from-velocity) | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
+| [Magnetometer](#magnetometer-3-dof)                          | [time, mag_w_x, mag_w_y, mag_w_z, q_im_w, q_im_x, q_im_y, q_im_z] |
+| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, p_ip_x, p_ip_y, p_ip_z]                               |
 
 
 ## Package Layout/Codebase
