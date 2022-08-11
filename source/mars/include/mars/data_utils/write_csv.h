@@ -46,7 +46,7 @@ public:
     std::stringstream os;
     const int num_cov_state = static_cast<int>(cov.rows());
 
-    for (int k = 0; k < num_cov_state; ++k)
+    for (int k = 0; k < num_cov_state; k++)
     {
       int row_count = k * num_cov_state + k;
       int col_count = num_cov_state - k;  // Size relative to row_count
