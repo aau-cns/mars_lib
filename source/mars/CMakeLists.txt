@@ -54,6 +54,8 @@ set(headers
     ${include_path}/sensors/update_sensor_abs_class.h
     ${include_path}/sensors/sensor_interface.h
     ${include_path}/sensors/bind_sensor_data.h
+    ${include_path}/sensors/measurement_base_class.h
+    ${include_path}/sensors/measurement_interface.h
     ${include_path}/sensors/imu/imu_sensor_class.h
     ${include_path}/sensors/imu/imu_measurement_type.h
     ${include_path}/sensors/position/position_measurement_type.h
