@@ -12,10 +12,11 @@
 #define MEASUREMENT_INTERFACE_H
 
 #include <Eigen/Dense>
+#include <memory>
 
 namespace mars
 {
-class MeasInterface()
+class MeasInterface
 {
     public:
 
@@ -26,9 +27,9 @@ class MeasInterface()
     ///
     /// \brief get the measurement noise associated with the current sensor measurement
     /// \param sensor_data contains the current sensor measurement
-    /// \return Measurment noise matrix
+    /// \return Measurement noise matrix
     ///
-    virtual Eugen::MatrixXd get_meas_noise(const std::shared_ptr<void>& sensor_data) = 0;
+    virtual Eigen::MatrixXd get_meas_noise(const std::shared_ptr<void>& sensor_data) = 0;
 
     protected:
 

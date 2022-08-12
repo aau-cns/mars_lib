@@ -17,11 +17,11 @@
 
 namespace mars
 {
-class BaseMeas : Public MeasInterface
+class BaseMeas : public MeasInterface
 {
 public:
-    Eigen:MatrixXd meas_noise;
-    bool has_meas_noise{False};
+    Eigen::MatrixXd meas_noise;
+    bool has_meas_noise{false};
 
     BaseMeas()
     {
