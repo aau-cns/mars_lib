@@ -14,7 +14,6 @@
 #include <mars/buffer.h>
 #include <mars/core_state.h>
 #include <mars/sensor_manager.h>
-#include <mars/sensors/pose/pose_sensor_class.h>
 #include <mars/type_definitions/core_state_type.h>
 #include <Eigen/Dense>
 #include <iostream>
