@@ -41,6 +41,7 @@ public:
     if (expected_columns != columns)
     {
       std::cout << "Error: CSV File does not have the expected number of columns" << std::endl;
+      std::cout << "Expected " << expected_columns << "got " << columns << std::endl;
       exit(EXIT_FAILURE);
     }
 
