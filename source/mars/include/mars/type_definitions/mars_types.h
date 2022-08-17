@@ -25,6 +25,19 @@ public:
   Pose(const Eigen::Vector3d& position, const Eigen::Quaterniond& orientation) : p(position), q(orientation)
   {
   }
+
+  bool operator==(const Pose& rhs) const
+  {
+    return ((p == rhs.p) && ((q.coeffs() == rhs.q.coeffs())));
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, const Pose& data)
+  {
+    out << "p: " << data.p[0] << ", " << data.p[1] << ", " << data.p[2];
+    out << " q: " << data.q.w() << ", " << data.q.x() << ", " << data.q.y() << ", " << data.q.z();
+
+    return out;
+  }
 };
 }  // namespace mars
 
