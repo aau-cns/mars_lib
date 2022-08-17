@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -18,22 +18,18 @@ namespace mars
 {
 class MeasInterface
 {
-    public:
+public:
+  virtual ~MeasInterface() = default;
 
-    MeasInterface()
-    {
-    }
+  ///
+  /// \brief get the measurement noise associated with the current sensor measurement
+  /// \param sensor_data contains the current sensor measurement
+  /// \return Measurement noise matrix
+  ///
+  virtual Eigen::MatrixXd get_meas_noise(const std::shared_ptr<void>& sensor_data) = 0;
 
-    ///
-    /// \brief get the measurement noise associated with the current sensor measurement
-    /// \param sensor_data contains the current sensor measurement
-    /// \return Measurement noise matrix
-    ///
-    virtual Eigen::MatrixXd get_meas_noise(const std::shared_ptr<void>& sensor_data) = 0;
-
-    protected:
-
+protected:
 };
-}
+}  // namespace mars
 
-#endif // MEASUREMENT_INTERFACE_H
+#endif  // MEASUREMENT_INTERFACE_H

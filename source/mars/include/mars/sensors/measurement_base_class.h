@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -8,11 +8,11 @@
 //
 // You can contact the author at <christian.brommer@ieee.org>
 
-
 #ifndef MEASUREMENT_BASE_CLASS_H
 #define MEASUREMENT_BASE_CLASS_H
 
 #include <mars/sensors/measurement_interface.h>
+
 #include <Eigen/Dense>
 
 namespace mars
@@ -20,13 +20,9 @@ namespace mars
 class BaseMeas : public MeasInterface
 {
 public:
-    Eigen::MatrixXd meas_noise;
-    bool has_meas_noise{false};
-
-    BaseMeas()
-    {
-    }
+  Eigen::MatrixXd meas_noise;
+  bool has_meas_noise{ false };
 };
-}
+}  // namespace mars
 
-#endif // MEASUREMENT_BASE_CLASS_H
+#endif  // MEASUREMENT_BASE_CLASS_H
