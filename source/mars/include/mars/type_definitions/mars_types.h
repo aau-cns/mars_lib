@@ -18,26 +18,43 @@ namespace mars
 class Pose
 {
 public:
-  Eigen::Vector3d p{ Eigen::Vector3d::Zero() };
-  Eigen::Quaterniond q{ Eigen::Quaterniond::Identity() };
+  Eigen::Vector3d p_{ Eigen::Vector3d::Zero() };
+  Eigen::Quaterniond q_{ Eigen::Quaterniond::Identity() };
+
+  Eigen::Vector3d n_p_{ Eigen::Vector3d::Ones() * 0.1 };
+  Eigen::Vector3d n_r_{ Eigen::Vector3d::Ones() * 0.1 };
 
   Pose() = default;
-  Pose(const Eigen::Vector3d& position, const Eigen::Quaterniond& orientation) : p(position), q(orientation)
+  Pose(const Eigen::Vector3d& position, const Eigen::Quaterniond& orientation) : p_(position), q_(orientation)
   {
+  }
+
+  void set_meas_noise(Eigen::Vector3d n_p, Eigen::Vector3d n_r)
+  {
+    n_p_ = n_p;
+    n_r_ = n_r;
   }
 
   bool operator==(const Pose& rhs) const
   {
-    return ((p == rhs.p) && ((q.coeffs() == rhs.q.coeffs())));
+    return ((p_ == rhs.p_) && ((q_.coeffs() == rhs.q_.coeffs())));
   }
 
   friend std::ostream& operator<<(std::ostream& out, const Pose& data)
   {
-    out << "p: " << data.p[0] << ", " << data.p[1] << ", " << data.p[2];
-    out << " q: " << data.q.w() << ", " << data.q.x() << ", " << data.q.y() << ", " << data.q.z();
+    out << "p: " << data.p_[0] << ", " << data.p_[1] << ", " << data.p_[2];
+    out << " q: " << data.q_.w() << ", " << data.q_.x() << ", " << data.q_.y() << ", " << data.q_.z();
 
     return out;
   }
+
+  Eigen::Matrix<double, 6, 6> get_meas_noise_mat() const
+  {
+    Eigen::Matrix<double, 6, 1> vec;
+    vec << n_p_, n_r_;
+    return vec.asDiagonal();
+  }
+
 };
 }  // namespace mars
 
