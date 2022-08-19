@@ -29,6 +29,11 @@ public:
   {
   }
 
+  Pose(const Eigen::Vector3d& position, const Eigen::Matrix3d& rotation) : p_(position), q_(rotation)
+  {
+
+  }
+
   void set_meas_noise(Eigen::Vector3d n_p, Eigen::Vector3d n_r)
   {
     n_p_ = n_p;
@@ -53,6 +58,15 @@ public:
     Eigen::Matrix<double, 6, 1> vec;
     vec << n_p_, n_r_;
     return vec.asDiagonal();
+  }
+
+  ///
+  /// \brief Return inverse transformation (T_AB -> T_BA) as mars::Pose
+  /// \return Pose
+  ///
+  Pose get_inverse_pose() const
+  {
+    return Pose(-q_.toRotationMatrix().transpose()*p_, q_.conjugate());
   }
 
 };
