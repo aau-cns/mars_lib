@@ -66,7 +66,7 @@ Eigen::Matrix3d MagnetometerInit::get_rot() const
   // Build rotation matrix
   Eigen::Matrix3d R;
   R << x_axis, y_axis, z_axis;
-  return R;
+  return R.transpose();
 }
 
 Eigen::Quaterniond MagnetometerInit::get_quat() const
