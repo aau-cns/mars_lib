@@ -58,5 +58,5 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 #endif  // MAG_SENSOR_STATE_TYPE_H

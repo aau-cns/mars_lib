@@ -31,5 +31,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // POSEMEASUREMENTTYPE_H

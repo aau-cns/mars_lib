@@ -11,6 +11,7 @@
 #ifndef ATTITUDE_CONVERSION_H
 #define ATTITUDE_CONVERSION_H
 
+#include <mars/general_functions/utils.h>
 #include <Eigen/Dense>
 
 namespace mars
@@ -21,13 +22,13 @@ namespace mars
 struct Attitude
 {
   Attitude() = default;
-  Attitude(Eigen::Quaterniond quaternion) : quaternion_(quaternion)
+  Attitude(const Eigen::Quaterniond& quaternion) : quaternion_(quaternion)
   {
   }
-  Attitude(Eigen::Matrix3d rotation_matrix) : quaternion_(rotation_matrix)
+  Attitude(const Eigen::Matrix3d& rotation_matrix) : quaternion_(rotation_matrix)
   {
   }
-  Attitude(Eigen::Vector3d vec, std::string order = "XYZ")
+  Attitude(const Eigen::Vector3d& vec, const std::string& order = "XYZ")
   {
     // scoping
     using AAd = Eigen::AngleAxisd;
@@ -54,7 +55,7 @@ struct Attitude
   Eigen::Vector2d get_rp()
   {
     Eigen::Vector3d rpy = mars::Utils::RPYFromRotMat(quaternion_.toRotationMatrix());
-    return Eigen::Vector2d(rpy(0), rpy(1));
+    return { rpy(0), rpy(1) };
   }
 
   friend std::ostream& operator<<(std::ostream& out, const Attitude& attitude);

@@ -11,7 +11,6 @@
 // and <martin.scheiber@ieee.org>
 
 #include <mars/buffer.h>
-
 #include <utility>
 
 namespace mars
@@ -25,6 +24,11 @@ Buffer::Buffer(const int& size)
 void Buffer::set_max_buffer_size(const int& size)
 {
   max_buffer_size_ = std::abs(size);
+}
+
+void Buffer::set_keep_last_sensor_handle(const bool& value)
+{
+  keep_last_sensor_handle_ = value;
 }
 
 int Buffer::get_max_buffer_size() const
@@ -52,7 +56,7 @@ void Buffer::PrintBufferEntrys() const
   std::cout << "Idx \t Sensor Name \t Timestamp \t Metadata " << std::endl;
 
   // iterate forwards
-  for (int k = 0; k < data_.size(); ++k)
+  for (size_t k = 0; k < data_.size(); ++k)
   {
     std::cout << k << " " << data_[k] << std::endl;
   }
@@ -77,11 +81,11 @@ bool Buffer::get_latest_state(BufferEntryType* entry) const
   }
 
   // iterate backwards
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsState())
+    if (k->IsState())
     {
-      *entry = data_[k];
+      *entry = *k;
       return true;
     }
   }
@@ -97,11 +101,11 @@ bool Buffer::get_oldest_state(BufferEntryType* entry) const
   }
 
   // iterate forwards
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsState())
+    if (k.IsState())
     {
-      *entry = data_[k];
+      *entry = k;
       return true;
     }
   }
@@ -117,11 +121,11 @@ bool Buffer::get_oldest_core_state(BufferEntryType* entry) const
   }
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].metadata_ == mars::BufferMetadataType::core_state)
+    if (k.metadata_ == mars::BufferMetadataType::core_state)
     {
-      *entry = data_[k];
+      *entry = k;
       return true;
     }
   }
@@ -137,13 +141,13 @@ bool Buffer::get_latest_init_state(BufferEntryType* entry) const
   }
 
   // iterate backwards (newest to oldest)
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsState())
+    if (k->IsState())
     {
-      if (data_[k].metadata_ == BufferMetadataType::init_state)
+      if (k->metadata_ == BufferMetadataType::init_state)
       {
-        *entry = data_[k];
+        *entry = *k;
         return true;
       }
     }
@@ -152,14 +156,15 @@ bool Buffer::get_latest_init_state(BufferEntryType* entry) const
   return false;
 }
 
-bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const
+bool Buffer::get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry) const
 {
   int none;
-  return this->get_latest_sensor_handle_state(std::move(sensor_handle), entry, &none);
+  return this->get_latest_sensor_handle_state(sensor_handle, entry, &none);
 }
 
-bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry,
-                                            int* index) const
+bool Buffer::get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry, int* index) const
 {
   if (this->IsEmpty())
   {
@@ -185,7 +190,8 @@ bool Buffer::get_latest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sens
   return false;
 }
 
-bool Buffer::get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sensor_handle, BufferEntryType* entry) const
+bool Buffer::get_oldest_sensor_handle_state(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            BufferEntryType* entry) const
 {
   if (this->IsEmpty())
   {
@@ -193,13 +199,13 @@ bool Buffer::get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sens
   }
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsState())
+    if (k.IsState())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k.sensor_.get() == sensor_handle.get())
       {
-        *entry = data_[k];
+        *entry = k;
         return true;
       }
     }
@@ -208,7 +214,7 @@ bool Buffer::get_oldest_sensor_handle_state(std::shared_ptr<SensorAbsClass> sens
   return false;
 }
 
-bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass> sensor_handle,
+bool Buffer::get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAbsClass>& sensor_handle,
                                                   BufferEntryType* entry) const
 {
   if (this->IsEmpty())
@@ -217,13 +223,13 @@ bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass
   }
 
   // iterate backwards (newest to oldest)
-  for (int k = data_.size() - 1; k >= 0; --k)
+  for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (data_[k].IsMeasurement())
+    if (k->IsMeasurement())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k->sensor_.get() == sensor_handle.get())
       {
-        *entry = data_[k];
+        *entry = *k;
         return true;
       }
     }
@@ -232,8 +238,8 @@ bool Buffer::get_latest_sensor_handle_measurement(std::shared_ptr<SensorAbsClass
   return false;
 }
 
-bool Buffer::get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sensor_handle,
-                                            std::vector<const BufferEntryType*>& entries) const
+bool Buffer::get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                            std::vector<const BufferEntryType*>* entries) const
 {
   if (this->IsEmpty())
   {
@@ -241,22 +247,22 @@ bool Buffer::get_sensor_handle_measurements(std::shared_ptr<SensorAbsClass> sens
   }
 
   // reset return value
-  entries.clear();
+  entries->clear();
 
   // iterate forwards (oldest to newest)
-  for (int k = 0; k < data_.size(); ++k)
+  for (const auto& k : data_)
   {
-    if (data_[k].IsMeasurement())
+    if (k.IsMeasurement())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (k.sensor_.get() == sensor_handle.get())
       {
-        entries.push_back(&data_[k]);
+        entries->push_back(&k);
       }
     }
   }
 
   // return false if vector is emtpy
-  return !entries.empty();
+  return !entries->empty();
 }
 
 bool Buffer::get_closest_state(const Time& timestamp, BufferEntryType* entry) const
@@ -341,17 +347,21 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
   {
     int del_idx = RemoveOverflowEntrys();
     if (del_idx < 0)
+    {
       index = -1;
+    }
     else
+    {
       index -= del_idx < index ? 1 : 0;
+    }
   }
 
   return index;
 }
 
-int Buffer::FindClosestTimestamp(const Time& timestamp) const
+int Buffer::FindClosestTimestamp(const Time& /*timestamp*/) const
 {
-  // TODO
+  // TODO(chb)
   return false;
 }
 
@@ -478,11 +488,11 @@ bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sen
   int num_found_handle = 0;
   int num_found_meas = 0;
 
-  for (int k = 0; k < this->get_length(); k++)
+  for (const auto& k : data_)
   {
-    if (data_[k].sensor_ == sensor_handle)
+    if (k.sensor_ == sensor_handle)
     {
-      if (data_[k].metadata_ == BufferMetadataType::measurement)
+      if (k.metadata_ == BufferMetadataType::measurement)
       {
         num_found_meas++;
 
@@ -493,7 +503,7 @@ bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sen
       }
       else
       {
-        if (data_[k].metadata_ == BufferMetadataType::sensor_state)
+        if (k.metadata_ == BufferMetadataType::sensor_state)
         {
           num_found_handle++;
 

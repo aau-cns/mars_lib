@@ -25,6 +25,6 @@ public:
 
   CoreType() = default;
 };
-}
+}  // namespace mars
 
 #endif  // CORETYPE_H

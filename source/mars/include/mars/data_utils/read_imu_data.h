@@ -61,6 +61,6 @@ public:
     ReadImuData(data_out, sensor, file_path, 0);
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_IMU_DATA_H

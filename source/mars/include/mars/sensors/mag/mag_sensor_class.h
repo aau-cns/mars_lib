@@ -42,10 +42,10 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  MagSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  MagSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -57,13 +57,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  MagSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~MagSensorClass() = default;
+
+  MagSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     MagSensorData data = *static_cast<MagSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     MagSensorData data = *static_cast<MagSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -75,10 +77,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
+    // MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
 
     MagSensorData sensor_state;
     std::string calibration_type;
@@ -103,7 +105,7 @@ public:
     BufferDataType result(std::make_shared<CoreType>(*latest_core_data.get()),
                           std::make_shared<MagSensorData>(sensor_state));
 
-    // TODO
+    // TODO (chb)
     // sensor_data.ref_to_nav = 0; //obj.calc_ref_to_nav(measurement, latest_core_state);
 
     is_initialized_ = true;
@@ -186,7 +188,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -227,7 +229,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -267,6 +269,6 @@ public:
     mag_intr_transform_ = m_transform;
   }
 };
-}
+}  // namespace mars
 
 #endif  // MAG_SENSOR_CLASS_H

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -34,23 +35,25 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  EmptySensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  EmptySensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  EmptySensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~EmptySensorClass() = default;
+
+  EmptySensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     EmptySensorData data = *static_cast<EmptySensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     EmptySensorData data = *static_cast<EmptySensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -62,10 +65,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    EmptyMeasurementType measurement = *static_cast<EmptyMeasurementType*>(sensor_data.get());
+    // EmptyMeasurementType measurement = *static_cast<EmptyMeasurementType*>(sensor_data.get());
 
     EmptySensorData sensor_state;
     std::string calibration_type;
@@ -100,12 +103,12 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
-                  std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
-                  BufferDataType* new_state_data)
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> /*measurement*/,
+                  const CoreStateType& prior_core_state, std::shared_ptr<void> latest_sensor_data,
+                  const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information
-    EmptyMeasurementType* meas = static_cast<EmptyMeasurementType*>(measurement.get());
+    // EmptyMeasurementType* meas = static_cast<EmptyMeasurementType*>(measurement.get());
     EmptySensorData* prior_sensor_data = static_cast<EmptySensorData*>(latest_sensor_data.get());
 
     // Extract sensor state
@@ -140,6 +143,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSVELSENSORCLASS_H

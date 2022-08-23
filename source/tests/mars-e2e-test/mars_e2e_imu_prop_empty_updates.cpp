@@ -143,9 +143,9 @@ TEST_F(mars_e2e_imu_prop_empty_update, END_2_END_IMU_PROPAGATION)
       std::vector<mars::BufferEntryType> measurement_data_imu_2;
       mars::ReadSimData(&measurement_data_imu_2, imu_sensor_sptr, test_data_path + traj_file_name);
 
-      for (int k = 0; k < measurement_data_imu_2.size(); k++)
+      for (auto k : measurement_data_imu_2)
       {
-        measurement_data_imu_2[k].timestamp_ = measurement_data_imu_2[k].timestamp_ + (1 / 200.0) / 2;
+        k.timestamp_ = k.timestamp_ + (1 / 200.0) / 2;
       }
 
       measurement_data.insert(measurement_data.end(), measurement_data_imu_2.begin(), measurement_data_imu_2.end());

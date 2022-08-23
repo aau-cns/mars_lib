@@ -24,6 +24,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -43,10 +44,10 @@ public:
   bool using_external_gps_reference_;
   bool gps_reference_is_set_;
 
-  GpsVelSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  GpsVelSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     using_external_gps_reference_ = false;
@@ -56,6 +57,8 @@ public:
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
+
+  virtual ~GpsVelSensorClass() = default;
 
   void set_v_rot_axis(const Eigen::Vector3d& vec)
   {
@@ -72,13 +75,13 @@ public:
     vel_rot_thr_ = fabs(value);
   }
 
-  GpsVelSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  GpsVelSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -162,7 +165,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
@@ -280,7 +283,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Check Chi2 test results
@@ -343,6 +346,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSVELSENSORCLASS_H

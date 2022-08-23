@@ -11,6 +11,8 @@
 #ifndef EMPTYMEASUREMENTTYPE_H
 #define EMPTYMEASUREMENTTYPE_H
 
+#include <utility>
+
 namespace mars
 {
 class EmptyMeasurementType
@@ -22,5 +24,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // EMPTYMEASUREMENTTYPE_H

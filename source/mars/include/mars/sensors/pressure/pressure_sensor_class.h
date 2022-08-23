@@ -39,10 +39,10 @@ public:
   PressureConversion pressure_conversion_;
   bool pressure_reference_is_set_;
 
-  PressureSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  PressureSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     pressure_reference_is_set_ = false;
@@ -53,13 +53,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
+  virtual ~PressureSensorClass() = default;
+
   PressureSensorStateType get_state(std::shared_ptr<void> sensor_data)
   {
     PressureSensorData data = *static_cast<PressureSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PressureSensorData data = *static_cast<PressureSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -194,7 +196,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test

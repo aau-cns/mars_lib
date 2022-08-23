@@ -39,10 +39,10 @@ public:
 
   bool update_scale_{ true };
 
-  VisionSensorClass(std::string name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
+  VisionSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     update_scale_ = update_scale;
@@ -53,13 +53,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  VisionSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~VisionSensorClass() = default;
+
+  VisionSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     VisionSensorData data = *static_cast<VisionSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     VisionSensorData data = *static_cast<VisionSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -71,10 +73,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
+    // VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
 
     VisionSensorData sensor_state;
     std::string calibration_type;
@@ -143,7 +145,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
@@ -190,10 +192,13 @@ public:
     const Eigen::Matrix3d Hp_ric = Eigen::Matrix3d::Zero();
     Eigen::Vector3d Hp_lambda;
     if (update_scale_)
+    {
       Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
+    }
     else
+    {
       Hp_lambda = Eigen::Vector3d::Zero();
-
+    }
     // Assemble the jacobian for the position (horizontal)
     // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_ip Hp_rip];
     Eigen::MatrixXd H_p(3, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pvw.cols() +
@@ -241,7 +246,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -282,7 +287,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;

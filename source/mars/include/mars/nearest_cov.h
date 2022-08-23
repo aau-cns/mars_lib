@@ -26,7 +26,7 @@ enum NearestCovMethod
   delta,  ///< Correcting negative eigenvaules to a defined delta
   none    ///< No Correction, direct passtrough
 };
-}
+}  // namespace NearestCovMethods
 
 namespace mars
 {
@@ -65,6 +65,6 @@ public:
   ///
   Eigen::MatrixXd EigenCorrectionUsingCorrelation(NearestCovMethod method);
 };
-}
+}  // namespace mars
 
 #endif  // NEARESTCOV_H

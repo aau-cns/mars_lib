@@ -75,7 +75,7 @@ struct MediumPressureOptions
   {
     set_constants();
   }
-  MediumPressureOptions(double P_sl, double M, double r, double g) : P_sl(P_sl), M(M), r(r), g(g)
+  MediumPressureOptions(double P_sl, double M, double r, double g) : g(g), P_sl(P_sl), M(M), r(r)
   {
     set_constants();
   }

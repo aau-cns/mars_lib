@@ -16,13 +16,13 @@
 
 namespace mars
 {
-filesystem::filesystem()
-{
-}
+filesystem::filesystem() = default;
 
 bool filesystem::IsDir(const std::string& name)
 {
-  struct stat info;
+  struct stat info
+  {
+  };
 
   if (stat(name.c_str(), &info) != 0)
   {
@@ -38,7 +38,9 @@ bool filesystem::IsDir(const std::string& name)
 
 bool filesystem::IsFile(const std::string& name)
 {
-  struct stat info;
+  struct stat info
+  {
+  };
 
   if (stat(name.c_str(), &info) != 0)
   {
@@ -67,12 +69,14 @@ bool filesystem::MakeDir(const std::string& name)
 
     if (ret == 0)
     {
+      std::cout << "[Info] Created directory " << name << std::endl;
       return true;
     }
     else
     {
+      std::cout << "[Warning] Could not created directory " << name << " error code " << ret << std::endl;
       return false;
     }
   }
 }
-}
+}  // namespace mars

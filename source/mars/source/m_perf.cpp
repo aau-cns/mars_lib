@@ -140,7 +140,7 @@ double MPerfType::get_mean()
 {
   std::vector<double> v_diff = get_diff_vec();
   double accumulated_duration = 0;
-  for (int k = 0; k < v_diff.size(); k++)
+  for (size_t k = 0; k < v_diff.size(); k++)
   {
     accumulated_duration += v_diff.at(k);
   }
@@ -166,7 +166,7 @@ double MPerfType::get_std()
   const double mean = get_mean();
 
   double std_accum = 0;
-  for (int k = 0; k < v_diff.size(); k++)
+  for (size_t k = 0; k < v_diff.size(); k++)
   {
     std_accum += pow(v_diff.at(k) - mean, 2);
   }
@@ -180,7 +180,7 @@ std::vector<double> MPerfType::get_diff_vec()
   std::vector<double> v_diff;
 
   // Using size of the stop vector in case the start vector has an active, unfinished, time instance
-  for (int k = 0; k < stop_.size(); k++)
+  for (size_t k = 0; k < stop_.size(); k++)
   {
     const double diff_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(stop_.at(k) - start_.at(k)).count();
     v_diff.push_back(diff_ns / 1000.0);

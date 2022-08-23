@@ -20,6 +20,9 @@ release_build
 /lib
 /install
 
+# Local folder
+**/include_local
+
 # Qt cache
 CMakeLists.txt.user
 CMakeLists.txt.user.*

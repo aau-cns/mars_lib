@@ -36,10 +36,10 @@ class PoseSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  PoseSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  PoseSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -51,13 +51,13 @@ public:
 
   virtual ~PoseSensorClass() = default;
 
-  PoseSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  PoseSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     PoseSensorData data = *static_cast<PoseSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PoseSensorData data = *static_cast<PoseSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -69,10 +69,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    PoseMeasurementType measurement = *static_cast<PoseMeasurementType*>(sensor_data.get());
+    // PoseMeasurementType measurement = *static_cast<PoseMeasurementType*>(sensor_data.get());
 
     PoseSensorData sensor_state;
     std::string calibration_type;
@@ -194,7 +194,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -235,7 +235,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -255,6 +255,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // POSESENSORCLASS_H

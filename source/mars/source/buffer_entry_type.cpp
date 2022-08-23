@@ -64,4 +64,4 @@ bool BufferEntryType::IsMeasurement() const
 {
   return (metadata_measurement_filter_.find(metadata_) != metadata_measurement_filter_.end());
 }
-}
+}  // namespace mars

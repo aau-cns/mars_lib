@@ -40,7 +40,7 @@ mars::Pressure mars::PressureInit::get_press_mean(const std::shared_ptr<mars::Se
 
   // get ordered values from buffer
   std::vector<const mars::BufferEntryType*> pressure_entries;
-  buffer.get_sensor_handle_measurements(sensor_handle, pressure_entries);
+  buffer.get_sensor_handle_measurements(sensor_handle, &pressure_entries);
 
   // check if enough measurements where recorded
   if (pressure_entries.empty() || (cur_time - pressure_entries.at(0)->timestamp_).get_seconds() < init_duration_)

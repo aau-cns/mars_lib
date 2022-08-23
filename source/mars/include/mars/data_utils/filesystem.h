@@ -46,6 +46,6 @@ public:
   ///
   static bool MakeDir(const std::string& name);
 };
-}
+}  // namespace mars
 
 #endif  // FILESYSTEM_H

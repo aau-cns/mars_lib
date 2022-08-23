@@ -50,6 +50,9 @@ inline std::ostream& operator<<(std::ostream& os, AttitudeSensorType type)
     case AttitudeSensorType::RPY_TYPE:
       os << "ROLL/PITCH/YAW";
       break;
+    default:
+      os << "UNKNOWN";
+      break;
   }
   return os;
 }
@@ -63,11 +66,11 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  AttitudeSensorClass(std::string name, std::shared_ptr<CoreState> core_states,
+  AttitudeSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states,
                       AttitudeSensorType type = AttitudeSensorType::RPY_TYPE)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -83,6 +86,14 @@ public:
       case AttitudeSensorType::RPY_TYPE:
         chi2_.set_dof(3);
         break;
+      default:
+        std::cout << "Warning: [" << this->name_
+                  << "] Unexpected type for AttitudeSensorClass.\n"
+                     "Assuming roll-pitch-yaw measurement."
+                  << std::endl;
+        attitude_type_ = AttitudeSensorType::RPY_TYPE;
+        chi2_.set_dof(3);
+        break;
     }
 
     // Sensor specific information
@@ -90,13 +101,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor (type: " << attitude_type_ << ")" << std::endl;
   }
 
-  AttitudeSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~AttitudeSensorClass() = default;
+
+  AttitudeSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     AttitudeSensorData data = *static_cast<AttitudeSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     AttitudeSensorData data = *static_cast<AttitudeSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -108,10 +121,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    AttitudeMeasurementType measurement = *static_cast<AttitudeMeasurementType*>(sensor_data.get());
+    // AttitudeMeasurementType measurement = *static_cast<AttitudeMeasurementType*>(sensor_data.get());
 
     AttitudeSensorData sensor_state;
     std::string calibration_type;
@@ -180,16 +193,19 @@ public:
     {
       case AttitudeSensorType::RP_TYPE:
         return CalcUpdateRP(timestamp, measurement, prior_core_state, latest_sensor_data, prior_cov, new_state_data);
-        break;
       case AttitudeSensorType::RPY_TYPE:
         return CalcUpdateRPY(timestamp, measurement, prior_core_state, latest_sensor_data, prior_cov, new_state_data);
-        break;
+      default:
+        std::cout << "Error: [" << this->name_ << "] Cannot perform update (unknown type)" << std::endl;
+        return false;
     }
+
+    return false;
   }
 
-  bool CalcUpdateRP(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
-                    std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
-                    BufferDataType* new_state_data)
+  bool CalcUpdateRP(const Time& /*timestamp*/, const std::shared_ptr<void>& measurement,
+                    const CoreStateType& prior_core_state, const std::shared_ptr<void>& latest_sensor_data,
+                    const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information
     AttitudeMeasurementType* meas = static_cast<AttitudeMeasurementType*>(measurement.get());
@@ -243,7 +259,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -292,8 +308,8 @@ public:
     return true;
   }
 
-  bool CalcUpdateRPY(const Time& /*timestamp*/, std::shared_ptr<void> measurement,
-                     const CoreStateType& prior_core_state, std::shared_ptr<void> latest_sensor_data,
+  bool CalcUpdateRPY(const Time& /*timestamp*/, const std::shared_ptr<void>& measurement,
+                     const CoreStateType& prior_core_state, const std::shared_ptr<void>& latest_sensor_data,
                      const Eigen::MatrixXd& prior_cov, BufferDataType* new_state_data)
   {
     // Cast the sensor measurement and prior state information
@@ -318,7 +334,7 @@ public:
     const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
     const Eigen::Matrix3d Z_3 = Eigen::Matrix3d::Zero();
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
-    const Eigen::Matrix3d R_aw = prior_sensor_state.q_aw_.toRotationMatrix();
+    // const Eigen::Matrix3d R_aw = prior_sensor_state.q_aw_.toRotationMatrix();
     const Eigen::Matrix3d R_ib = prior_sensor_state.q_ib_.toRotationMatrix();
 
     // Orientation
@@ -346,7 +362,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -416,6 +432,11 @@ public:
       case AttitudeSensorType::RPY_TYPE:
         q_aw_correction = correction.block(0, 0, 3, 1);
         q_ib_correction = correction.block(3, 0, 3, 1);
+        break;
+      default:
+        std::cout << "Error: [" << this->name_ << "] Cannot perform correction (unknown type)" << std::endl;
+        q_aw_correction = Eigen::Vector3d::Zero();
+        q_ib_correction = Eigen::Vector3d::Zero();
         break;
     }
 

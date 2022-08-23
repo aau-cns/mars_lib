@@ -119,6 +119,6 @@ private:
   ///
   bool once_{ false };
 };
-}
+}  // namespace mars
 
 #endif  // MAG_UTILS_H

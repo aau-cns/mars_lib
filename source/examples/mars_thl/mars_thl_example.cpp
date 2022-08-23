@@ -11,7 +11,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <gmock/gmock.h>
 #include <mars/core_logic.h>
 #include <mars/core_state.h>
 #include <mars/data_utils/read_pose_data.h>
@@ -42,7 +41,6 @@ bool read_yaml_vec_3(std::vector<double>* value, const std::string& parameter, Y
 
 int main(int /*argc*/, char** /*argv[]*/)
 {
-
   std::string test_data_path = std::string(MARS_LIB_THL_EXAMPLE_DATA_PATH);
 
   // get config
@@ -193,4 +191,3 @@ int main(int /*argc*/, char** /*argv[]*/)
 
   return 0;
 }
-

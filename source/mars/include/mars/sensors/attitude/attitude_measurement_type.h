@@ -46,7 +46,7 @@ public:
   //    std::cout << "[SensorType]: attitude with rpy [deg]: [" << rpy.transpose() * 180.0/M_PI << "]" << std::endl;
   //  }
 
-  AttitudeMeasurementType(Eigen::Matrix3d rot_mat) : attitude_(rot_mat)
+  AttitudeMeasurementType(const Eigen::Matrix3d& rot_mat) : attitude_(rot_mat)
   {
   }
 };

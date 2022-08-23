@@ -222,8 +222,8 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
 }
 
 BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
-                                                       std::shared_ptr<BufferDataType> data_measurement,
-                                                       std::shared_ptr<BufferEntryType> prior_state_entry)
+                                                       const std::shared_ptr<BufferDataType>& data_measurement,
+                                                       const std::shared_ptr<BufferEntryType>& prior_state_entry)
 {
   if (verbose_)
   {
@@ -264,7 +264,7 @@ bool CoreLogic::ReworkBufferStartingAtIndex(const int& index)
 {
   if (verbose_)
   {
-    std::cout << "[CoreLogic]: Rework Buffer Starting At Index" << std::endl;
+    std::cout << "[CoreLogic]: Rework Buffer Starting At Index " << index << std::endl;
   }
 
   assert(index >= 0);
@@ -492,4 +492,4 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 
   return true;
 }
-}
+}  // namespace mars

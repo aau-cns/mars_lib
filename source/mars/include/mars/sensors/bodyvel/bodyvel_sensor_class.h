@@ -39,10 +39,10 @@ class BodyvelSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  BodyvelSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  BodyvelSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -54,13 +54,13 @@ public:
 
   virtual ~BodyvelSensorClass() = default;
 
-  BodyvelSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  BodyvelSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     BodyvelSensorData data = *static_cast<BodyvelSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     BodyvelSensorData data = *static_cast<BodyvelSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -72,10 +72,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    BodyvelMeasurementType measurement = *static_cast<BodyvelMeasurementType*>(sensor_data.get());
+    // BodyvelMeasurementType measurement = *static_cast<BodyvelMeasurementType*>(sensor_data.get());
 
     BodyvelSensorData sensor_state;
     std::string calibration_type;
@@ -142,9 +142,9 @@ public:
     assert(P.size() == size_of_full_error_state * size_of_full_error_state);
 
     // Calculate the measurement jacobian H
-    const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
+    // const Eigen::Matrix3d I_3 = Eigen::Matrix3d::Identity();
     const Eigen::Matrix3d Z_3 = Eigen::Matrix3d::Zero();
-    const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
+    // const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
     const Eigen::Vector3d V_wi = prior_core_state.v_wi_;
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
     const Eigen::Vector3d P_ib = prior_sensor_state.p_ib_;
@@ -180,7 +180,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test

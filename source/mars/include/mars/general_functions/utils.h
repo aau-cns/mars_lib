@@ -64,7 +64,7 @@ public:
 
   ///
   /// \brief mat_exp Calculation of the matrix exponential, Taylor series cut-off at specified order
-  /// \param mat Matrix for Taylor series
+  /// \param A Matrix for Taylor series
   /// \param order Order at wich the series is cut-off
   /// \return
   ///
@@ -81,8 +81,8 @@ public:
 
   ///
   /// \brief QuatFromSmallAngle
-  /// \param v
-  /// \return
+  /// \param d_theta_vec angle for the generation of the quaternion
+  /// \return Resulting quaternion
   ///
   static Eigen::Quaterniond QuatFromSmallAngle(const Eigen::Vector3d& d_theta_vec);
 
@@ -106,6 +106,7 @@ public:
   /// \brief check_cov Performs tests for the properties of a given covariance matrix
   /// \param cov_mat
   /// \param description Used to associate the warning with the given covariance
+  /// \param check_cond Check the condition number of the covariance matrix
   /// \return true if the covariance matrix is valid, false otherwise
   ///
   static bool CheckCov(const Eigen::MatrixXd& cov_mat, const std::string& description, const bool& check_cond = false);
@@ -119,7 +120,7 @@ public:
 
   ///
   /// \brief quaternionAverage without weights
-  /// \param std::vector<Eigen::Quaterniond> vector of quaternion being averaged
+  /// \param quats vector of quaternion being averaged
   /// \return Eigen::Quaterniond averaged quaternion
   ///
   /// \note Reference: Markley et al., Averaging Quaternions, Journal of Guidance, Control, and Dynamics,

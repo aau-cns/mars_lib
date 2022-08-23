@@ -30,6 +30,6 @@ private:
   double current_progress_{ 0 };
   int current_iteration_{ 0 };
 };
-}
+}  // namespace mars
 
 #endif  // PROGRESSINDICATOR_H

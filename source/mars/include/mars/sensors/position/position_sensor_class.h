@@ -22,6 +22,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -32,10 +33,10 @@ class PositionSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  PositionSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  PositionSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
 
@@ -45,13 +46,15 @@ public:
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  PositionSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~PositionSensorClass() = default;
+
+  PositionSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     PositionSensorData data = *static_cast<PositionSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PositionSensorData data = *static_cast<PositionSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -63,10 +66,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    PositionMeasurementType measurement = *static_cast<PositionMeasurementType*>(sensor_data.get());
+    // PositionMeasurementType measurement = *static_cast<PositionMeasurementType*>(sensor_data.get());
 
     PositionSensorData sensor_state;
     std::string calibration_type;
@@ -152,7 +155,7 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
     // Perform Chi2 test
@@ -193,7 +196,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -211,6 +214,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // POSITIONSENSORCLASS_H

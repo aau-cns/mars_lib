@@ -133,5 +133,5 @@ public:
 
 using CoreStateMatrix = Eigen::Matrix<double, CoreStateType::size_error_, CoreStateType::size_error_>;
 using CoreStateVector = Eigen::Matrix<double, CoreStateType::size_error_, 1>;
-}
+}  // namespace mars
 #endif  // CORESTATETYPE_H

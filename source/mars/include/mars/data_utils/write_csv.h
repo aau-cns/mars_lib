@@ -23,7 +23,7 @@ public:
   inline static std::string vec_to_csv(const Eigen::VectorXd& a)
   {
     std::stringstream os;
-    // TODO option to pre or post add comma
+    // TODO(chb) option to pre or post add comma
     for (int k = 0; k < a.size(); k++)
     {
       os << ", " << a(k);
@@ -46,7 +46,7 @@ public:
     std::stringstream os;
     const int num_cov_state = static_cast<int>(cov.rows());
 
-    for (int k = 0; k < num_cov_state; ++k)
+    for (int k = 0; k < num_cov_state; k++)
     {
       int row_count = k * num_cov_state + k;
       int col_count = num_cov_state - k;  // Size relative to row_count
@@ -72,6 +72,6 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 
 #endif  // WRITE_CSV_H

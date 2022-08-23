@@ -69,4 +69,4 @@ std::ostream& operator<<(std::ostream& out, const Time& data)
 
   return out;
 }
-}
+}  // namespace mars

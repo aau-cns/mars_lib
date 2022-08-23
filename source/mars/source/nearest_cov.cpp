@@ -10,6 +10,7 @@
 
 #include <mars/nearest_cov.h>
 #include <Eigen/Dense>
+#include <utility>
 
 namespace mars
 {
@@ -101,9 +102,9 @@ Eigen::MatrixXd NearestCov::EigenCorrectionUsingCovariance(NearestCovMethod meth
   return result;
 }
 
-Eigen::MatrixXd NearestCov::EigenCorrectionUsingCorrelation(NearestCovMethod method)
+Eigen::MatrixXd NearestCov::EigenCorrectionUsingCorrelation(NearestCovMethod /*method*/)
 {
-  // TODO
+  // TODO (CHB)
   return {};
 }
-}
+}  // namespace mars

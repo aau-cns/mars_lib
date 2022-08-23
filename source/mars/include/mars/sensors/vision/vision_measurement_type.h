@@ -31,5 +31,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // VISIONMEASUREMENTTYPE_H

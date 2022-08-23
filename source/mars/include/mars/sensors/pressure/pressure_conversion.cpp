@@ -25,6 +25,9 @@ std::ostream& operator<<(std::ostream& out, const Pressure::Type& type)
     case Pressure::Type::HEIGHT:
       out << "HEIGHT";
       break;
+    default:
+      out << "UNKNOWN";
+      break;
   }
 
   return out;
@@ -64,6 +67,9 @@ PressureConversion::Matrix1d PressureConversion::get_height(Pressure pressure)
       return Matrix1d(get_height_gas(pressure));
     case mars::Pressure::Type::HEIGHT:
       return Matrix1d(pressure.data_);
+    default:
+      std::cout << "Error: [PressureConversion] Cannot return height (unknown type)" << std::endl;
+      return Matrix1d(-1);
   }
 }
 

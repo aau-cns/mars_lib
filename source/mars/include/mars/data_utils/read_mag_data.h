@@ -58,6 +58,6 @@ public:
     ReadMagData(data_out, sensor, file_path, 0);
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_MAG_DATA_H
