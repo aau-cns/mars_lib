@@ -43,11 +43,12 @@ $ qtcreator .    # Run QT-Creator and press 'Configure Project'
 
 ### Dependencies
 
-MaRS has three dependencies which are automatically downloaded and linked against:
+MaRS has four dependencies which are automatically downloaded and linked against:
 
 - Eigen
 - yaml-cpp
 - G-Test
+- Boost
 
 Thus, no dependencies need to be installed by hand.
 
@@ -268,7 +269,7 @@ Measurement equation:
 
 <!--$$
 \begin{align}
-z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\ 
+z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\
 z_{q} =& \text{\textbf{q}}_{WI} \otimes \text{\textbf{q}}_{IP}
 \end{align}
 $$-->
@@ -378,7 +379,47 @@ Measurement equation:
 z = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}^\mathsf{T} \left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \right)
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}^\mathsf{T}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+
+#### Body Velocity (3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IB}) | Translation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{IB}) | Orientation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{IB}^\mathsf{T} \text{\textbf{R}}_{WI}^\mathsf{T} \text{\textbf{V}}_{WI} + \text{\textbf{R}}_{IB}^\mathsf{T} \omega_{I} \times \text{\textbf{P}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB})
+
+
+#### Attitude (2-3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AW}) | Orientation of the attitude origin w.r.t. the world/global frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{IB}) | Orientation of the attitude sensor w.r.t. the robot IMU/body frame |
+
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{AW}\text{\textbf{R}}_{WI}\text{\textbf{R}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{q}}_{AW}\otimes\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IB})
+
 
 ## Package Layout/Codebase
 
@@ -505,6 +546,10 @@ pose_cov.setZero();
 pose_cov.diagonal() << 0.0025, 0.0025, 0.0025, 0.0076, 0.0076, 0.0076;  // 5cm, 5deg
 pose_calibration.sensor_cov_ = pose_cov;
 pose1_sensor_sptr_->set_initial_calib(std::make_shared<PoseSensorData>(pose_calibration));
+
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
 ```
 
 #### The code explained
@@ -553,6 +598,14 @@ Each sensor, given that it has calibration states, has the option to initialize 
 
 The first lines instantiate a sensor state object that is set in consecutive lines. The second part of these lines generates the covariance matrix and map it to the state object. In the last line, the state object is passed to the sensor instance to set the calibration parameter.
 
+```c++
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
+```
+
+Finally, a Chi2 test can be activated per sensor to perform a measurement validation and possible rejection at the update stage. These two options set the confidence value of the check and activate it. The Chi2-rejection test is deactivated by default.
+
 ### Navigation State Propagation
 
 The routine for the propagation of the navigation states through propagation sensor measurements is generally not different from the sensor update routine. However, this routine includes the initialization of the filter and is thus shown for completeness.
@@ -583,10 +636,10 @@ void MarsWrapperPose::ImuMeasurementCallback(const sensor_msgs::ImuConstPtr& mea
   {
      mars::BufferEntryType latest_state;
      core_logic_.buffer_.get_latest_state(&latest_state);
-      
+
      mars::CoreStateType latest_core_state = static_cast<mars::CoreType*>
          (latest_state.data_.core_.get())->state_;
-      
+
      pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
           latest_state.timestamp_.get_seconds(), latest_core_state));
   }
@@ -647,7 +700,7 @@ In the final step, we convert the state information to a ROS message and publish
 
 ```c++
 void MarsWrapperPose::PoseMeasurementUpdate(
-std::shared_ptr<mars::PoseSensorClass> sensor_sptr, 
+std::shared_ptr<mars::PoseSensorClass> sensor_sptr,
 const PoseMeasurementType& pose_meas, const Time& timestamp)
 {
   // TMP feedback init pose
@@ -673,8 +726,8 @@ const PoseMeasurementType& pose_meas, const Time& timestamp)
      (latest_state.data_.core_.get())->state_;
   pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
      latest_state.timestamp_.get_seconds(), latest_core_state));
-    
-  mars::PoseSensorStateType pose_sensor_state = 
+
+  mars::PoseSensorStateType pose_sensor_state =
      sensor_sptr.get()->get_state(latest_result.data_.sensor_);
   pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
      latest_result.timestamp_.get_seconds(), pose_sensor_state));
@@ -728,7 +781,7 @@ pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
 Here we use the buffer entry from the previous step and extract the core state information, which is part of the buffer entry data field. The core state MaRS data type is then converted to a ROS message and published.
 
 ```c++
-mars::PoseSensorStateType pose_sensor_state = 
+mars::PoseSensorStateType pose_sensor_state =
    sensor_sptr.get()->get_state(latest_result.data_.sensor_);
 pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
    latest_result.timestamp_.get_seconds(), pose_sensor_state));
