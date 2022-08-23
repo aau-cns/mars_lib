@@ -41,6 +41,7 @@ set(headers
     ${include_path}/sensor_manager.h
     ${include_path}/nearest_cov.h
     ${include_path}/ekf.h
+    ${include_path}/m_perf.h
     ${include_path}/general_functions/utils.h
     ${include_path}/general_functions/progress_indicator.h
     ${include_path}/type_definitions/base_states.h
@@ -111,6 +112,7 @@ set(sources
     ${source_path}/core_state_calc_q.cpp
     ${source_path}/nearest_cov.cpp
     ${source_path}/ekf.cpp
+    ${source_path}/m_perf.cpp
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
     ${include_path}/sensors/pressure/pressure_conversion.cpp
