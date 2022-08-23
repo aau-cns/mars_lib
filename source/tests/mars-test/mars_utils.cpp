@@ -10,6 +10,7 @@
 
 #include <gmock/gmock.h>
 #include <mars/general_functions/utils.h>
+#include <mars/sensors/imu/imu_measurement_type.h>
 #include <Eigen/Dense>
 
 class mars_utils_test : public testing::Test
@@ -28,6 +29,24 @@ public:
     negative_det << 2, -1, -4, 9, -1, 3, 3, -10, -4, 3, 10, -4, 9, -10, -4, 3;
   }
 };
+
+TEST_F(mars_utils_test, IMU_TRANSFORM)
+{
+  mars::IMUMeasurementType result;
+  double dt = 1;
+
+  mars::IMUMeasurementType imu_meas_1(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Vector3d(0.0, 0.0, 9.81));
+  mars::IMUMeasurementType imu_meas_2(Eigen::Vector3d(0.5, 0.5, 0.5), Eigen::Vector3d(0.0, 0.0, 9.81));
+
+  Eigen::Vector3d transform_zero;
+  transform_zero.setZero();
+  Eigen::Quaterniond rotation_zero;
+  rotation_zero.setIdentity();
+
+  // Dummy call
+  EXPECT_NO_FATAL_FAILURE(mars::Utils::TransformImu(mars::IMUMeasurementType(), mars::IMUMeasurementType(), dt,
+                                                    transform_zero, rotation_zero, result));
+}
 
 TEST_F(mars_utils_test, QUAT_FROM_SMALL_ANGLE)
 {
