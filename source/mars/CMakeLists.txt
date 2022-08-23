@@ -77,6 +77,10 @@ set(headers
     ${include_path}/sensors/bodyvel/bodyvel_measurement_type.h
     ${include_path}/sensors/bodyvel/bodyvel_sensor_class.h
     ${include_path}/sensors/bodyvel/bodyvel_sensor_state_type.h
+    ${include_path}/sensors/attitude/attitude_conversion.h
+    ${include_path}/sensors/attitude/attitude_measurement_type.h
+    ${include_path}/sensors/attitude/attitude_sensor_class.h
+    ${include_path}/sensors/attitude/attitude_sensor_state_type.h
     ${include_path}/sensors/empty/empty_measurement_type.h
     ${include_path}/sensors/empty/empty_sensor_class.h
     ${include_path}/sensors/empty/empty_sensor_state_type.h

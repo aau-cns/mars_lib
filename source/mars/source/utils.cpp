@@ -9,6 +9,7 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/general_functions/utils.h>
+
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <cmath>
@@ -116,4 +117,11 @@ bool Utils::CheckCov(const Eigen::MatrixXd& cov_mat, const std::string& descript
 
   return result;
 }
+
+Eigen::Vector3d Utils::RPYFromRotMat(const Eigen::Matrix3d& rot_mat)
+{
+  // according to this post, mat.eulerAngles returns the correct angles
+  Eigen::Vector3d ypr = rot_mat.eulerAngles(2, 1, 0);
+  return Eigen::Vector3d(ypr(2), ypr(1), ypr(0));
 }
+}  // namespace mars

@@ -35,6 +35,7 @@ set(sources
     mars_vision_sensor.cpp
     mars_position_sensor.cpp
     mars_bodyvel_sensor.cpp
+    mars_attitude_sensor.cpp
     mars_type_erasure.cpp
     mars_core_logic.cpp
     mars_nearest_cov.cpp
