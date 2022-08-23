@@ -21,6 +21,7 @@
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/core_state_type.h>
+
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -36,12 +37,15 @@ class VisionSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  VisionSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  bool update_scale_{ true };
+
+  VisionSensorClass(std::string name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
   {
     name_ = std::move(name);
     core_states_ = core_states;
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
+    update_scale_ = update_scale;
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
@@ -83,7 +87,7 @@ public:
     }
     else
     {
-      //      calibration_type = "Auto";
+      calibration_type = "Auto";
 
       //      Eigen::Vector3d p_wp(measurement.position_);
       //      Eigen::Quaterniond q_wp(measurement.orientation_);
@@ -96,11 +100,14 @@ public:
       //      Eigen::Quaterniond q_ip = q_wi.conjugate() * q_wp;
 
       //      // Calibration, position / rotation imu-pose
-      //      sensor_state.state_.p_ip_ = p_ip;
-      //      sensor_state.state_.q_ip_ = q_ip;
+      //      sensor_state.state_.p_vw_ = p_ip;
+      //      sensor_state.state_.q_vw_ = q_ip;
+      //      sensor_state.state_.p_ic_ = p_ip;
+      //      sensor_state.state_.q_ic_ = q_ip;
+      //      sensor_state.state_.lambda_ = 1;
 
       //      // The covariance should enclose the initialization with a 3 Sigma bound
-      //      Eigen::Matrix<double, 6, 1> std;
+      //      Eigen::Matrix<double, 13, 1> std;
       //      std << 1, 1, 1, (35 * M_PI / 180), (35 * M_PI / 180), (35 * M_PI / 180);
       //      sensor_state.sensor_cov_ = std.cwiseProduct(std).asDiagonal();
       std::cout << "Vision calibration AUTO init not implemented yet" << std::endl;
@@ -178,7 +185,11 @@ public:
     const Eigen::Matrix3d Hp_rvw = -L * R_vw * Utils::Skew(P_wi + R_wi * P_ic);
     const Eigen::Matrix3d Hp_pic = L * R_vw * R_wi;
     const Eigen::Matrix3d Hp_ric = Eigen::Matrix3d::Zero();
-    const Eigen::Vector3d Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
+    Eigen::Vector3d Hp_lambda;
+    if (update_scale_)
+      Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
+    else
+      Hp_lambda = Eigen::Vector3d::Zero();
 
     // Assemble the jacobian for the position (horizontal)
     // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_ip Hp_rip];
@@ -295,6 +306,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // VISIONSENSORCLASS_H
