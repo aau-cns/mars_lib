@@ -74,6 +74,17 @@ public:
     // set sensor type
     attitude_type_ = type;
 
+    // chi2
+    switch (attitude_type_)
+    {
+      case AttitudeSensorType::RP_TYPE:
+        chi2_.set_dof(2);
+        break;
+      case AttitudeSensorType::RPY_TYPE:
+        chi2_.set_dof(3);
+        break;
+    }
+
     // Sensor specific information
     // setup_sensor_properties();
     std::cout << "Created: [" << this->name_ << "] Sensor (type: " << attitude_type_ << ")" << std::endl;
@@ -232,8 +243,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
@@ -328,8 +346,16 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
+
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
     P_updated = Utils::EnforceMatrixSymmetry(P_updated);
