@@ -1,14 +1,14 @@
 
-# 
+#
 # External dependencies
-# 
+#
 
 # find_package(THIRDPARTY REQUIRED)
 
 
-# 
+#
 # Library name and options
-# 
+#
 
 # Target name
 set(target mars)
@@ -25,7 +25,7 @@ set(template_export_file "include/${target}/${target}_api.h")
 set(export_macro         "${target_id}_API")
 
 
-# 
+#
 # Sources
 #
 
@@ -74,6 +74,9 @@ set(headers
     ${include_path}/sensors/vision/vision_measurement_type.h
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
+    ${include_path}/sensors/bodyvel/bodyvel_measurement_type.h
+    ${include_path}/sensors/bodyvel/bodyvel_sensor_class.h
+    ${include_path}/sensors/bodyvel/bodyvel_sensor_state_type.h
     ${include_path}/sensors/empty/empty_measurement_type.h
     ${include_path}/sensors/empty/empty_sensor_class.h
     ${include_path}/sensors/empty/empty_sensor_state_type.h
@@ -108,15 +111,15 @@ set(sources
 # Group source files
 set(header_group "Header Files (API)")
 set(source_group "Source Files")
-source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$" 
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$"
     ${header_group} ${headers})
-source_group_by_path(${source_path}  "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
+source_group_by_path(${source_path}  "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$"
     ${source_group} ${sources})
 
 
-# 
+#
 # Create library
-# 
+#
 
 # Build library
 add_library(${target}
@@ -162,9 +165,9 @@ generate_template_export_header(${target}
 )
 
 
-# 
+#
 # Project options
-# 
+#
 
 set_target_properties(${target}
     PROPERTIES
@@ -175,9 +178,9 @@ set_target_properties(${target}
 )
 
 
-# 
+#
 # Include directories
-# 
+#
 
 target_include_directories(${target}
     PRIVATE
@@ -196,9 +199,9 @@ target_include_directories(${target}
 )
 
 
-# 
+#
 # Libraries
-# 
+#
 
 target_link_libraries(${target}
     PRIVATE
@@ -214,9 +217,9 @@ target_link_libraries(${target}
 )
 
 
-# 
+#
 # Compile definitions
-# 
+#
 
 target_compile_definitions(${target}
     PRIVATE
@@ -229,9 +232,9 @@ target_compile_definitions(${target}
 )
 
 
-# 
+#
 # Compile options
-# 
+#
 
 target_compile_options(${target}
     PRIVATE
@@ -243,9 +246,9 @@ target_compile_options(${target}
 )
 
 
-# 
+#
 # Linker options
-# 
+#
 
 target_link_libraries(${target}
     PRIVATE
@@ -268,9 +271,9 @@ perform_health_checks(
 )
 
 
-# 
+#
 # Deployment
-# 
+#
 
 # Library
 install(TARGETS ${target}
