@@ -31,7 +31,6 @@ public:
 
   Pose(const Eigen::Vector3d& position, const Eigen::Matrix3d& rotation) : p_(position), q_(rotation)
   {
-
   }
 
   void set_meas_noise(Eigen::Vector3d n_p, Eigen::Vector3d n_r)
@@ -66,9 +65,8 @@ public:
   ///
   Pose get_inverse_pose() const
   {
-    return Pose(-q_.toRotationMatrix().transpose()*p_, q_.conjugate());
+    return Pose(-q_.toRotationMatrix().transpose() * p_, q_.conjugate());
   }
-
 };
 }  // namespace mars
 
