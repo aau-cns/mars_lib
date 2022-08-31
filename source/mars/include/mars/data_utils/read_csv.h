@@ -47,7 +47,18 @@ public:
 
     const int rows = get_rows();
 
-    CsvDataType row_data(rows);
+    // Check for header and set line counter to first valued row
+    int first_value_row = check_for_header();
+
+    if (first_value_row > 0)
+    {
+      std::cout << "Info: Detected CSV header, skipping first line" << std::endl;
+      // Set line counter to first valued row
+      set_line_couter_of_file(first_value_row);
+    }
+
+    // Initialize CSV data type
+    CsvDataType row_data(size_t(rows - first_value_row));
 
     std::string line;
     int line_counter = 0;
@@ -101,6 +112,37 @@ private:
     file_.clear();  // reset line counter
     file_.seekg(0, std::ios::beg);
     return count;
+  }
+
+  int check_for_header()
+  {
+    int count = 0;
+    std::string line;
+    while (std::getline(file_, line))
+    {
+      if (std::isdigit(line[line.find_first_not_of(" \t")]))
+      {
+        break;
+      }
+
+      ++count;
+    }
+
+    file_.clear();  // reset line counter
+    file_.seekg(0, std::ios::beg);
+    return count;
+  }
+
+  void set_line_couter_of_file(const int& line_number)
+  {
+    file_.clear();  // reset line counter
+    file_.seekg(0, std::ios::beg);
+
+    std::string line;
+    for (int k = 0; k < line_number; k++)
+    {
+      std::getline(file_, line);
+    }
   }
 
   int get_rows()
