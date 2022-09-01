@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Martin Scheiber, Christian Brommer,
+// Copyright (C) 2022 Martin Scheiber, Christian Brommer,
 // Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
@@ -137,6 +137,7 @@ public:
 
     std::cout << "Info: [" << name_ << "] Calibration(rounded):" << std::endl;
     std::cout << "\tPosition[m]: [" << sensor_state.state_.p_ip_.transpose() << " ]" << std::endl;
+    std::cout << "\tBias[m]:     " << sensor_state.state_.bias_p_ << std::endl;
 
     return result;
   }
@@ -166,11 +167,14 @@ public:
 
     // Calculate the measurement jacobian H
     typedef Eigen::Matrix<double, 1, 3> Matrix13d_t;
+    typedef Eigen::Matrix<double, 1, 1> Matrix1d_t;
+    const Matrix1d_t I_1{ 1 };
     const Matrix13d_t I_el3{ 0, 0, 1 };
     const Matrix13d_t Z_el3{ 0, 0, 0 };
     const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
     const Eigen::Vector3d P_ip = prior_sensor_state.p_ip_;
+    const Eigen::Vector3d bias_p = Eigen::Vector3d(0, 0, prior_sensor_state.bias_p_);
 
     // Position
     const Matrix13d_t Hp_pwi = I_el3;
@@ -179,20 +183,23 @@ public:
     const Matrix13d_t Hp_rwi = I_el3 * Hp_rwi3;
     const Matrix13d_t Hp_bw = Z_el3;
     const Matrix13d_t Hp_ba = Z_el3;
+
+    // with bias
     const Eigen::Matrix3d Hp_pip3 = R_wi;
     const Matrix13d_t Hp_pip = I_el3 * Hp_pip3;
+    const Matrix1d_t Hp_biasp = I_1;
 
-    // Assemble the jacobian for the position (horizontal)
-    // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_pip ];
-    Eigen::MatrixXd H(1, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pip.cols());
+    // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_pip Hp_biasp];
+    Eigen::MatrixXd H(1, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pip.cols() +
+                             Hp_biasp.cols());
 
-    H << Hp_pwi, Hp_vwi, Hp_rwi, Hp_bw, Hp_ba, Hp_pip;
+    H << Hp_pwi, Hp_vwi, Hp_rwi, Hp_bw, Hp_ba, Hp_pip, Hp_biasp;
 
     // Calculate the residual z = z~ - (estimate)
     // Position
-    const Eigen::Vector3d h_est3 = P_wi + R_wi * P_ip;
-    const Eigen::Matrix<double, 1, 1> h_est = I_el3 * h_est3;
-    const Eigen::Matrix<double, 1, 1> res = h_meas - h_est;
+    const Eigen::Vector3d h_est3 = P_wi + R_wi * P_ip + bias_p;
+    const Matrix1d_t h_est = I_el3 * h_est3;
+    const Matrix1d_t res = h_meas - h_est;
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
@@ -249,9 +256,10 @@ public:
                                           const Eigen::MatrixXd& correction)
   {
     // state + error state correction
-
     PressureSensorStateType corrected_sensor_state;
     corrected_sensor_state.p_ip_ = prior_sensor_state.p_ip_ + correction.block(0, 0, 3, 1);
+    corrected_sensor_state.bias_p_ = prior_sensor_state.bias_p_ + correction(3);
+
     return corrected_sensor_state;
   }
 };

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Martin Scheiber, Christian Brommer,
+// Copyright (C) 2022 Martin Scheiber, Christian Brommer,
 // Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
@@ -25,18 +25,21 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   Eigen::Vector3d p_ip_;
-  // technically also bias and scale here, which are now assumed zero/one
+  double bias_p_;
+  // technically also scale here, which is currently assumed one
 
-  PressureSensorStateType() : BaseStates(3)  // cov size
+  PressureSensorStateType() : BaseStates(4)  // cov size
   {
     p_ip_.setZero();
+    bias_p_ = 0.0;
   }
 
   static std::string get_csv_state_header_string()
   {
     std::stringstream os;
     os << "t, ";
-    os << "p_ip_x, p_ip_y, p_ip_z";
+    os << "p_ip_x, p_ip_y, p_ip_z, ";
+    os << "bias_p";
 
     return os.str();
   }
@@ -48,6 +51,7 @@ public:
     os << timestamp;
 
     os << ", " << p_ip_(0) << ", " << p_ip_(1) << ", " << p_ip_(2);
+    os << ", " << bias_p_;
 
     return os.str();
   }
