@@ -36,9 +36,9 @@ public:
   {
   }
 
-  PressureMeasurementType(const double& pressure, const double& temperature, const Pressure::Type& /*type*/)
+  PressureMeasurementType(const double& pressure, const double& temperature, const Pressure::Type& type)
   {
-    pressure_.type_ = Pressure::Type::GAS;
+    pressure_.type_ = type;
     pressure_.data_ = pressure;
     pressure_.temperature_K_ = temperature;
   }
