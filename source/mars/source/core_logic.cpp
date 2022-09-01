@@ -237,7 +237,7 @@ BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbs
   const Time previous_time = prior_state_entry->timestamp_;
   const Time dt = (current_time - previous_time).abs();
 
-  if (dt == 0)
+  if (dt == 0 && verbose_)
   {
     std::cout << "Warning: dt for propagation is zero" << std::endl;
   }
