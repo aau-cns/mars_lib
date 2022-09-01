@@ -49,6 +49,7 @@ set(headers
     ${include_path}/type_definitions/buffer_data_type.h
     ${include_path}/type_definitions/core_state_type.h
     ${include_path}/type_definitions/core_type.h
+    ${include_path}/type_definitions/mars_types.h
     ${include_path}/sensors/sensor_abs_class.h
     ${include_path}/sensors/update_sensor_abs_class.h
     ${include_path}/sensors/sensor_interface.h
