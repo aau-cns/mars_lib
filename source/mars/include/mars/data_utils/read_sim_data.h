@@ -30,28 +30,30 @@ public:
   ReadSimData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
               const std::string& file_path)
   {
-    constexpr int expected_columns = 23;
-    CsvDataType sim_data;
-    ReadCsv(&sim_data, file_path, expected_columns);
+    std::vector<std::string> expect_entry = {
+      "t",   "a_x", "a_y", "a_z", "w_x", "w_y",  "w_z",  "p_x",  "p_y",  "p_z",  "v_x",  "v_y",
+      "v_z", "q_w", "q_x", "q_y", "q_z", "ba_x", "ba_y", "ba_z", "bw_x", "bw_y", "bw_z",
+    };
 
-    unsigned long number_of_datapoints = sim_data.size();
+    CsvDataType csv_data;
+    ReadCsv(&csv_data, file_path);
+
+    unsigned long number_of_datapoints = csv_data["t"].size();
+    data_out->resize(number_of_datapoints);
 
     CoreStateType core_ground_truth;
 
-    data_out->resize(number_of_datapoints);
-
-    unsigned long current_index = 0;
-    for (auto k : sim_data)
+    for (size_t k = 0; k < number_of_datapoints; k++)
     {
-      Time time = k[0];
+      Time time = csv_data["t"][k];
 
-      Eigen::Vector3d w_imu(std::vector<double>(k.begin() + 1, k.begin() + 3 + 1).data());
-      Eigen::Vector3d a_imu(std::vector<double>(k.begin() + 4, k.begin() + 6 + 1).data());
-      Eigen::Vector3d p(std::vector<double>(k.begin() + 7, k.begin() + 9 + 1).data());
-      Eigen::Vector3d v(std::vector<double>(k.begin() + 10, k.begin() + 12 + 1).data());
-      Eigen::Quaterniond q(std::vector<double>(k.begin() + 13, k.begin() + 16 + 1).data());
-      Eigen::Vector3d bGyr(std::vector<double>(k.begin() + 17, k.begin() + 19 + 1).data());
-      Eigen::Vector3d bAcc(std::vector<double>(k.begin() + 20, k.begin() + 22 + 1).data());
+      Eigen::Vector3d w_imu(csv_data["w_x"][k], csv_data["w_y"][k], csv_data["w_z"][k]);
+      Eigen::Vector3d a_imu(csv_data["a_x"][k], csv_data["a_y"][k], csv_data["a_z"][k]);
+      Eigen::Vector3d p(csv_data["p_x"][k], csv_data["p_y"][k], csv_data["p_z"][k]);
+      Eigen::Vector3d v(csv_data["v_x"][k], csv_data["v_y"][k], csv_data["v_z"][k]);
+      Eigen::Quaterniond q(csv_data["q_w"][k], csv_data["q_x"][k], csv_data["q_y"][k], csv_data["q_z"][k]);
+      Eigen::Vector3d bGyr(csv_data["bw_x"][k], csv_data["bw_y"][k], csv_data["bw_z"][k]);
+      Eigen::Vector3d bAcc(csv_data["ba_x"][k], csv_data["ba_y"][k], csv_data["ba_z"][k]);
 
       CoreStateType core_ground_truth;
       core_ground_truth.p_wi_ = p;
@@ -65,9 +67,7 @@ public:
       data.set_sensor_data(std::make_shared<IMUMeasurementType>(a_imu, w_imu));
 
       BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
-      data_out->at(current_index) = current_entry;
-
-      ++current_index;
+      data_out->at(k) = current_entry;
     }
   }
 };
