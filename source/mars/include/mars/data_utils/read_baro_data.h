@@ -36,7 +36,7 @@ public:
     unsigned long number_of_datapoints = csv_data["t"].size();
     data_out->resize(number_of_datapoints);
 
-    double temperature = 288;  // Sea level standard temperature in [k]
+    double temperature = 293.15;  // Sea level standard temperature in [k]
 
     for (size_t k = 0; k < number_of_datapoints; k++)
     {
