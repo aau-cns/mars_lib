@@ -10,12 +10,15 @@
 
 #ifndef IMU_MEASUREMENT_TYPE_H
 #define IMU_MEASUREMENT_TYPE_H
+
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 #include <utility>
 
 namespace mars
 {
-class IMUMeasurementType
+class IMUMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

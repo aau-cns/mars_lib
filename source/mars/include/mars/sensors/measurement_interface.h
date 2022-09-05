@@ -26,7 +26,7 @@ public:
   /// \param sensor_data contains the current sensor measurement
   /// \return Measurement noise matrix
   ///
-  virtual Eigen::MatrixXd get_meas_noise(const std::shared_ptr<void>& sensor_data) = 0;
+  virtual Eigen::MatrixXd get_meas_noise() = 0;
 
 protected:
 };

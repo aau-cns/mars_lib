@@ -11,12 +11,14 @@
 #ifndef GPSMEASUREMENTTYPE_H
 #define GPSMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <mars/sensors/gps/gps_conversion.h>
 #include <utility>
 
 namespace mars
 {
-class GpsMeasurementType
+class GpsMeasurementType : public BaseMeas
 {
 public:
   GpsCoordinates coordinates_;
@@ -26,5 +28,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // GPS_MEASUREMENTTYPE_H

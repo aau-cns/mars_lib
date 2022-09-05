@@ -11,12 +11,14 @@
 #ifndef MAG_MEASUREMENT_TYPE_H
 #define MAG_MEASUREMENT_TYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 #include <utility>
 
 namespace mars
 {
-class MagMeasurementType
+class MagMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

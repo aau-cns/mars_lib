@@ -218,7 +218,16 @@ public:
     AttitudeSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
     // Generate measurement noise matrix
-    const Eigen::Matrix<double, 2, 2> R_meas = this->R_.asDiagonal();
+    Eigen::Matrix<double, 2, 2> R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      R_meas_dyn = meas->get_meas_noise();
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 2, 2> R_meas = R_meas_dyn;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -323,7 +332,17 @@ public:
     AttitudeSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
     // Generate measurement noise matrix
-    const Eigen::Matrix<double, 3, 3> R_meas = this->R_.asDiagonal();
+    Eigen::Matrix<double, 3, 3> R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      R_meas_dyn = meas->get_meas_noise();
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 3, 3> R_meas = R_meas_dyn;
+
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
     const int size_of_full_error_state = size_of_core_state + size_of_sensor_state;

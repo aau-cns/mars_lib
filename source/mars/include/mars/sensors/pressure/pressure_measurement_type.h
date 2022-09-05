@@ -13,6 +13,8 @@
 #ifndef PRESSUREMEASUREMENTTYPE_H
 #define PRESSUREMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <mars/sensors/pressure/pressure_conversion.h>
 
 #include <Eigen/Dense>
@@ -20,7 +22,7 @@
 
 namespace mars
 {
-class PressureMeasurementType
+class PressureMeasurementType : public BaseMeas
 {
 public:
   Pressure pressure_;

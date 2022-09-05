@@ -37,6 +37,7 @@ public:
   std::shared_ptr<void> initial_calib_{ nullptr };
   bool initial_calib_provided_{ false };  ///< True if an initial calibration was provided
   bool const_ref_to_nav_{ true };         ///< True if the reference should not be estimated
+  bool use_dynamic_meas_noise_{ false };  ///< True if dynamic noise values from measurements should be used
 
   Chi2 chi2_;
 

@@ -13,6 +13,8 @@
 #ifndef ATTITUDE_MEASUREMENT_TYPE_H
 #define ATTITUDE_MEASUREMENT_TYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <mars/general_functions/utils.h>
 #include <mars/sensors/attitude/attitude_conversion.h>
 
@@ -22,7 +24,7 @@
 
 namespace mars
 {
-class AttitudeMeasurementType
+class AttitudeMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
