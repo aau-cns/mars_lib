@@ -11,9 +11,9 @@
 #ifndef GPSVELMEASUREMENTTYPE_H
 #define GPSVELMEASUREMENTTYPE_H
 
+#include <mars/sensors/gps/gps_conversion.h>
 #include <mars/sensors/measurement_base_class.h>
 
-#include <mars/sensors/gps/gps_conversion.h>
 #include <Eigen/Dense>
 
 namespace mars

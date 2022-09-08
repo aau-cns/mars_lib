@@ -132,7 +132,8 @@ public:
     // Extract sensor state
     BodyvelSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
     Eigen::Matrix<double, 3, 3> R_meas_dyn;
     if (meas->has_meas_noise && use_dynamic_meas_noise_)
     {

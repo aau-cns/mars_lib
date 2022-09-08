@@ -13,10 +13,9 @@
 #ifndef ATTITUDE_MEASUREMENT_TYPE_H
 #define ATTITUDE_MEASUREMENT_TYPE_H
 
-#include <mars/sensors/measurement_base_class.h>
-
 #include <mars/general_functions/utils.h>
 #include <mars/sensors/attitude/attitude_conversion.h>
+#include <mars/sensors/measurement_base_class.h>
 
 #include <Eigen/Dense>
 #include <iostream>

@@ -160,7 +160,8 @@ public:
     // Extract sensor state
     VisionSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
     Eigen::Matrix<double, 6, 6> R_meas_dyn;
     if (meas->has_meas_noise && use_dynamic_meas_noise_)
     {

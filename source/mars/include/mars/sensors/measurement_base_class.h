@@ -12,7 +12,6 @@
 #define MEASUREMENT_BASE_CLASS_H
 
 #include <mars/sensors/measurement_interface.h>
-
 #include <Eigen/Dense>
 
 namespace mars
