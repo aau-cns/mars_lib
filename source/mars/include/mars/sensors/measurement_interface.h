@@ -27,6 +27,7 @@ public:
   /// \return Measurement noise matrix
   ///
   virtual bool get_meas_noise(Eigen::MatrixXd* meas_noise) = 0;
+  virtual void set_meas_noise(const Eigen::MatrixXd& meas_noise) = 0;
 
 protected:
 };

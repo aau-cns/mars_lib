@@ -35,6 +35,11 @@ public:
       return false;
     }
   }
+
+  void set_meas_noise(const Eigen::MatrixXd& meas_noise)
+  {
+    this->meas_noise_ = meas_noise;
+  }
 };
 }  // namespace mars
 
