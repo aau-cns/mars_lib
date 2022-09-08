@@ -19,18 +19,20 @@ namespace mars
 class BaseMeas : public MeasInterface
 {
 public:
-  Eigen::MatrixXd meas_noise;
+  Eigen::MatrixXd meas_noise_;
   bool has_meas_noise{ false };
 
-  Eigen::MatrixXd get_meas_noise()
+  bool get_meas_noise(Eigen::MatrixXd* meas_noise)
   {
     if (this->has_meas_noise)
     {
-      return this->meas_noise;
+      *meas_noise = this->meas_noise_;
+      return true;
     }
     else
     {
-      return Eigen::MatrixXd();
+      meas_noise = nullptr;
+      return false;
     }
   }
 };

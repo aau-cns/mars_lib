@@ -26,7 +26,7 @@ public:
   /// \param sensor_data contains the current sensor measurement
   /// \return Measurement noise matrix
   ///
-  virtual Eigen::MatrixXd get_meas_noise() = 0;
+  virtual bool get_meas_noise(Eigen::MatrixXd* meas_noise) = 0;
 
 protected:
 };

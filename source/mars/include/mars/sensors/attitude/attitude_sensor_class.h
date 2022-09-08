@@ -219,10 +219,10 @@ public:
 
     // Generate measurement noise matrix and check
     // if noisevalues from the measurement object should be used
-    Eigen::Matrix<double, 2, 2> R_meas_dyn;
+    Eigen::MatrixXd R_meas_dyn;
     if (meas->has_meas_noise && use_dynamic_meas_noise_)
     {
-      R_meas_dyn = meas->get_meas_noise();
+      meas->get_meas_noise(&R_meas_dyn);
     }
     else
     {
@@ -333,10 +333,10 @@ public:
     AttitudeSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
     // Generate measurement noise matrix
-    Eigen::Matrix<double, 3, 3> R_meas_dyn;
+    Eigen::MatrixXd R_meas_dyn;
     if (meas->has_meas_noise && use_dynamic_meas_noise_)
     {
-      R_meas_dyn = meas->get_meas_noise();
+      meas->get_meas_noise(&R_meas_dyn);
     }
     else
     {

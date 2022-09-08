@@ -185,7 +185,7 @@ public:
     Eigen::MatrixXd R_meas_dyn;
     if (meas->has_meas_noise && use_dynamic_meas_noise_)
     {
-      R_meas_dyn = meas->get_meas_noise();
+      meas->get_meas_noise(&R_meas_dyn);
     }
     else
     {
