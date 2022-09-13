@@ -15,6 +15,7 @@
 
 #include <mars/general_functions/utils.h>
 #include <mars/sensors/attitude/attitude_conversion.h>
+#include <mars/sensors/measurement_base_class.h>
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -22,7 +23,7 @@
 
 namespace mars
 {
-class AttitudeMeasurementType
+class AttitudeMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

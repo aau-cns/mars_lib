@@ -11,11 +11,13 @@
 #ifndef EMPTYMEASUREMENTTYPE_H
 #define EMPTYMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <utility>
 
 namespace mars
 {
-class EmptyMeasurementType
+class EmptyMeasurementType : public BaseMeas
 {
 public:
   double value_;

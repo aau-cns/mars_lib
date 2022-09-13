@@ -12,11 +12,13 @@
 #define GPSVELMEASUREMENTTYPE_H
 
 #include <mars/sensors/gps/gps_conversion.h>
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 
 namespace mars
 {
-class GpsVelMeasurementType
+class GpsVelMeasurementType : public BaseMeas
 {
 public:
   GpsCoordinates coordinates_;

@@ -11,12 +11,14 @@
 #ifndef POSITIONMEASUREMENTTYPE_H
 #define POSITIONMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 #include <utility>
 
 namespace mars
 {
-class PositionMeasurementType
+class PositionMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

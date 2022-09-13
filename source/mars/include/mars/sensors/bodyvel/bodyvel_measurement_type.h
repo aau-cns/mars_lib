@@ -13,12 +13,14 @@
 #ifndef BODYVELMEASUREMENTTYPE_H
 #define BODYVELMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 #include <utility>
 
 namespace mars
 {
-class BodyvelMeasurementType
+class BodyvelMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
