@@ -50,7 +50,7 @@ public:
   ///
   void set_cov(const Eigen::MatrixXd& cov)
   {
-    // TODO allow this with changing sensor state sizes
+    // TODO(chb) allow this with changing sensor state sizes
     sensor_cov_ = cov.block(CoreStateType::size_error_, CoreStateType::size_error_, state_.cov_size_, state_.cov_size_);
     core_sensor_cross_cov_ = cov.block(0, CoreStateType::size_error_, CoreStateType::size_error_, state_.cov_size_);
   }
@@ -62,7 +62,7 @@ public:
   ///
   Eigen::MatrixXd get_full_cov() const
   {
-    // TODO allow this with changing sensor state sizes
+    // TODO(chb) allow this with changing sensor state sizes
     Eigen::MatrixXd full_cov;
     full_cov.resize(full_cov_size_, full_cov_size_);
 
@@ -83,6 +83,6 @@ public:
     return full_cov;
   }
 };
-}
+}  // namespace mars
 
 #endif  // BASESENSORDATA_H

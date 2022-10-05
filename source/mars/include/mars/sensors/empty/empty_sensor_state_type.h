@@ -52,5 +52,5 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 #endif  // EMPTYSENSORSTATETYPE_H

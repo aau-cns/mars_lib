@@ -1,14 +1,14 @@
 
-# 
+#
 # External dependencies
-# 
+#
 
 # find_package(THIRDPARTY REQUIRED)
 
 
-# 
+#
 # Library name and options
-# 
+#
 
 # Target name
 set(target mars)
@@ -25,7 +25,7 @@ set(template_export_file "include/${target}/${target}_api.h")
 set(export_macro         "${target_id}_API")
 
 
-# 
+#
 # Sources
 #
 
@@ -41,6 +41,7 @@ set(headers
     ${include_path}/sensor_manager.h
     ${include_path}/nearest_cov.h
     ${include_path}/ekf.h
+    ${include_path}/m_perf.h
     ${include_path}/general_functions/utils.h
     ${include_path}/general_functions/progress_indicator.h
     ${include_path}/type_definitions/base_states.h
@@ -48,10 +49,13 @@ set(headers
     ${include_path}/type_definitions/buffer_data_type.h
     ${include_path}/type_definitions/core_state_type.h
     ${include_path}/type_definitions/core_type.h
+    ${include_path}/type_definitions/mars_types.h
     ${include_path}/sensors/sensor_abs_class.h
     ${include_path}/sensors/update_sensor_abs_class.h
     ${include_path}/sensors/sensor_interface.h
     ${include_path}/sensors/bind_sensor_data.h
+    ${include_path}/sensors/measurement_base_class.h
+    ${include_path}/sensors/measurement_interface.h
     ${include_path}/sensors/imu/imu_sensor_class.h
     ${include_path}/sensors/imu/imu_measurement_type.h
     ${include_path}/sensors/position/position_measurement_type.h
@@ -71,9 +75,21 @@ set(headers
     ${include_path}/sensors/mag/mag_sensor_class.h
     ${include_path}/sensors/mag/mag_sensor_state_type.h
     ${include_path}/sensors/mag/mag_utils.h
+    ${include_path}/sensors/pressure/pressure_conversion.h
+    ${include_path}/sensors/pressure/pressure_measurement_type.h
+    ${include_path}/sensors/pressure/pressure_sensor_class.h
+    ${include_path}/sensors/pressure/pressure_sensor_state_type.h
+    ${include_path}/sensors/pressure/pressure_utils.h
     ${include_path}/sensors/vision/vision_measurement_type.h
     ${include_path}/sensors/vision/vision_sensor_class.h
     ${include_path}/sensors/vision/vision_sensor_state_type.h
+    ${include_path}/sensors/bodyvel/bodyvel_measurement_type.h
+    ${include_path}/sensors/bodyvel/bodyvel_sensor_class.h
+    ${include_path}/sensors/bodyvel/bodyvel_sensor_state_type.h
+    ${include_path}/sensors/attitude/attitude_conversion.h
+    ${include_path}/sensors/attitude/attitude_measurement_type.h
+    ${include_path}/sensors/attitude/attitude_sensor_class.h
+    ${include_path}/sensors/attitude/attitude_sensor_state_type.h
     ${include_path}/sensors/empty/empty_measurement_type.h
     ${include_path}/sensors/empty/empty_sensor_class.h
     ${include_path}/sensors/empty/empty_sensor_state_type.h
@@ -82,9 +98,11 @@ set(headers
     ${include_path}/data_utils/read_sim_data.h
     ${include_path}/data_utils/read_imu_data.h
     ${include_path}/data_utils/read_pose_data.h
+    ${include_path}/data_utils/read_vision_data.h
     ${include_path}/data_utils/read_position_data.h
     ${include_path}/data_utils/read_gps_w_vel_data.h
     ${include_path}/data_utils/read_mag_data.h
+    ${include_path}/data_utils/read_baro_data.h
     ${include_path}/data_utils/filesystem.h
 )
 
@@ -97,8 +115,11 @@ set(sources
     ${source_path}/core_state_calc_q.cpp
     ${source_path}/nearest_cov.cpp
     ${source_path}/ekf.cpp
+    ${source_path}/m_perf.cpp
     ${source_path}/utils.cpp
     ${include_path}/sensors/gps/gps_conversion.cpp
+    ${include_path}/sensors/pressure/pressure_conversion.cpp
+    ${include_path}/sensors/pressure/pressure_utils.cpp
     ${include_path}/sensors/mag/mag_utils.cpp
     ${include_path}/general_functions/progress_indicator.cpp
     ${include_path}/data_utils/filesystem.cpp
@@ -108,15 +129,15 @@ set(sources
 # Group source files
 set(header_group "Header Files (API)")
 set(source_group "Source Files")
-source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$" 
+source_group_by_path(${include_path} "\\\\.h$|\\\\.hpp$"
     ${header_group} ${headers})
-source_group_by_path(${source_path}  "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$" 
+source_group_by_path(${source_path}  "\\\\.cpp$|\\\\.c$|\\\\.h$|\\\\.hpp$"
     ${source_group} ${sources})
 
 
-# 
+#
 # Create library
-# 
+#
 
 # Build library
 add_library(${target}
@@ -162,9 +183,9 @@ generate_template_export_header(${target}
 )
 
 
-# 
+#
 # Project options
-# 
+#
 
 set_target_properties(${target}
     PROPERTIES
@@ -175,9 +196,9 @@ set_target_properties(${target}
 )
 
 
-# 
+#
 # Include directories
-# 
+#
 
 target_include_directories(${target}
     PRIVATE
@@ -196,9 +217,9 @@ target_include_directories(${target}
 )
 
 
-# 
+#
 # Libraries
-# 
+#
 
 target_link_libraries(${target}
     PRIVATE
@@ -214,9 +235,9 @@ target_link_libraries(${target}
 )
 
 
-# 
+#
 # Compile definitions
-# 
+#
 
 target_compile_definitions(${target}
     PRIVATE
@@ -229,9 +250,9 @@ target_compile_definitions(${target}
 )
 
 
-# 
+#
 # Compile options
-# 
+#
 
 target_compile_options(${target}
     PRIVATE
@@ -243,9 +264,9 @@ target_compile_options(${target}
 )
 
 
-# 
+#
 # Linker options
-# 
+#
 
 target_link_libraries(${target}
     PRIVATE
@@ -268,9 +289,9 @@ perform_health_checks(
 )
 
 
-# 
+#
 # Deployment
-# 
+#
 
 # Library
 install(TARGETS ${target}

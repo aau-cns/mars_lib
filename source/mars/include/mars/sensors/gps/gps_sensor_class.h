@@ -23,6 +23,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -37,25 +38,30 @@ public:
   bool using_external_gps_reference_;
   bool gps_reference_is_set_;
 
-  GpsSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  GpsSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     using_external_gps_reference_ = false;
     gps_reference_is_set_ = false;
 
+    // chi2
+    chi2_.set_dof(3);
+
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  GpsSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~GpsSensorClass() = default;
+
+  GpsSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     GpsSensorData data = *static_cast<GpsSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     GpsSensorData data = *static_cast<GpsSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -118,6 +124,7 @@ public:
     }
     else
     {
+      calibration_type = "Auto";
       std::cout << "GPS calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }
@@ -152,8 +159,18 @@ public:
     // Extract sensor state
     GpsSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
-    const Eigen::Matrix<double, 3, 3> R_meas = this->R_.asDiagonal();
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
+    Eigen::MatrixXd R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      meas->get_meas_noise(&R_meas_dyn);
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 3, 3> R_meas = R_meas_dyn;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -195,8 +212,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
@@ -250,6 +274,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSSENSORCLASS_H

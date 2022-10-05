@@ -17,6 +17,7 @@
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/buffer_entry_type.h>
 #include <Eigen/Dense>
+#include <utility>
 #include <vector>
 
 namespace mars
@@ -27,40 +28,31 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-               const std::string& file_path, const double& time_offset)
+               const std::string& file_path, const double& time_offset = 0)
   {
-    constexpr int expected_columns = 8;
-    CsvDataType sim_data;
-    ReadCsv(&sim_data, file_path, expected_columns);
+    std::vector<std::string> expect_entry = { "t", "p_x", "p_y", "p_z", "q_w", "q_x", "q_y", "q_z" };
 
-    unsigned long number_of_datapoints = sim_data.size();
+    CsvDataType csv_data;
+    ReadCsv(&csv_data, file_path);
 
+    unsigned long number_of_datapoints = csv_data["t"].size();
     data_out->resize(number_of_datapoints);
 
-    unsigned long current_index = 0;
-    for (auto k : sim_data)
+    for (size_t k = 0; k < number_of_datapoints; k++)
     {
-      Time time = k[0] + time_offset;
+      Time time = csv_data["t"][k] + time_offset;
 
-      Eigen::Vector3d position(k[1], k[2], k[3]);
-      Eigen::Quaterniond orientation(k[4], k[5], k[6], k[7]);
+      Eigen::Vector3d position(csv_data["p_x"][k], csv_data["p_y"][k], csv_data["p_z"][k]);
+      Eigen::Quaterniond orientation(csv_data["q_w"][k], csv_data["q_x"][k], csv_data["q_y"][k], csv_data["q_z"][k]);
 
       BufferDataType data;
       data.set_sensor_data(std::make_shared<PoseMeasurementType>(position, orientation));
 
       BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
-      data_out->at(current_index) = current_entry;
-
-      ++current_index;
+      data_out->at(k) = current_entry;
     }
   }
-
-  ReadPoseData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-               const std::string& file_path)
-  {
-    ReadPoseData(data_out, sensor, file_path, 0);
-  }
 };
-}
+}  // namespace mars
 
 #endif  // READ_POSE_DATA_H

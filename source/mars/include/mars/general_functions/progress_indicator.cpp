@@ -28,4 +28,4 @@ void ProgressIndicator::next_step()
     current_progress_ += step_width_;
   }
 }
-}
+}  // namespace mars

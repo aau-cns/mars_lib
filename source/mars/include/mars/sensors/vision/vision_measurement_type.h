@@ -11,12 +11,14 @@
 #ifndef VISIONMEASUREMENTTYPE_H
 #define VISIONMEASUREMENTTYPE_H
 
+#include <mars/sensors/measurement_base_class.h>
+
 #include <Eigen/Dense>
 #include <utility>
 
 namespace mars
 {
-class VisionMeasurementType
+class VisionMeasurementType : public BaseMeas
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -31,5 +33,5 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 #endif  // VISIONMEASUREMENTTYPE_H

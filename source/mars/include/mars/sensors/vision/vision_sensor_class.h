@@ -21,6 +21,7 @@
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/core_state_type.h>
+
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -36,23 +37,31 @@ class VisionSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  VisionSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  bool update_scale_{ true };
+
+  VisionSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states, bool update_scale = true)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
+    update_scale_ = update_scale;
+
+    // chi2
+    chi2_.set_dof(6);
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  VisionSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~VisionSensorClass() = default;
+
+  VisionSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     VisionSensorData data = *static_cast<VisionSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     VisionSensorData data = *static_cast<VisionSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -64,10 +73,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
+    // VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
 
     VisionSensorData sensor_state;
     std::string calibration_type;
@@ -83,7 +92,7 @@ public:
     }
     else
     {
-      //      calibration_type = "Auto";
+      calibration_type = "Auto";
 
       //      Eigen::Vector3d p_wp(measurement.position_);
       //      Eigen::Quaterniond q_wp(measurement.orientation_);
@@ -96,11 +105,14 @@ public:
       //      Eigen::Quaterniond q_ip = q_wi.conjugate() * q_wp;
 
       //      // Calibration, position / rotation imu-pose
-      //      sensor_state.state_.p_ip_ = p_ip;
-      //      sensor_state.state_.q_ip_ = q_ip;
+      //      sensor_state.state_.p_vw_ = p_ip;
+      //      sensor_state.state_.q_vw_ = q_ip;
+      //      sensor_state.state_.p_ic_ = p_ip;
+      //      sensor_state.state_.q_ic_ = q_ip;
+      //      sensor_state.state_.lambda_ = 1;
 
       //      // The covariance should enclose the initialization with a 3 Sigma bound
-      //      Eigen::Matrix<double, 6, 1> std;
+      //      Eigen::Matrix<double, 13, 1> std;
       //      std << 1, 1, 1, (35 * M_PI / 180), (35 * M_PI / 180), (35 * M_PI / 180);
       //      sensor_state.sensor_cov_ = std.cwiseProduct(std).asDiagonal();
       std::cout << "Vision calibration AUTO init not implemented yet" << std::endl;
@@ -133,7 +145,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
@@ -148,8 +160,18 @@ public:
     // Extract sensor state
     VisionSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
-    const Eigen::Matrix<double, 6, 6> R_meas = this->R_.asDiagonal();
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
+    Eigen::MatrixXd R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      meas->get_meas_noise(&R_meas_dyn);
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 6, 6> R_meas = R_meas_dyn;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -178,8 +200,15 @@ public:
     const Eigen::Matrix3d Hp_rvw = -L * R_vw * Utils::Skew(P_wi + R_wi * P_ic);
     const Eigen::Matrix3d Hp_pic = L * R_vw * R_wi;
     const Eigen::Matrix3d Hp_ric = Eigen::Matrix3d::Zero();
-    const Eigen::Vector3d Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
-
+    Eigen::Vector3d Hp_lambda;
+    if (update_scale_)
+    {
+      Hp_lambda = P_vw + R_vw * (P_wi + R_wi * P_ic);
+    }
+    else
+    {
+      Hp_lambda = Eigen::Vector3d::Zero();
+    }
     // Assemble the jacobian for the position (horizontal)
     // H_p = [Hp_pwi Hp_vwi Hp_rwi Hp_bw Hp_ba Hp_ip Hp_rip];
     Eigen::MatrixXd H_p(3, Hp_pwi.cols() + Hp_vwi.cols() + Hp_rwi.cols() + Hp_bw.cols() + Hp_ba.cols() + Hp_pvw.cols() +
@@ -227,8 +256,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
@@ -261,7 +297,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -295,6 +331,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // VISIONSENSORCLASS_H

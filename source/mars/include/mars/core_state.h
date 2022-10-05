@@ -109,7 +109,7 @@ public:
 
   ///
   /// \brief PropagateState Performs the state propagation
-  /// \param prior_core_state
+  /// \param prior_state Prior state for the propagation
   /// \param measurement System input
   /// \param dt propagation timespan
   /// \return Propagated core state
@@ -125,7 +125,7 @@ public:
   ///
   /// \brief PredictProcessCovariance Predicted core state covariance and generate the state transition matrix
   /// \param prior_core_state
-  /// \param measurement System input
+  /// \param system_input Measurement for the system input
   /// \param dt propagation timespan
   /// \return Core state covariance and state transition matrix
   ///
@@ -154,7 +154,6 @@ public:
   /// \param a_est  the estimate of the acceleration (a_m - b_a)
   /// \param w_est  the estimate of the angular velocity (w_m - b_w)
   /// \param dt     time step
-  /// \param error_state_size
   ///
   /// \note Eq.(3.35) in S. Weiss, "Vision Based Navigation for Micro Helicopters (PhD Thesis - Weiss 2012)," Thesis.
   ///
@@ -168,6 +167,6 @@ public:
                                                const Eigen::Vector3d& w_m, const Eigen::Vector3d& n_w,
                                                const Eigen::Vector3d& b_w, const Eigen::Vector3d& n_bw);
 };
-}
+}  // namespace mars
 
 #endif  // CORESTATE_H

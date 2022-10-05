@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -18,6 +18,6 @@ class SensorManager
 public:
   SensorManager() = default;
 };
-}
+}  // namespace mars
 
 #endif  // SENSORMANAGER_HPP

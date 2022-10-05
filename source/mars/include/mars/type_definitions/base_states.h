@@ -28,6 +28,6 @@ public:
   {
   }
 };
-}
+}  // namespace mars
 
 #endif  // BASESTATES_H

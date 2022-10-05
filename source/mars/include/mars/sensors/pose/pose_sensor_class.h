@@ -36,25 +36,28 @@ class PoseSensorClass : public UpdateSensorAbsClass
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  PoseSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  PoseSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
+
+    // chi2
+    chi2_.set_dof(6);
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
   virtual ~PoseSensorClass() = default;
 
-  PoseSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  PoseSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     PoseSensorData data = *static_cast<PoseSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     PoseSensorData data = *static_cast<PoseSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -66,10 +69,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    PoseMeasurementType measurement = *static_cast<PoseMeasurementType*>(sensor_data.get());
+    // PoseMeasurementType measurement = *static_cast<PoseMeasurementType*>(sensor_data.get());
 
     PoseSensorData sensor_state;
     std::string calibration_type;
@@ -85,27 +88,7 @@ public:
     }
     else
     {
-      //      calibration_type = "Auto";
-
-      //      Eigen::Vector3d p_wp(measurement.position_);
-      //      Eigen::Quaterniond q_wp(measurement.orientation_);
-
-      //      Eigen::Vector3d p_wi(latest_core_data->state_.p_wi_);
-      //      Eigen::Quaterniond q_wi(latest_core_data->state_.q_wi_);
-      //      Eigen::Matrix3d r_wi(q_wi.toRotationMatrix());
-
-      //      Eigen::Vector3d p_ip = r_wi.transpose() * (p_wp - p_wi);
-      //      Eigen::Quaterniond q_ip = q_wi.conjugate() * q_wp;
-
-      //      // Calibration, position / rotation imu-pose
-      //      sensor_state.state_.p_ip_ = p_ip;
-      //      sensor_state.state_.q_ip_ = q_ip;
-
-      //      // The covariance should enclose the initialization with a 3 Sigma bound
-      //      Eigen::Matrix<double, 6, 1> std;
-      //      std << 1, 1, 1, (35 * M_PI / 180), (35 * M_PI / 180), (35 * M_PI / 180);
-      //      sensor_state.sensor_cov_ = std.cwiseProduct(std).asDiagonal();
-
+      calibration_type = "Auto";
       std::cout << "Pose calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }
@@ -146,8 +129,18 @@ public:
     // Extract sensor state
     PoseSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
-    const Eigen::Matrix<double, 6, 6> R_meas = this->R_.asDiagonal();
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
+    Eigen::MatrixXd R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      meas->get_meas_noise(&R_meas_dyn);
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 6, 6> R_meas = R_meas_dyn;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -211,8 +204,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
@@ -245,7 +245,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -265,6 +265,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // POSESENSORCLASS_H

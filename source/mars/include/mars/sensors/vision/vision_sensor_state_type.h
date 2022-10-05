@@ -70,5 +70,5 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 #endif  // VISIONSENSORSTATETYPE_H

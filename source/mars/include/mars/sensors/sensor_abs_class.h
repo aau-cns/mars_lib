@@ -24,5 +24,5 @@ public:
   bool is_initialized_{ false };  ///< True if the sensor has been initialized
   int type_{ -1 };  ///< Future feature, holds information such as position or orientation for highlevel decissions
 };
-}
+}  // namespace mars
 #endif  // SENSORABSCLASS_H

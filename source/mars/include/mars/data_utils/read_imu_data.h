@@ -27,40 +27,31 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   ReadImuData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-              const std::string& file_path, const double& time_offset)
+              const std::string& file_path, const double& time_offset = 0)
   {
-    constexpr int expected_columns = 7;
-    CsvDataType imu_data;
-    ReadCsv(&imu_data, file_path, expected_columns);
+    std::vector<std::string> expect_entry = {"t", "a_x", "a_y", "a_z","w_x", "w_y", "w_z"};
 
-    unsigned long number_of_datapoints = imu_data.size();
+    CsvDataType csv_data;
+    ReadCsv(&csv_data, file_path);
 
-    CoreStateType core_ground_truth;
+    unsigned long number_of_datapoints = csv_data["t"].size();
     data_out->resize(number_of_datapoints);
 
-    unsigned long current_index = 0;
-    for (auto k : imu_data)
+    for (size_t k = 0; k < number_of_datapoints; k++)
     {
-      Time time = k[0] + time_offset;
-      Eigen::Vector3d linear_acceleration(k[1], k[2], k[3]);
-      Eigen::Vector3d angular_velocity(k[4], k[5], k[6]);
+      Time time = csv_data["t"][k] + time_offset;
+
+      Eigen::Vector3d linear_acceleration(csv_data["a_x"][k], csv_data["a_y"][k], csv_data["a_z"][k]);
+      Eigen::Vector3d angular_velocity(csv_data["w_x"][k], csv_data["w_y"][k], csv_data["w_z"][k]);
 
       BufferDataType data;
       data.set_sensor_data(std::make_shared<IMUMeasurementType>(linear_acceleration, angular_velocity));
 
       BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
-      data_out->at(current_index) = current_entry;
-
-      ++current_index;
+      data_out->at(k) = current_entry;
     }
   }
-
-  ReadImuData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
-              const std::string& file_path)
-  {
-    ReadImuData(data_out, sensor, file_path, 0);
-  }
 };
-}
+}  // namespace mars
 
 #endif  // READ_IMU_DATA_H

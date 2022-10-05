@@ -24,7 +24,7 @@ class SensorInterface
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  // virtual ~SensorInterface();
+  virtual ~SensorInterface() = default;
 
   ///
   /// \brief set_initial_calib Sets the calibration of an individual sensor
@@ -48,6 +48,7 @@ public:
   /// \param prior_core_state_data
   /// \param latest_sensor_data
   /// \param prior_cov Prior covariance containing core, sensor and sensor cross covariance
+  /// \param new_state_data Updated state data
   /// \return True if the update was successful, false if the update was rejected
   ///
   virtual bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement,
@@ -60,10 +61,10 @@ public:
   /// \param sensor_data
   /// \return Covariance matrix contained in the sensor data struct
   ///
-  virtual Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data) = 0;
+  virtual Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data) = 0;
 
 protected:
   // SensorInterface(); // construction for child classes only
 };
-}
+}  // namespace mars
 #endif  // SENSORINTERFACE_H

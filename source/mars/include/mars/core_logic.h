@@ -14,7 +14,6 @@
 #include <mars/buffer.h>
 #include <mars/core_state.h>
 #include <mars/sensor_manager.h>
-#include <mars/sensors/pose/pose_sensor_class.h>
 #include <mars/type_definitions/core_state_type.h>
 #include <Eigen/Dense>
 #include <iostream>
@@ -43,10 +42,10 @@ public:
 
   ///
   /// \brief CoreLogic
-  /// \param core_states
+  /// \param core_states Core state type used for updates and propagation
   ///
-  CoreLogic() = default;
   CoreLogic(std::shared_ptr<CoreState> core_states);
+  CoreLogic() = default;
 
   ///
   /// \brief Initialize the filter with information available in the prior init buffer
@@ -84,8 +83,8 @@ public:
   /// handle the data structure of the propagation sensor.
   ///
   BufferEntryType PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
-                                              std::shared_ptr<BufferDataType> data_measurement,
-                                              std::shared_ptr<BufferEntryType> prior_state_entry);
+                                              const std::shared_ptr<BufferDataType>& data_measurement,
+                                              const std::shared_ptr<BufferEntryType>& prior_state_entry);
   ///
   /// \brief ReworkBufferStartingAtIndex Reprocesses the buffer after an out of order update,
   /// starting at given 'idx'
@@ -106,6 +105,10 @@ public:
   ///
   /// \brief ProcessMeasurement Processes the sensor input
   ///
+  /// \param sensor Pointer to the sensor instance associated with the sensor data
+  /// \param timestamp Timestamp associated with the sensor data
+  /// \param data Sensor data to process
+  ///
   /// This is the primary function that controls the sensor updates.
   /// The function determines filter operations based on the sensor
   /// type (propagation or regular sensor).
@@ -118,8 +121,10 @@ public:
   /// measurement was out of order; the buffer is reprocessed
   /// starting at the index of the out of order measurement.
   ///
+  /// \return True if the processing of the measurement was successful
+  ///
   bool ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp, const BufferDataType& data);
 };
-}
+}  // namespace mars
 
 #endif  // CORELOGIC_H

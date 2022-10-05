@@ -62,5 +62,5 @@ public:
     return os.str();
   }
 };
-}
+}  // namespace mars
 #endif  // GPSVELSENSORSTATETYPE_H

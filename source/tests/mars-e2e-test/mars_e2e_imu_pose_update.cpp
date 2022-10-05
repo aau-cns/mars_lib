@@ -14,6 +14,7 @@
 #include <mars/data_utils/read_pose_data.h>
 #include <mars/data_utils/read_sim_data.h>
 #include <mars/sensors/imu/imu_sensor_class.h>
+#include <mars/sensors/pose/pose_sensor_class.h>
 #include <mars/type_definitions/buffer_entry_type.h>
 #include <yaml-cpp/yaml.h>
 #include <Eigen/Dense>

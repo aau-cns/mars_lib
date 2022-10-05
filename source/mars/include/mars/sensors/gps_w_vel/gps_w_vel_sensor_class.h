@@ -24,6 +24,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace mars
 {
@@ -43,21 +44,21 @@ public:
   bool using_external_gps_reference_;
   bool gps_reference_is_set_;
 
-  GpsVelSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  GpsVelSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
     name_ = name;
-    core_states_ = core_states;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
     using_external_gps_reference_ = false;
     gps_reference_is_set_ = false;
 
     chi2_.set_dof(6);
-    chi2_.set_chi_value(0.05);
-    chi2_.ActivateTest(true);
 
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
+
+  virtual ~GpsVelSensorClass() = default;
 
   void set_v_rot_axis(const Eigen::Vector3d& vec)
   {
@@ -74,13 +75,13 @@ public:
     vel_rot_thr_ = fabs(value);
   }
 
-  GpsVelSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  GpsVelSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     GpsVelSensorData data = *static_cast<GpsVelSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -143,6 +144,7 @@ public:
     }
     else
     {
+      calibration_type = "Auto";
       std::cout << "GPS calibration AUTO init not implemented yet" << std::endl;
       exit(EXIT_FAILURE);
     }
@@ -163,7 +165,7 @@ public:
     return result;
   }
 
-  bool CalcUpdate(const Time& timestamp, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
+  bool CalcUpdate(const Time& /*timestamp*/, std::shared_ptr<void> measurement, const CoreStateType& prior_core_state,
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
@@ -178,8 +180,18 @@ public:
     // Extract sensor state
     GpsVelSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
-    Eigen::MatrixXd R_meas(R_.asDiagonal());
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
+    Eigen::MatrixXd R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      meas->get_meas_noise(&R_meas_dyn);
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    Eigen::MatrixXd R_meas(R_meas_dyn);
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -195,6 +207,7 @@ public:
 
     const Eigen::Vector3d P_wi = prior_core_state.p_wi_;
     const Eigen::Vector3d V_wi = prior_core_state.v_wi_;
+    const Eigen::Vector3d b_w = prior_core_state.b_w_;
     const Eigen::Matrix3d R_wi = prior_core_state.q_wi_.toRotationMatrix();
     const Eigen::Vector3d P_ig = prior_sensor_state.p_ig_;
 
@@ -226,19 +239,20 @@ public:
     if (use_vel_rot_ && (v_meas.norm() > vel_rot_thr_))
     {
       // Velocity
-      const Eigen::Vector3d mu = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+      const Eigen::Vector3d mu = V_wi + R_wi * Utils::Skew(omega_i - b_w) * P_ig;
       const Eigen::Vector3d d_mu = mu / mu.norm();
       const Eigen::Vector3d alpha = v_rot_axis_;
 
       const Eigen::Matrix3d Hv_pwi = O_3;
       const Eigen::Matrix3d Hv_vwi = R_wi * alpha * d_mu.transpose();
-      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(alpha) * mu.norm() -
-                                     R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+      const Eigen::Matrix3d Hv_rwi =
+          -R_wi * Utils::Skew(alpha) * mu.norm() -
+          R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(Utils::Skew(omega_i - b_w) * P_ig);
 
       const Eigen::Matrix3d Hv_bw = O_3;
       const Eigen::Matrix3d Hv_ba = O_3;
 
-      const Eigen::Matrix3d Hv_pig = R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pig = R_wi * alpha * d_mu.transpose() * R_wi * Utils::Skew(omega_i - b_w);
       const Eigen::Matrix3d Hv_pgw_w = O_3;
       const Eigen::Matrix3d Hv_rgw_w = O_3;
 
@@ -249,16 +263,16 @@ public:
     {
       const Eigen::Matrix3d Hv_pwi = O_3;
       const Eigen::Matrix3d Hv_vwi = I_3;
-      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i) * P_ig);
+      const Eigen::Matrix3d Hv_rwi = -R_wi * Utils::Skew(Utils::Skew(omega_i - b_w) * P_ig);
       const Eigen::Matrix3d Hv_bw = O_3;
       const Eigen::Matrix3d Hv_ba = O_3;
 
-      const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i);
+      const Eigen::Matrix3d Hv_pig = R_wi * Utils::Skew(omega_i - b_w);
       const Eigen::Matrix3d Hv_pgw_w = O_3;
       const Eigen::Matrix3d Hv_rgw_w = O_3;
 
       H_v << Hv_pwi, Hv_vwi, Hv_rwi, Hv_bw, Hv_ba, Hv_pig, Hv_pgw_w, Hv_rgw_w;
-      v_est = V_wi + R_wi * Utils::Skew(omega_i) * P_ig;
+      v_est = V_wi + R_wi * Utils::Skew(omega_i - b_w) * P_ig;
     }
 
     // Combine all jacobians (vertical)
@@ -279,10 +293,11 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection(chi2_);
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
-    if (!chi2_.passed_)
+    // Check Chi2 test results
+    if (!chi2_.passed_ && chi2_.do_test_)
     {
       chi2_.PrintReport(name_);
       return false;
@@ -341,6 +356,6 @@ public:
     return corrected_sensor_state;
   }
 };
-}
+}  // namespace mars
 
 #endif  // GPSVELSENSORCLASS_H

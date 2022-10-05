@@ -43,11 +43,12 @@ $ qtcreator .    # Run QT-Creator and press 'Configure Project'
 
 ### Dependencies
 
-MaRS has three dependencies which are automatically downloaded and linked against:
+MaRS has four dependencies which are automatically downloaded and linked against:
 
 - Eigen
 - yaml-cpp
 - G-Test
+- Boost
 
 Thus, no dependencies need to be installed by hand.
 
@@ -268,7 +269,7 @@ Measurement equation:
 
 <!--$$
 \begin{align}
-z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\ 
+z_{p} =& \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \\
 z_{q} =& \text{\textbf{q}}_{WI} \otimes \text{\textbf{q}}_{IP}
 \end{align}
 $$-->
@@ -378,7 +379,78 @@ Measurement equation:
 z = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}^\mathsf{T} \left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \right)
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}^\mathsf{T}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+
+#### Body Velocity (3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IB}) | Translation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{IB}) | Orientation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{IB}^\mathsf{T} \text{\textbf{R}}_{WI}^\mathsf{T} \text{\textbf{V}}_{WI} + \text{\textbf{R}}_{IB}^\mathsf{T} \omega_{I} \times \text{\textbf{P}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB})
+
+
+#### Attitude (2-3 DoF)
+
+Symbols:
+
+
+| Symbol                   | Definition                                                   |
+| ------------------------ | ------------------------------------------------------------ |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AW}) | Orientation of the attitude origin w.r.t. the world/global frame |
+| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{IB}) | Orientation of the attitude sensor w.r.t. the robot IMU/body frame |
+
+
+Measurement equation:
+
+<!--$$
+z = \text{\textbf{R}}_{AW}\text{\textbf{R}}_{WI}\text{\textbf{R}}_{IB}
+$$-->
+
+![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{q}}_{AW}\otimes\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IB})
+
+
+## CSV file formats for sensor data
+
+Individual symbols are described in section [Symbols](#Symbols) and sensor states are described in section [Provided Sensor Modules (Plug and Play)](#provided-sensor-modules-plug-and-play)
+
+### Input Files
+
+| Sensor                                                       | CSV File Column Entries                   |
+| ------------------------------------------------------------ | ----------------------------------------- |
+| IMU                                                          | [time, a_x, a_y, a_z, w_x, w_y, w_z]      |
+| [Position Sensor](#position-3-dof)                           | [time, p_x, p_y, p_z]                     |
+| [Pose Sensor](#pose-6-dof)                                   | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
+| [Vision Sensor](#loosely-coupled-vision-6-dof)               | [time, p_x, p_y, p_z, q_w, q_x, q_y, q_z] |
+| [GNSS](#gnss-with-local-coordinate-transforms-3-dof)         | [time, lat, long, alt]                    |
+| [GNSS with Velocity](#gnss-with-rotational-constraints-from-velocity) | [time, lat, long, alt, v_x, v_y, v_z]     |
+| [Magnetometer](#magnetometer-3-dof)                          | [time, m_x, m_y, m_z]                     |
+| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, pressure]                          |
+
+### Output Files
+
+| Sensor                                                       | CSV File Column Entries                                      |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Core States](#state-definition)                             | [time, w_x, w_y, w_z, a_x, a_y, a_z, p_wi_x, p_wi_y, p_wi_z, v_x, v_y, v_z,<br />q_wi_w, q_wi_x, q_wi_y, q_wi_z, bw_x, bw_y, bw_z, ba_x, ba_y, ba_z] |
+| [Position Sensor](#position-3-dof)                           | [time, p_ip_x, p_ip_y, p_ip_z]                               |
+| [Pose Sensor](#pose-6-dof)                                   | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
+| [Vision Sensor](#loosely-coupled-vision-6-dof)               | [time, p_ip_x, p_ip_y, p_ip_z, q_ip_w, q_ip_x, q_ip_y, q_ip_z] |
+| [GNSS](#gnss-with-local-coordinate-transforms-3-dof)         | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
+| [GNSS with Velocity](#gnss-with-rotational-constraints-from-velocity) | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
+| [Magnetometer](#magnetometer-3-dof)                          | [time, mag_w_x, mag_w_y, mag_w_z, q_im_w, q_im_x, q_im_y, q_im_z] |
+| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, p_ip_x, p_ip_y, p_ip_z]                               |
+
 
 ## Package Layout/Codebase
 
@@ -505,6 +577,10 @@ pose_cov.setZero();
 pose_cov.diagonal() << 0.0025, 0.0025, 0.0025, 0.0076, 0.0076, 0.0076;  // 5cm, 5deg
 pose_calibration.sensor_cov_ = pose_cov;
 pose1_sensor_sptr_->set_initial_calib(std::make_shared<PoseSensorData>(pose_calibration));
+
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
 ```
 
 #### The code explained
@@ -553,6 +629,14 @@ Each sensor, given that it has calibration states, has the option to initialize 
 
 The first lines instantiate a sensor state object that is set in consecutive lines. The second part of these lines generates the covariance matrix and map it to the state object. In the last line, the state object is passed to the sensor instance to set the calibration parameter.
 
+```c++
+// Sensor Chi2`
+pose1_sensor_sptr_->chi2_.set_chi_value(0.05);
+pose1_sensor_sptr_->chi2_.ActivateTest(true);
+```
+
+Finally, a Chi2 test can be activated per sensor to perform a measurement validation and possible rejection at the update stage. These two options set the confidence value of the check and activate it. The Chi2-rejection test is deactivated by default.
+
 ### Navigation State Propagation
 
 The routine for the propagation of the navigation states through propagation sensor measurements is generally not different from the sensor update routine. However, this routine includes the initialization of the filter and is thus shown for completeness.
@@ -583,10 +667,10 @@ void MarsWrapperPose::ImuMeasurementCallback(const sensor_msgs::ImuConstPtr& mea
   {
      mars::BufferEntryType latest_state;
      core_logic_.buffer_.get_latest_state(&latest_state);
-      
+
      mars::CoreStateType latest_core_state = static_cast<mars::CoreType*>
          (latest_state.data_.core_.get())->state_;
-      
+
      pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
           latest_state.timestamp_.get_seconds(), latest_core_state));
   }
@@ -647,7 +731,7 @@ In the final step, we convert the state information to a ROS message and publish
 
 ```c++
 void MarsWrapperPose::PoseMeasurementUpdate(
-std::shared_ptr<mars::PoseSensorClass> sensor_sptr, 
+std::shared_ptr<mars::PoseSensorClass> sensor_sptr,
 const PoseMeasurementType& pose_meas, const Time& timestamp)
 {
   // TMP feedback init pose
@@ -673,8 +757,8 @@ const PoseMeasurementType& pose_meas, const Time& timestamp)
      (latest_state.data_.core_.get())->state_;
   pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
      latest_state.timestamp_.get_seconds(), latest_core_state));
-    
-  mars::PoseSensorStateType pose_sensor_state = 
+
+  mars::PoseSensorStateType pose_sensor_state =
      sensor_sptr.get()->get_state(latest_result.data_.sensor_);
   pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
      latest_result.timestamp_.get_seconds(), pose_sensor_state));
@@ -728,7 +812,7 @@ pub_ext_core_state_.publish(MarsMsgConv::ExtCoreStateToMsg(
 Here we use the buffer entry from the previous step and extract the core state information, which is part of the buffer entry data field. The core state MaRS data type is then converted to a ROS message and published.
 
 ```c++
-mars::PoseSensorStateType pose_sensor_state = 
+mars::PoseSensorStateType pose_sensor_state =
    sensor_sptr.get()->get_state(latest_result.data_.sensor_);
 pub_pose1_state_.publish(MarsMsgConv::PoseStateToPoseMsg(
    latest_result.timestamp_.get_seconds(), pose_sensor_state));

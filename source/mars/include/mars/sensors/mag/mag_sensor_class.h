@@ -34,30 +34,38 @@ using MagSensorData = BindSensorData<MagSensorStateType>;
 class MagSensorClass : public UpdateSensorAbsClass
 {
 private:
-  bool normalize_{ false };
+  bool normalize_{ false };                                     ///< The measurement will be normalized if True
+  bool apply_intrinsic_{ false };                               ///< The intrinsic calibration will be aplied if True
+  Eigen::Vector3d mag_intr_offset_{ Eigen::Vector3d::Zero() };  ///< Intrinsic cal offset
+  Eigen::Matrix3d mag_intr_transform_{ Eigen::Matrix3d::Identity() };  ///< Intrinsic cal distortion
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  MagSensorClass(std::string name, std::shared_ptr<CoreState> core_states)
+  MagSensorClass(const std::string& name, std::shared_ptr<CoreState> core_states)
   {
-    name_ = std::move(name);
-    core_states_ = core_states;
+    name_ = name;
+    core_states_ = std::move(core_states);
     const_ref_to_nav_ = false;
     initial_calib_provided_ = false;
+
+    // chi2
+    chi2_.set_dof(3);
 
     // Sensor specific information
     // setup_sensor_properties();
     std::cout << "Created: [" << this->name_ << "] Sensor" << std::endl;
   }
 
-  MagSensorStateType get_state(std::shared_ptr<void> sensor_data)
+  virtual ~MagSensorClass() = default;
+
+  MagSensorStateType get_state(const std::shared_ptr<void>& sensor_data)
   {
     MagSensorData data = *static_cast<MagSensorData*>(sensor_data.get());
     return data.state_;
   }
 
-  Eigen::MatrixXd get_covariance(std::shared_ptr<void> sensor_data)
+  Eigen::MatrixXd get_covariance(const std::shared_ptr<void>& sensor_data)
   {
     MagSensorData data = *static_cast<MagSensorData*>(sensor_data.get());
     return data.get_full_cov();
@@ -69,10 +77,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
+    // MagMeasurementType measurement = *static_cast<MagMeasurementType*>(sensor_data.get());
 
     MagSensorData sensor_state;
     std::string calibration_type;
@@ -88,33 +96,16 @@ public:
     }
     else
     {
-      //      calibration_type = "Auto";
-
-      //      Eigen::Vector3d p_wp(measurement.position_);
-      //      Eigen::Quaterniond q_wp(measurement.orientation_);
-
-      //      Eigen::Vector3d p_wi(latest_core_data->state_.p_wi_);
-      //      Eigen::Quaterniond q_wi(latest_core_data->state_.q_wi_);
-      //      Eigen::Matrix3d r_wi(q_wi.toRotationMatrix());
-
-      //      Eigen::Vector3d p_ip = r_wi.transpose() * (p_wp - p_wi);
-      //      Eigen::Quaterniond q_ip = q_wi.conjugate() * q_wp;
-
-      //      // Calibration, position / rotation imu-pose
-      //      sensor_state.state_.p_ip_ = p_ip;
-      //      sensor_state.state_.q_ip_ = q_ip;
-
-      //      // The covariance should enclose the initialization with a 3 Sigma bound
-      //      Eigen::Matrix<double, 6, 1> std;
-      //      std << 1, 1, 1, (35 * M_PI / 180), (35 * M_PI / 180), (35 * M_PI / 180);
-      //      sensor_state.sensor_cov_ = std.cwiseProduct(std).asDiagonal();
+      calibration_type = "Auto";
+      std::cout << "Magnetometer calibration AUTO init not implemented yet" << std::endl;
+      exit(EXIT_FAILURE);
     }
 
     // Bypass core state for the returned object
     BufferDataType result(std::make_shared<CoreType>(*latest_core_data.get()),
                           std::make_shared<MagSensorData>(sensor_state));
 
-    // TODO
+    // TODO (chb)
     // sensor_data.ref_to_nav = 0; //obj.calc_ref_to_nav(measurement, latest_core_state);
 
     is_initialized_ = true;
@@ -143,22 +134,35 @@ public:
     MagSensorData* prior_sensor_data = static_cast<MagSensorData*>(latest_sensor_data.get());
 
     // Decompose sensor measurement
-    Eigen::Vector3d mag_meas;
+    Eigen::Vector3d mag_meas(meas->mag_vector_);
 
+    // Correct measurement with intrinsic calibration
+    if (apply_intrinsic_)
+    {
+      mag_meas = mag_intr_transform_ * (mag_meas - mag_intr_offset_);
+    }
+
+    // Perform normalization
     if (normalize_)
     {
-      mag_meas = meas->mag_vector_ / meas->mag_vector_.norm();
-    }
-    else
-    {
-      mag_meas = meas->mag_vector_;
+      mag_meas = mag_meas / mag_meas.norm();
     }
 
     // Extract sensor state
     MagSensorStateType prior_sensor_state(prior_sensor_data->state_);
 
-    // Generate measurement noise matrix
-    const Eigen::Matrix<double, 3, 3> R_meas = this->R_.asDiagonal();
+    // Generate measurement noise matrix and check
+    // if noisevalues from the measurement object should be used
+    Eigen::MatrixXd R_meas_dyn;
+    if (meas->has_meas_noise && use_dynamic_meas_noise_)
+    {
+      meas->get_meas_noise(&R_meas_dyn);
+    }
+    else
+    {
+      R_meas_dyn = this->R_.asDiagonal();
+    }
+    const Eigen::Matrix<double, 3, 3> R_meas = R_meas_dyn;
 
     const int size_of_core_state = CoreStateType::size_error_;
     const int size_of_sensor_state = prior_sensor_state.cov_size_;
@@ -194,8 +198,15 @@ public:
 
     // Perform EKF calculations
     mars::Ekf ekf(H, R_meas, res, P);
-    const Eigen::MatrixXd correction = ekf.CalculateCorrection();
+    const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
+
+    // Perform Chi2 test
+    if (!chi2_.passed_ && chi2_.do_test_)
+    {
+      chi2_.PrintReport(name_);
+      return false;
+    }
 
     Eigen::MatrixXd P_updated = ekf.CalculateCovUpdate();
     assert(P_updated.size() == size_of_full_error_state * size_of_full_error_state);
@@ -228,7 +239,7 @@ public:
     }
     else
     {
-      // TODO also estimate ref to nav
+      // TODO(chb) also estimate ref to nav
     }
 
     *new_state_data = state_entry;
@@ -248,11 +259,26 @@ public:
     return corrected_sensor_state;
   }
 
-  void set_normalize(const bool& normalize)
+  void set_normalize(const bool& value)
   {
-    normalize_ = normalize;
+    normalize_ = value;
+  }
+
+  void set_apply_intrinsic(const bool& value)
+  {
+    apply_intrinsic_ = value;
+  }
+
+  void set_intr_offset(const Eigen::Vector3d& v_offset)
+  {
+    mag_intr_offset_ = v_offset;
+  }
+
+  void set_intr_transform(const Eigen::Matrix3d& m_transform)
+  {
+    mag_intr_transform_ = m_transform;
   }
 };
-}
+}  // namespace mars
 
 #endif  // MAG_SENSOR_CLASS_H

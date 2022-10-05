@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -12,25 +12,14 @@
 
 namespace mars
 {
-double MagnetometerInit::get_yaw()
+void MagnetometerInit::AddElement(const Eigen::Vector3d& mag_vector, const Eigen::Vector3d& imu_linear_acc_vector)
 {
-  return yaw_;
+  rot_init_vec_.push_back(MagImuData(mag_vector, imu_linear_acc_vector));
 }
 
-void MagnetometerInit::AddElement(const Eigen::Vector3d& mag_vector)
+int MagnetometerInit::get_size() const
 {
-  m_vec_.push_back(mag_vector);
-}
-
-void MagnetometerInit::AddElement(const double& x, const double& y, const double& z)
-{
-  const Eigen::Vector3d m(x, y, z);
-  m_vec_.push_back(m);
-}
-
-int MagnetometerInit::get_size()
-{
-  return int(m_vec_.size());
+  return static_cast<int>(rot_init_vec_.size());
 }
 
 void MagnetometerInit::set_done()
@@ -38,7 +27,7 @@ void MagnetometerInit::set_done()
   once_ = true;
 }
 
-bool MagnetometerInit::IsDone()
+bool MagnetometerInit::IsDone() const
 {
   return once_;
 }
@@ -46,38 +35,56 @@ bool MagnetometerInit::IsDone()
 void MagnetometerInit::Reset()
 {
   once_ = false;
-  m_vec_.clear();
+  rot_init_vec_.clear();
 }
 
-void MagnetometerInit::get_vec_mean(Eigen::Vector3d& mean_res)
+Eigen::Vector3d MagnetometerInit::mag_var_ang_to_vec(const double& dec, const double& inc, const double& r)
 {
-  double x(0), y(0), z(0);
-  const unsigned long v_size = m_vec_.size();
+  const double dec_rad = dec * (M_PI / 180);
+  const double inc_rad = inc * (M_PI / 180);
+  const double dec_gnss = dec_rad + (M_PI / 2);
 
-  for (unsigned long i = 0; i < v_size; i++)
+  const double rcos = r * cos(inc_rad);
+  const double x = rcos * cos(dec_gnss);
+  const double y = rcos * sin(dec_gnss);
+  const double z = r * sin(inc_rad);
+
+  return { x, y, z };
+}
+
+MagnetometerInit::MagImuData MagnetometerInit::get_vec_mean() const
+{
+  Eigen::Vector3d mag_vec_sum(0, 0, 0);
+  Eigen::Vector3d imu_vec_sum(0, 0, 0);
+  for (const auto& k : rot_init_vec_)
   {
-    x += m_vec_[i](0);
-    y += m_vec_[i](1);
-    z += m_vec_[i](2);
+    mag_vec_sum += k.mag_vec_;
+    imu_vec_sum += k.imu_vec_;
   }
-
-  mean_res = Eigen::Vector3d(x / v_size, y / v_size, z / v_size);
+  return MagImuData(mag_vec_sum / get_size(), imu_vec_sum / get_size());
 }
 
-void MagnetometerInit::get_quat(Eigen::Quaterniond& q_mag)
+Eigen::Matrix3d MagnetometerInit::get_rot() const
 {
-  Eigen::Vector3d m;
-  get_vec_mean(m);
+  MagImuData mag_imu = get_vec_mean();
 
-  // const double r = m.norm();
-  const double az = atan2(m(1), m(0));
-  // const double el = atan2(m(1), sqrt(m(0) * m(0) + m(1) * m(1)));
+  // Normalize vectors
+  Eigen::Vector3d mag = mag_imu.mag_vec_.normalized();
+  Eigen::Vector3d imu = mag_imu.imu_vec_.normalized();
 
-  yaw_ = (M_PI / 2) - az;
+  // Generate Frame base vectors
+  Eigen::Vector3d x_axis = mag.cross(imu).normalized();
+  Eigen::Vector3d y_axis = imu.cross(x_axis).normalized();
+  Eigen::Vector3d z_axis = imu;
 
-  Eigen::Matrix3d r_z;
-  r_z << cos(yaw_), -sin(yaw_), 0, sin(yaw_), cos(yaw_), 0, 0, 0, 1;
-
-  q_mag = Eigen::Quaterniond(r_z);
+  // Build rotation matrix
+  Eigen::Matrix3d R;
+  R << x_axis, y_axis, z_axis;
+  return R.transpose();
 }
+
+Eigen::Quaterniond MagnetometerInit::get_quat() const
+{
+  return Eigen::Quaterniond(get_rot());
 }
+}  // namespace mars

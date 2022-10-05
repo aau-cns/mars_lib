@@ -58,5 +58,5 @@ public:
     sensor_ = std::move(sensor);
   }
 };
-}
+}  // namespace mars
 #endif  // BUFFERDATATYPE_H

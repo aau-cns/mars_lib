@@ -9,6 +9,7 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/general_functions/utils.h>
+
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <cmath>
@@ -22,6 +23,47 @@ Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::Matri
 {
   Eigen::MatrixXd mat_out = (mat_in + mat_in.transpose()) / 2;
   return mat_out;
+}
+
+void Utils::TransformImu(const IMUMeasurementType& prev, const IMUMeasurementType& now, const double& dt,
+                         const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab, IMUMeasurementType& result)
+{
+  const Eigen::Matrix3d R_ba = q_ab.toRotationMatrix().transpose();
+  const Eigen::Vector3d w_a_now(now.angular_velocity_);
+  const Eigen::Vector3d w_a_prev(prev.angular_velocity_);
+  const Eigen::Vector3d acc_a(now.linear_acceleration_);
+
+  // Transformation of angular velocity
+  const Eigen::Vector3d w_b = R_ba * w_a_now;
+
+  // Transformation of linear acceleration
+  Eigen::Vector3d acc_b;
+
+  if (dt > 0)
+  {
+    // Account for angular acceleration
+    const Eigen::Vector3d dw_a = (w_a_now - w_a_prev) / dt;
+    acc_b = R_ba * (acc_a + (Skew(w_a_now) * Skew(w_a_now) + Skew(dw_a)) * p_ab);
+  }
+  else
+  {
+    // Since dt is zero, do not concider angular acceleration
+    acc_b = R_ba * (acc_a + (Skew(w_a_now) * Skew(w_a_now)) * p_ab);
+  }
+
+  // Map return values
+  result.angular_velocity_ = w_b;
+  result.linear_acceleration_ = acc_b;
+  return;
+}
+
+void Utils::TransformImu(const IMUMeasurementType& now, const Eigen::Vector3d& p_ab, const Eigen::Quaterniond& q_ab,
+                         IMUMeasurementType& result)
+{
+  const double dt = 0;            // Setting dt=0 ignores angular acceleration
+  const IMUMeasurementType prev;  // Empty previous IMU measurement
+
+  TransformImu(prev, now, dt, p_ab, q_ab, result);
 }
 
 Eigen::Matrix3d Utils::Skew(const Eigen::Vector3d& v)
@@ -116,4 +158,52 @@ bool Utils::CheckCov(const Eigen::MatrixXd& cov_mat, const std::string& descript
 
   return result;
 }
+
+Eigen::Vector3d Utils::RPYFromRotMat(const Eigen::Matrix3d& rot_mat)
+{
+  // according to this post, mat.eulerAngles returns the correct angles
+  Eigen::Vector3d ypr = rot_mat.eulerAngles(2, 1, 0);
+  return { ypr(2), ypr(1), ypr(0) };
 }
+
+Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond>& quats)
+{
+  // Define matrix A
+  Eigen::Matrix4d A = Eigen::Matrix4d::Zero();
+
+  // Loop through quaternions
+  for (const auto& it : quats)
+  {
+    // Assign quaternion
+    Eigen::Quaterniond q = it.normalized();
+
+    // Flip is w coefficient is negative
+    if (q.w() < 0)
+    {
+      q = Eigen::Quaterniond(-q.w(), -q.x(), -q.y(), -q.z());
+    }
+
+    // Build matrix A (A = A + q*q')
+    A = A + q.coeffs() * q.coeffs().transpose();
+  }
+
+  // Scale A
+  A = (1.0 / quats.size()) * A;
+
+  // Compute Eigenvalues and Eigenvectors
+  Eigen::EigenSolver<Eigen::Matrix4d> eigs(A);
+  Eigen::Matrix4d D = eigs.pseudoEigenvalueMatrix();
+  Eigen::Matrix4d V = eigs.pseudoEigenvectors();
+
+  // Get max eigenvalue
+  int col_index, row_index;
+  D.maxCoeff(&row_index, &col_index);
+  assert(row_index == col_index);
+
+  // Get averaged quaternion
+  Eigen::Quaterniond qavg = Eigen::Quaterniond(V.col(col_index));
+
+  return qavg;
+}
+
+}  // namespace mars

@@ -10,6 +10,7 @@
 
 #include <gmock/gmock.h>
 #include <mars/general_functions/utils.h>
+#include <mars/sensors/imu/imu_measurement_type.h>
 #include <Eigen/Dense>
 
 class mars_utils_test : public testing::Test
@@ -28,6 +29,24 @@ public:
     negative_det << 2, -1, -4, 9, -1, 3, 3, -10, -4, 3, 10, -4, 9, -10, -4, 3;
   }
 };
+
+TEST_F(mars_utils_test, IMU_TRANSFORM)
+{
+  mars::IMUMeasurementType result;
+  double dt = 1;
+
+  mars::IMUMeasurementType imu_meas_1(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Vector3d(0.0, 0.0, 9.81));
+  mars::IMUMeasurementType imu_meas_2(Eigen::Vector3d(0.5, 0.5, 0.5), Eigen::Vector3d(0.0, 0.0, 9.81));
+
+  Eigen::Vector3d transform_zero;
+  transform_zero.setZero();
+  Eigen::Quaterniond rotation_zero;
+  rotation_zero.setIdentity();
+
+  // Dummy call
+  EXPECT_NO_FATAL_FAILURE(mars::Utils::TransformImu(mars::IMUMeasurementType(), mars::IMUMeasurementType(), dt,
+                                                    transform_zero, rotation_zero, result));
+}
 
 TEST_F(mars_utils_test, QUAT_FROM_SMALL_ANGLE)
 {
@@ -91,4 +110,54 @@ TEST_F(mars_utils_test, ENFORCE_SYMMETRY)
 
   mars::Utils::EnforceMatrixSymmetry(Eigen::Matrix3d::Random());
   ASSERT_TRUE(result_symmetric.isApprox(mars::Utils::EnforceMatrixSymmetry(non_symmetric)));
+}
+
+TEST_F(mars_utils_test, AVERAGE_QUAT)
+{
+
+  // Test average of identity
+  {
+    std::vector<Eigen::Quaterniond> quats;
+    for (int i = 0; i < 100; ++i)
+    {
+      quats.emplace_back(Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0));
+    }
+    Eigen::Quaterniond result = mars::Utils::quaternionAverage(quats);
+    Eigen::Quaterniond correct_result = Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0);
+    EXPECT_TRUE(result.coeffs().isApprox(correct_result.coeffs()));
+  }
+
+  // Test average of 10 known quaternions
+  {
+    std::vector<Eigen::Quaterniond> quats;
+    quats.emplace_back(Eigen::Quaterniond(0.2496, -0.7802, -0.1212, -0.5606));
+    quats.emplace_back(Eigen::Quaterniond(0.6294, -0.5781, -0.0381, 0.5179));
+    quats.emplace_back(Eigen::Quaterniond(0.5311, -0.3866, -0.6291, 0.4155));
+    quats.emplace_back(Eigen::Quaterniond(0.4545, 0.5559,  0.3359, -0.6095));
+    quats.emplace_back(Eigen::Quaterniond(0.2320, -0.6568, -0.3290, -0.6376));
+    quats.emplace_back(Eigen::Quaterniond(0.8314, 0.5518, 0.0549, 0.0364));
+    quats.emplace_back(Eigen::Quaterniond(0.5708, 0.2599, 0.3520, -0.6948));
+    quats.emplace_back(Eigen::Quaterniond(-0.0561, 0.7147, 0.0538, -0.6951));
+    quats.emplace_back(Eigen::Quaterniond(0.2919, -0.1939, 0.7737, 0.5278));
+    quats.emplace_back(Eigen::Quaterniond(0.1059, -0.3478, -0.8196, 0.4429));
+
+    Eigen::Quaterniond result = mars::Utils::quaternionAverage(quats);
+    Eigen::Quaterniond correct_result = Eigen::Quaterniond(0.0063, -0.6814, -0.4345, 0.5890);
+    std::cout << "Averaged quat: \n" << result.coeffs() << '\n';
+    std::cout << "Expected quat: \n" << correct_result.coeffs() << std::endl;
+    EXPECT_TRUE(result.coeffs().isApprox(correct_result.coeffs(), 1e-3));
+  }
+
+  // Test failure
+  {
+    std::vector<Eigen::Quaterniond> quats;
+    for (int i = 0; i < 100; ++i)
+    {
+      quats.emplace_back(Eigen::Quaterniond::UnitRandom());
+    }
+    Eigen::Quaterniond result = mars::Utils::quaternionAverage(quats);
+    Eigen::Quaterniond correct_result = Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0);
+    EXPECT_FALSE(result.coeffs().isApprox(correct_result.coeffs()));
+  }
+
 }
