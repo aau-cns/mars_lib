@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -102,6 +102,12 @@ bool Chi2::CalculateChi2(const Eigen::MatrixXd& res, const Eigen::MatrixXd& S)
   last_res_ = res;
   last_X2_ = X2;
   return passed_;
+}
+
+void Chi2::get_result(Eigen::MatrixXd* const last_res, double* const last_X2) const
+{
+  *last_res = last_res_;
+  *last_X2 = last_X2_;
 }
 
 void Chi2::PrintReport(const std::string& name)
