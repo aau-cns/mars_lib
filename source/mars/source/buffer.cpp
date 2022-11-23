@@ -453,69 +453,82 @@ bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& inde
 
 int Buffer::RemoveOverflowEntrys()
 {
-  if (this->get_length() > this->max_buffer_size_)
+  // Only delete if buffer would overflow
+  if (this->get_length() < this->max_buffer_size_)
   {
-    int delete_idx = 0;  // 0 is the oldest index
+    return -1;
+  }
 
-    // This only keeps sensor states, not measurements or core states
-    if (this->keep_last_sensor_handle_ && (data_[delete_idx].metadata_ == BufferMetadataType::sensor_state))
+  int delete_idx = 0;  // 0 is the oldest index
+
+  for (int k = 0; k < this->get_length() - 1; k++)
+  {
+    if (data_[delete_idx].IsMeasurement())
     {
-      for (int k = 0; k < this->get_length(); k++)
+      if (CheckForLastSensorHandlePair(data_[delete_idx].sensor_))
       {
-        if (CheckForLastSensorHandle(data_[delete_idx].sensor_))
+        // Is last SensorHandle, dont delete
+        delete_idx++;
+      }
+      else
+      {
+        bool same_timestamp = data_[delete_idx].timestamp_ == data_[delete_idx + 1].timestamp_;
+        bool same_handle = data_[delete_idx].sensor_ == data_[delete_idx + 1].sensor_;
+
+        if (same_timestamp && same_handle)
         {
-          delete_idx++;
+          *data_.erase(data_.begin() + delete_idx + 1);
+          *data_.erase(data_.begin() + delete_idx);
         }
         else
         {
-          *data_.erase(data_.begin() + delete_idx);
-          return delete_idx;
+          // Error
         }
+        return delete_idx;
       }
     }
     else
     {
-      *data_.erase(data_.begin() + delete_idx);
-      return delete_idx;
+      delete_idx++;
     }
   }
 
   return -1;
-}
+}  // namespace mars
 
-bool Buffer::CheckForLastSensorHandle(const std::shared_ptr<SensorAbsClass>& sensor_handle)
+bool Buffer::CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle)
 {
-  int num_found_handle = 0;
-  int num_found_meas = 0;
+  int num_found_ms_pair = 0;
 
-  for (const auto& k : data_)
+  for (auto current_it = data_.begin(); current_it != data_.end() - 1; ++current_it)
   {
-    if (k.sensor_ == sensor_handle)
+    auto next_it = current_it + 1;
+
+    if (current_it->sensor_ == sensor_handle && current_it->IsMeasurement() && next_it->IsState())
     {
-      if (k.metadata_ == BufferMetadataType::measurement)
+      // Additional check
+      if (next_it->sensor_ != sensor_handle)
       {
-        num_found_meas++;
-
-        if (num_found_meas > 1)
-        {
-          return true;
-        }
+        // Error
       }
-      else
-      {
-        if (k.metadata_ == BufferMetadataType::sensor_state)
-        {
-          num_found_handle++;
 
-          if (num_found_handle > 1 || num_found_meas > 0)
-          {
-            return false;
-          }
-        }
-      }
+      num_found_ms_pair++;
+    }
+
+    if (num_found_ms_pair > 2)
+    {
+      return false;
     }
   }
 
-  return true;
+  if (num_found_ms_pair == 0)
+  {
+    // Cover the case that no entrie existed
+    return false;
+  }
+  else
+  {
+    return true;
+  }
 }
 }  // namespace mars
