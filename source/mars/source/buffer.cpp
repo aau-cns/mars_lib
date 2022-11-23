@@ -51,14 +51,14 @@ int Buffer::get_length() const
   return static_cast<int>(data_.size());
 }
 
-void Buffer::PrintBufferEntrys() const
+void Buffer::PrintBufferEntries() const
 {
   std::cout << "Idx \t Sensor Name \t Timestamp \t Metadata " << std::endl;
 
   // iterate forwards
   for (size_t k = 0; k < data_.size(); ++k)
   {
-    std::cout << k << " " << data_[k] << std::endl;
+    std::cout << k << "\t " << data_[k] << std::endl;
   }
 }
 

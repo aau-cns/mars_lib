@@ -82,9 +82,9 @@ public:
   int get_length() const;
 
   ///
-  /// \brief PrintBufferEntrys prints all buffer entrys in a formated way
+  /// \brief PrintBufferEntries prints all buffer entries in a formatted way
   ///
-  void PrintBufferEntrys() const;
+  void PrintBufferEntries() const;
 
   ///
   /// \brief get_latest_entry Returns the last buffer entry

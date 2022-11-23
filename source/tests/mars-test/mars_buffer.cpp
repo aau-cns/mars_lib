@@ -142,7 +142,7 @@ TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
   }
 
   std::cout << "Buffer Length: " << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   ASSERT_EQ(buffer.get_length(), max_buffer_size);
 }
@@ -182,7 +182,7 @@ TEST_F(mars_buffer_test, LATEST_ENTRY)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   mars::BufferEntryType latest_entry;
   buffer.get_latest_entry(&latest_entry);
@@ -236,7 +236,7 @@ TEST_F(mars_buffer_test, OLDEST_LATEST_STATE_RETURN)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   mars::BufferEntryType latest_state_full;
   int latest_filled_state_return = buffer.get_latest_state(&latest_state_full);
@@ -287,7 +287,7 @@ TEST_F(mars_buffer_test, RESET_BUFFER)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.get_length(), num_test_entrys);
   ASSERT_EQ(buffer.IsEmpty(), 0);
 
@@ -523,7 +523,7 @@ TEST_F(mars_buffer_test, ADD_SORTED)
   buffer.AddEntrySorted(mars::BufferEntryType(6, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.IsSorted(), 1);
   ASSERT_EQ(buffer.get_length(), 7);
 }
@@ -552,9 +552,9 @@ TEST_F(mars_buffer_test, REMOVE_STATES_STARTING_AT_IDX)
   buffer.AddEntrySorted(mars::BufferEntryType(8, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(9, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   buffer.DeleteStatesStartingAtIdx(4);
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   ASSERT_EQ(buffer.get_length(), 6);
 }
@@ -593,7 +593,7 @@ TEST_F(mars_buffer_test, MULTI_SENSOR_TYPE_SETUP)
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.IsSorted(), 1);
   ASSERT_EQ(buffer.get_length(), 14);
 
@@ -856,11 +856,9 @@ TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)
   buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.PrintBufferEntrys();
 
   // Trigger overflow removal
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-  buffer.PrintBufferEntrys();
 
   // Check that last state entry is still pose sensor 2
   mars::BufferEntryType last_state;
@@ -973,7 +971,7 @@ TEST_F(mars_buffer_test, SIZE_TEST)
   buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_3_sptr, mars::BufferMetadataType::sensor_state));
 
   ASSERT_EQ(buffer.get_length(), 3);
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   // Check that last state entry is still pose sensor 2
   mars::BufferEntryType last_state;
