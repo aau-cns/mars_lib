@@ -100,7 +100,7 @@ public:
   /// and
   /// not 'add state sorted' which increases performance.
   ///
-  bool ReworkBufferStartingAtIndex(const int& index);
+  void ReworkBufferStartingAtIndex(const int& index);
 
   ///
   /// \brief ProcessMeasurement Processes the sensor input

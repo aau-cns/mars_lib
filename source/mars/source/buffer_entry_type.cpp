@@ -19,8 +19,8 @@ BufferEntryType::BufferEntryType(const Time& timestamp, BufferDataType data, std
                                  const int& metadata)
   : timestamp_(timestamp), data_(std::move(data)), sensor_(move(sensor)), metadata_(metadata)
 {
-  metadata_state_filter_ = std::set<int>(
-      { BufferMetadataType::core_state, BufferMetadataType::sensor_state, BufferMetadataType::init_state });
+  metadata_state_filter_ = std::set<int>({ BufferMetadataType::core_state, BufferMetadataType::core_state_auto,
+                                           BufferMetadataType::sensor_state, BufferMetadataType::init_state });
 
   metadata_measurement_filter_ =
       std::set<int>({ BufferMetadataType::measurement, BufferMetadataType::measurement_ooo });

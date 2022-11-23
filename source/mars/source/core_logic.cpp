@@ -202,22 +202,37 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
   successful_update = sensor->CalcUpdate(timestamp, sensor_data->sensor_, prior_core_data.state_,
                                          prior_sensor_state_entry.data_.sensor_, corrected_cov, &corrected_state_data);
 
-  if (verbose_)
-  {
-    std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
-  }
-
   if (successful_update)
   {
     // Generate buffer entry and return the corrected states
     *state_buffer_entry_return =
         BufferEntryType(timestamp, corrected_state_data, sensor, BufferMetadataType::sensor_state);
 
+    if (verbose_)
+    {
+      std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
+    }
+
     return true;
   }
   else
   {
-    return false;
+    // Store the propagated core state as an auto generated state "zero order hold" in case the original update was
+    // rejected. The sensor handle will be that of the propagtion sensor
+
+    BufferEntryType generated_prior_data(new_core_state_entry);
+    generated_prior_data.sensor_ = core_states_->propagation_sensor_;
+    generated_prior_data.metadata_ = BufferMetadataType::core_state_auto;
+
+    *state_buffer_entry_return = generated_prior_data;
+
+    if (verbose_)
+    {
+      std::cout << "[CoreLogic]: Measurement was rejected, propagated core state was written instead" << std::endl;
+      std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
+    }
+
+    return true;
   }
 }
 
@@ -260,7 +275,7 @@ BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbs
   return new_core_state_entry;
 }
 
-bool CoreLogic::ReworkBufferStartingAtIndex(const int& index)
+void CoreLogic::ReworkBufferStartingAtIndex(const int& index)
 {
   if (verbose_)
   {
@@ -319,11 +334,8 @@ bool CoreLogic::ReworkBufferStartingAtIndex(const int& index)
     {
       // Process non-propagation sensor information
       mars::BufferEntryType new_state_buffer_entry;
-      if (!PerformSensorUpdate(&new_state_buffer_entry, sensor_handle, timestamp,
-                               std::make_shared<BufferDataType>(buffer_data)))
-      {
-        return false;
-      }
+      PerformSensorUpdate(&new_state_buffer_entry, sensor_handle, timestamp,
+                          std::make_shared<BufferDataType>(buffer_data));
 
       buffer_.InsertDataAtIndex(new_state_buffer_entry, state_insertion_idx);
     }
@@ -338,8 +350,6 @@ bool CoreLogic::ReworkBufferStartingAtIndex(const int& index)
   {
     std::cout << "[CoreLogic]: Rework Buffer Starting At Index - DONE" << std::endl;
   }
-
-  return true;
 }
 
 bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
