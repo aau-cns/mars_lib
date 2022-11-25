@@ -29,7 +29,7 @@ public:
   ReadImuData(std::vector<BufferEntryType>* data_out, std::shared_ptr<SensorAbsClass> sensor,
               const std::string& file_path, const double& time_offset = 0)
   {
-    std::vector<std::string> expect_entry = {"t", "a_x", "a_y", "a_z","w_x", "w_y", "w_z"};
+    std::vector<std::string> expect_entry = { "t", "a_x", "a_y", "a_z", "w_x", "w_y", "w_z" };
 
     CsvDataType csv_data;
     ReadCsv(&csv_data, file_path);

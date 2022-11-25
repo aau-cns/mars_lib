@@ -16,7 +16,6 @@
 #include <mars/sensors/sensor_abs_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_entry_type.h>
-
 #include <algorithm>
 #include <cmath>
 #include <deque>

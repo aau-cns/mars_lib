@@ -52,6 +52,6 @@ public:
     }
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_BAROMETER_DATA_H

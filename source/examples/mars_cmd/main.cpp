@@ -13,7 +13,6 @@
 
 #include <iostream>
 
-
 int main(int /*argc*/, char** /*argv[]*/)
 {
   // Print library info

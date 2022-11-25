@@ -12,7 +12,6 @@
 #define MAG_MEASUREMENT_TYPE_H
 
 #include <mars/sensors/measurement_base_class.h>
-
 #include <Eigen/Dense>
 #include <utility>
 

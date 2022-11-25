@@ -12,7 +12,6 @@
 #include <mars/general_functions/utils.h>
 #include <mars/time.h>
 #include <mars/type_definitions/core_state_type.h>
-
 #include <utility>
 
 namespace mars

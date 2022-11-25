@@ -21,7 +21,6 @@
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/core_state_type.h>
-
 #include <cmath>
 #include <iostream>
 #include <memory>

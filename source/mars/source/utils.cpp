@@ -9,7 +9,6 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/general_functions/utils.h>
-
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <cmath>

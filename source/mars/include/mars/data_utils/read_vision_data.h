@@ -52,6 +52,6 @@ public:
     }
   }
 };
-}
+}  // namespace mars
 
 #endif  // READ_VISION_DATA_H

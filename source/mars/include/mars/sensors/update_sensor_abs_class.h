@@ -16,7 +16,6 @@
 #include <mars/sensors/sensor_abs_class.h>
 #include <mars/sensors/sensor_interface.h>
 #include <mars/type_definitions/base_states.h>
-
 #include <Eigen/Dense>
 
 namespace mars

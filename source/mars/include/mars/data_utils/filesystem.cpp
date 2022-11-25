@@ -9,7 +9,6 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include "filesystem.h"
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <iostream>

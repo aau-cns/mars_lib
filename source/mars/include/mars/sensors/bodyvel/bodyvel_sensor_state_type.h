@@ -14,7 +14,6 @@
 #define BODYVELSENSORSTATETYPE_H
 
 #include <mars/type_definitions/base_states.h>
-
 #include <Eigen/Dense>
 
 namespace mars

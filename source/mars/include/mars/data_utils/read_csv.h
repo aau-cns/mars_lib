@@ -11,6 +11,7 @@
 #ifndef READ_CSV_H
 #define READ_CSV_H
 
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -18,7 +19,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 #include "mars/data_utils/filesystem.h"
 
 namespace mars
@@ -59,7 +59,7 @@ public:
     }
 
     // Initialize CSV data type
-    //const int rows = get_rows();
+    // const int rows = get_rows();
 
     // TODO(CHB) Possibly initialize/reserve map vectors
     CsvDataType csv_data_int;

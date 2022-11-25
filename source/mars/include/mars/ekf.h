@@ -12,9 +12,8 @@
 #define EKF_HPP
 
 #include <Eigen/Dense>
-#include <iostream>
-
 #include <boost/math/distributions/chi_squared.hpp>
+#include <iostream>
 
 namespace mars
 {
