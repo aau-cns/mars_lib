@@ -52,6 +52,8 @@ public:
       Eigen::Vector3d p(csv_data["p_x"][k], csv_data["p_y"][k], csv_data["p_z"][k]);
       Eigen::Vector3d v(csv_data["v_x"][k], csv_data["v_y"][k], csv_data["v_z"][k]);
       Eigen::Quaterniond q(csv_data["q_w"][k], csv_data["q_x"][k], csv_data["q_y"][k], csv_data["q_z"][k]);
+      q = Utils::NormalizeQuaternion(q, "sim csv reader");
+
       Eigen::Vector3d bGyr(csv_data["bw_x"][k], csv_data["bw_y"][k], csv_data["bw_z"][k]);
       Eigen::Vector3d bAcc(csv_data["ba_x"][k], csv_data["ba_y"][k], csv_data["ba_z"][k]);
 

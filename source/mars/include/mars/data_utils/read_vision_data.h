@@ -43,6 +43,7 @@ public:
 
       Eigen::Vector3d position(csv_data["p_x"][k], csv_data["p_y"][k], csv_data["p_z"][k]);
       Eigen::Quaterniond orientation(csv_data["q_w"][k], csv_data["q_x"][k], csv_data["q_y"][k], csv_data["q_z"][k]);
+      orientation = Utils::NormalizeQuaternion(orientation, "vision csv reader");
 
       BufferDataType data;
       data.set_sensor_data(std::make_shared<VisionMeasurementType>(position, orientation));

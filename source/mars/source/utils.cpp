@@ -205,4 +205,22 @@ Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond
   return qavg;
 }
 
+Eigen::Quaterniond Utils::NormalizeQuaternion(const Eigen::Quaterniond& quat, std::string note)
+{
+  Eigen::Quaterniond q_normalized = quat.normalized();
+
+  if (!q_normalized.isApprox(quat))
+  {
+    std::cout << "[Utils] Warning, quaternion was not normalized in: " << note << std::endl;
+  }
+
+  return q_normalized;
+}
+
+Eigen::Quaterniond Utils::NormalizeQuaternion(const double& w, const double& x, const double& y, const double& z,
+                                              std::string note)
+{
+  return NormalizeQuaternion(Eigen::Quaterniond(w, x, y, z), note);
+}
+
 }  // namespace mars

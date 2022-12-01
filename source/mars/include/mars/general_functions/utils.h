@@ -146,6 +146,10 @@ public:
     }
     return every_nth_data;
   }
+
+  static Eigen::Quaterniond NormalizeQuaternion(const Eigen::Quaterniond& quat, std::string note = "");
+  static Eigen::Quaterniond NormalizeQuaternion(const double& w, const double& x, const double& y, const double& z,
+                                                std::string note = "");
 };
 }  // namespace mars
 

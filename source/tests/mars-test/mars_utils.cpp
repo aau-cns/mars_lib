@@ -159,3 +159,25 @@ TEST_F(mars_utils_test, AVERAGE_QUAT)
     EXPECT_FALSE(result.coeffs().isApprox(correct_result.coeffs()));
   }
 }
+
+TEST_F(mars_utils_test, NORMALIZE_QUATERNION)
+{
+  double w, x, y, z;
+  w = 1;
+  x = 0;
+  y = 0;
+  z = 0.5;
+
+  Eigen::Quaterniond q_non_normalized(w, x, y, z);
+
+  Eigen::Quaterniond q_normalized1;
+  q_normalized1 = mars::Utils::NormalizeQuaternion(q_non_normalized, "Test1");
+  EXPECT_NEAR(q_normalized1.norm(), 1.0, 1e-10);
+  std::cout << "Q norm 1: " << q_normalized1.norm() << std::endl;
+
+  Eigen::Quaterniond q_normalized2;
+  q_normalized2 = mars::Utils::NormalizeQuaternion(w, x, y, z, "Test2");
+  EXPECT_NEAR(q_normalized2.norm(), 1.0, 1e-10);
+  std::cout << "Q norm 2: " << q_normalized1.norm() << std::endl;
+  ;
+}
