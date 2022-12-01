@@ -252,13 +252,13 @@ private:
   ///
   /// \brief defines the max size at wich the oldest entry is removed
   ///
-  int max_buffer_size_{ 400 };
+  int max_buffer_size_{ 2000 };
 
   ///
   /// \brief If true, the last entry of a sensor state entry will be keept in the buffer.
   /// \note This only keeps sensor states, not measurements or core states
   ///
-  bool keep_last_sensor_handle_{ false };
+  bool keep_last_sensor_handle_{ true };
 
   bool verbose_{ false };  ///< Increased cmd output
 };

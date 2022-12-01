@@ -29,9 +29,9 @@ enum BufferMetadataType
   core_state,
   sensor_state,
   init_state,
-  measurement,       ///< regular measurement
-  measurement_ooo,   ///< out of order measurement
-  core_state_auto    ///< auto generated core_state
+  measurement,      ///< regular measurement
+  measurement_ooo,  ///< out of order measurement
+  core_state_auto   ///< auto generated core_state
 };
 }  // namespace BufferMetadataTypes
 
