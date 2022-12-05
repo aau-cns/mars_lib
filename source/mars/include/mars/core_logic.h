@@ -36,9 +36,11 @@ public:
   bool core_is_initialized_{ false };  /// core_is_initialized_ = true if the core state was initialized, false
                                        /// otherwise
   bool core_init_warn_once_{ false };
-  bool verbose_{ false };                /// Increased output of information
-  bool verbose_out_of_order_{ false };   /// Increased output of information for delayed measurements
-  bool discard_ooo_prop_meas_{ false };  /// Discard out of order propagation sensor measurements
+  bool verbose_{ false };                    /// Increased output of information
+  bool verbose_out_of_order_{ false };       /// Increased output of information for delayed measurements
+  bool discard_ooo_prop_meas_{ false };      /// Discard out of order propagation sensor measurements
+  bool add_interm_buffer_entries_{ false };  /// Determines if intermediate entries before a sensor update are stored to
+                                             /// the buffer
 
   ///
   /// \brief CoreLogic
