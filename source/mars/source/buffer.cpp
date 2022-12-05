@@ -451,6 +451,36 @@ bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& inde
   return true;
 }
 
+bool Buffer::InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state)
+{
+  // Ensure the given data has the right meta data
+  if (!(measurement.IsMeasurement() && state.IsState()))
+  {
+    return false;
+  }
+
+  // Check of the latest entry is a state or measurement
+  if (data_.back().IsState())
+  {
+    return false;
+  }
+  else if (data_.back().IsMeasurement())
+  {
+    // insert set of data one element before latest
+    // change entry meta data to auto generated
+    BufferEntryType meas_auto(measurement);
+    meas_auto.metadata_ = BufferMetadataType::measurement_auto;
+
+    BufferEntryType state_auto(state);
+    state_auto.metadata_ = BufferMetadataType::core_state_auto;
+
+    int last_idx = get_length();
+    InsertDataAtIndex(meas_auto, last_idx - 1);
+    InsertDataAtIndex(state_auto, last_idx);
+  }
+
+  return true;
+}
 int Buffer::RemoveOverflowEntrys()
 {
   // Only delete if buffer would overflow

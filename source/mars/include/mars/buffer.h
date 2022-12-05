@@ -232,6 +232,17 @@ public:
   bool InsertDataAtIndex(const BufferEntryType& new_entry, const int& index);
 
   ///
+  /// \brief InsertIntermediateData Insert data during the intermediate propagation step
+  ///
+  /// This function is intended for inserting a auto generated measurement and state before a current measurement entry.
+  /// This is required for intermediate propagation information.
+  ///
+  /// \param measurement
+  /// \param state
+  /// \return
+  ///
+  bool InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state);
+  ///
   /// \brief CheckForLastHandle Checks if the given sensor handle only exists once in the buffer
   /// \param sensor_handle
   /// \return true if current sensor handle is the last in the buffer, false otherwise

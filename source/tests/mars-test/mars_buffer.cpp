@@ -1070,9 +1070,57 @@ TEST_F(mars_buffer_test, SIZE_TEST)
   ASSERT_EQ(pose_sensor_1_sptr, last_state.sensor_);
 }
 
-TEST_F(mars_buffer_test, BUFFER_CONSISTENCY_CHECKER)
+TEST_F(mars_buffer_test, BUFFER_INSERT_INTERMEDIATE_DATA)
 {
-  // TBD
+  const int max_buffer_size = 10;
+  mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
+
+  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+  std::shared_ptr<mars::ImuSensorClass> imu_sensor_1_sptr =
+      std::make_shared<mars::ImuSensorClass>("imu");
+
+  int core_dummy = 13;
+  int sensor_dummy = 15;
+  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+
+  mars::BufferEntryType meas(4, data, imu_sensor_1_sptr, mars::BufferMetadataType::measurement);
+  mars::BufferEntryType state(4, data, imu_sensor_1_sptr, mars::BufferMetadataType::core_state);
+
+  EXPECT_FALSE(buffer.InsertIntermediateData(state, state));
+  // Confirm no change in buffersize
+  EXPECT_TRUE(buffer.get_length() == 5);
+  EXPECT_FALSE(buffer.InsertIntermediateData(meas, meas));
+  // Confirm no change in buffersize
+  EXPECT_TRUE(buffer.get_length() == 5);
+
+  buffer.PrintBufferEntries();
+
+  EXPECT_TRUE(buffer.InsertIntermediateData(meas, state));
+  EXPECT_TRUE(buffer.get_length() == 7);
+
+  buffer.PrintBufferEntries();
+
+  mars::BufferEntryType entry_04;
+  buffer.get_entry_at_idx(4, &entry_04);
+  mars::BufferEntryType entry_05;
+  buffer.get_entry_at_idx(5, &entry_05);
+
+  EXPECT_TRUE(entry_04.sensor_ == imu_sensor_1_sptr);
+  EXPECT_EQ(entry_04.timestamp_, 4);
+  EXPECT_TRUE(entry_04.metadata_ == mars::BufferMetadataType::measurement_auto);
+
+  EXPECT_TRUE(entry_05.sensor_ == imu_sensor_1_sptr);
+  EXPECT_EQ(entry_05.timestamp_, 4);
+  EXPECT_TRUE(entry_05.metadata_ == mars::BufferMetadataType::core_state_auto);
 }
 
 TEST_F(mars_buffer_test, INSERT_DATA_AT_IDX)
