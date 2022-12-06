@@ -481,6 +481,36 @@ bool Buffer::InsertIntermediateData(const BufferEntryType& measurement, const Bu
 
   return true;
 }
+
+bool Buffer::get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                         BufferEntryType* imu_state, BufferEntryType* sensor_state) const
+{
+  BufferEntryType found_sensor_state;
+  int found_sensor_state_idx;
+  get_latest_sensor_handle_state(sensor_handle, &found_sensor_state, &found_sensor_state_idx);
+
+  // The intermediate IMU state will be located before the found sensor state and the corresponding sensor measurement
+  // (idx-2). Ensure that we are accessing valid data.
+  const int entry_offset = 2;
+
+  if (found_sensor_state_idx < entry_offset)
+  {
+    return false;
+  }
+
+  size_t interm_core_idx = size_t(found_sensor_state_idx - entry_offset);
+
+  // Ensure that the entrie is a state entry, as expected, and has the same timestamp as the sensor state
+  if (data_[interm_core_idx].IsState() && data_[interm_core_idx].timestamp_ == found_sensor_state.timestamp_)
+  {
+    *sensor_state = found_sensor_state;
+    *imu_state = data_[interm_core_idx];
+    return true;
+  }
+
+  return false;
+}
+
 int Buffer::RemoveOverflowEntrys()
 {
   // Only delete if buffer would overflow

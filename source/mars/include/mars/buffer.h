@@ -242,6 +242,20 @@ public:
   /// \return
   ///
   bool InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state);
+
+  ///
+  /// \brief get_latest_interm_entrie Get last state pair of imu prop and sensor update
+  ///
+  /// This function provides a state pair for an intermediate propagated state and a corresponding sensor update for the
+  /// same point in time.
+  /// The intermediate state reflects the propagation of the latest real IMU measurement to the current point in time at
+  /// which the sensor update will be performed. This is mostelikely an auto generated state, added via the
+  /// 'InsertIntermediateData' function.
+  ///
+  /// \return True if successfull, false of no pair was found
+  ///
+  bool get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle, BufferEntryType* imu_state, BufferEntryType* sensor_state) const;
+
   ///
   /// \brief CheckForLastHandle Checks if the given sensor handle only exists once in the buffer
   /// \param sensor_handle
