@@ -236,7 +236,7 @@ public:
   /// \param sensor_handle
   /// \return true if current sensor handle is the last in the buffer, false otherwise
   ///
-  bool CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle);
+  bool CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle) const;
 
   ///
   /// \brief RemoveOverflowEntrys Removes the oldest entries if max buffer size is reached

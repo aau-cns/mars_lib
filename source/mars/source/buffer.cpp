@@ -496,7 +496,7 @@ int Buffer::RemoveOverflowEntrys()
   return -1;
 }  // namespace mars
 
-bool Buffer::CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle)
+bool Buffer::CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle) const
 {
   int num_found_ms_pair = 0;
 
