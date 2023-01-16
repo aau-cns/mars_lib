@@ -218,14 +218,12 @@ Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond
 
 Eigen::Quaterniond Utils::NormalizeQuaternion(const Eigen::Quaterniond& quat, std::string note)
 {
-  Eigen::Quaterniond q_normalized = quat.normalized();
-
-  if (!q_normalized.isApprox(quat))
+  if (abs(quat.norm() - 1) > 0.01)
   {
-    std::cout << "[Utils] Warning, quaternion was not normalized in: " << note << std::endl;
+    std::cout << "[Utils] Warning, quaternion not normalized in: " << note << "Norm: " << quat.norm() << std::endl;
   }
 
-  return q_normalized;
+  return quat.normalized();
 }
 
 Eigen::Quaterniond Utils::NormalizeQuaternion(const double& w, const double& x, const double& y, const double& z,
