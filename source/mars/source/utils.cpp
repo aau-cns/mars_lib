@@ -9,6 +9,7 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/general_functions/utils.h>
+#include <mars_lib/mars_lib-version.h>
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <cmath>
@@ -17,6 +18,16 @@
 namespace mars
 {
 Utils::Utils() = default;
+
+std::string Utils::get_mars_version_string()
+{
+  return std::string(std::string(MARS_LIB_VERSION) + "-" + std::string(MARS_LIB_VERSION_REVISION));
+}
+
+void Utils::PrintMarsVersion()
+{
+  std::cout << "MaRS Version: " << Utils::get_mars_version_string() << std::endl;
+}
 
 Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in)
 {

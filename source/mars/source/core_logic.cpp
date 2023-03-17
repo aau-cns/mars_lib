@@ -18,7 +18,7 @@ namespace mars
 {
 CoreLogic::CoreLogic(std::shared_ptr<CoreState> core_states) : core_states_(move(core_states))
 {
-  std::cout << "Created: CoreLogic" << std::endl;
+  std::cout << "Created: CoreLogic - Using MaRS Version: " << mars::Utils::get_mars_version_string() << std::endl;
 }
 
 int CoreLogic::Initialize(const Eigen::Vector3d& p_wi_init, const Eigen::Quaterniond& q_wi_init)

@@ -26,6 +26,17 @@ public:
   Utils();
 
   ///
+  /// \brief get_mars_version_string
+  /// \return String wit MaRS version and git commit hash
+  ///
+  static std::string get_mars_version_string();
+
+  ///
+  /// \brief PrintMarsVersion
+  ///
+  static void PrintMarsVersion();
+
+  ///
   /// \brief TransformImu Transform IMU measurements from current frame A to frame B
   ///
   /// This function takes angular accleration into account and thus needs the previous IMU measurement and dt
