@@ -85,9 +85,11 @@ CoreStateMatrix CoreLogic::GenerateStateTransitionBlock(const int& first_transit
     BufferEntryType entry;
     buffer_.get_entry_at_idx(k, &entry);
 
-    if (entry.metadata_ == BufferMetadataType::core_state)
+    if (entry.IsState() && entry.metadata_ != BufferMetadataType::sensor_state &&
+        entry.metadata_ != BufferMetadataType::init_state)
     {
-      state_transition = static_cast<CoreType*>(entry.data_.core_.get())->state_transition_ * state_transition;
+      CoreStateMatrix entry_st = static_cast<CoreType*>(entry.data_.core_.get())->state_transition_;
+      state_transition = entry_st * state_transition;
     }
   }
 
@@ -177,19 +179,37 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
   interm_prop.set_sensor_data(std::make_shared<IMUMeasurementType>(imu_meas_curr));
 
   mars::BufferEntryType new_core_state_entry;
-  new_core_state_entry = PerformCoreStatePropagation(latest_state_buffer_entry.sensor_, timestamp,
+  new_core_state_entry = PerformCoreStatePropagation(core_states_->propagation_sensor_, timestamp,
                                                      std::make_shared<BufferDataType>(interm_prop),
                                                      std::make_shared<BufferEntryType>(latest_state_buffer_entry));
 
-  // Extract prior information from buffer entry
+  // Extract prior information from buffer entries
   CoreType prior_core_data = *static_cast<CoreType*>(new_core_state_entry.data_.core_.get());
-
-  Eigen::MatrixXd prior_sensor_covariance = sensor->get_covariance(prior_sensor_state_entry.data_.sensor_);
-
   Utils::CheckCov(prior_core_data.cov_, "CoreLogic: Core cov prior");
+  Eigen::MatrixXd prior_sensor_covariance = sensor->get_covariance(prior_sensor_state_entry.data_.sensor_);
+  CoreStateMatrix state_transition;
 
-  // Generate state transition block between prior_sensor_idx and prior_core_idx
-  CoreStateMatrix state_transition = GenerateStateTransitionBlock(prior_sensor_idx, prior_core_idx);
+  if (add_interm_buffer_entries_)
+  {
+    // Intermediate IMU Measurement and propergated state
+    mars::BufferEntryType interm_imu_measurement_entry(timestamp, interm_prop, core_states_->propagation_sensor_,
+                                                       mars::BufferMetadataType::measurement);
+    buffer_.InsertIntermediateData(interm_imu_measurement_entry, new_core_state_entry);
+
+    // Generate state transition block between prior_sensor_idx and prior_core_idx
+    BufferEntryType tmp_entry;
+    int prior_core_idx_after_interm;
+    buffer_.get_closest_state(timestamp, &tmp_entry, &prior_core_idx_after_interm);
+    int prior_sensor_idx_after_interm;
+    buffer_.get_latest_sensor_handle_state(sensor, &tmp_entry, &prior_sensor_idx_after_interm);
+
+    state_transition = GenerateStateTransitionBlock(prior_sensor_idx_after_interm, prior_core_idx_after_interm);
+  }
+  else
+  {
+    state_transition = GenerateStateTransitionBlock(prior_sensor_idx, prior_core_idx);
+    state_transition = prior_core_data.state_transition_ * state_transition;
+  }
 
   Eigen::MatrixXd prior_cov = PropagateSensorCrossCov(prior_sensor_covariance, prior_core_data.cov_, state_transition);
 
@@ -201,6 +221,11 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
   bool successful_update;
   successful_update = sensor->CalcUpdate(timestamp, sensor_data->sensor_, prior_core_data.state_,
                                          prior_sensor_state_entry.data_.sensor_, corrected_cov, &corrected_state_data);
+
+  if (verbose_)
+  {
+    std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
+  }
 
   if (successful_update)
   {

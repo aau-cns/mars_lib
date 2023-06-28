@@ -451,6 +451,66 @@ bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& inde
   return true;
 }
 
+bool Buffer::InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state)
+{
+  // Ensure the given data has the right meta data
+  if (!(measurement.IsMeasurement() && state.IsState()))
+  {
+    return false;
+  }
+
+  // Check of the latest entry is a state or measurement
+  if (data_.back().IsState())
+  {
+    return false;
+  }
+  else if (data_.back().IsMeasurement())
+  {
+    // insert set of data one element before latest
+    // change entry meta data to auto generated
+    BufferEntryType meas_auto(measurement);
+    meas_auto.metadata_ = BufferMetadataType::measurement_auto;
+
+    BufferEntryType state_auto(state);
+    state_auto.metadata_ = BufferMetadataType::core_state_auto;
+
+    int last_idx = get_length();
+    InsertDataAtIndex(meas_auto, last_idx - 1);
+    InsertDataAtIndex(state_auto, last_idx);
+  }
+
+  return true;
+}
+
+bool Buffer::get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle,
+                                         BufferEntryType* imu_state, BufferEntryType* sensor_state) const
+{
+  BufferEntryType found_sensor_state;
+  int found_sensor_state_idx;
+  get_latest_sensor_handle_state(sensor_handle, &found_sensor_state, &found_sensor_state_idx);
+
+  // The intermediate IMU state will be located before the found sensor state and the corresponding sensor measurement
+  // (idx-2). Ensure that we are accessing valid data.
+  const int entry_offset = 2;
+
+  if (found_sensor_state_idx < entry_offset)
+  {
+    return false;
+  }
+
+  size_t interm_core_idx = size_t(found_sensor_state_idx - entry_offset);
+
+  // Ensure that the entrie is a state entry, as expected, and has the same timestamp as the sensor state
+  if (data_[interm_core_idx].IsState() && data_[interm_core_idx].timestamp_ == found_sensor_state.timestamp_)
+  {
+    *sensor_state = found_sensor_state;
+    *imu_state = data_[interm_core_idx];
+    return true;
+  }
+
+  return false;
+}
+
 int Buffer::RemoveOverflowEntrys()
 {
   // Only delete if buffer would overflow
