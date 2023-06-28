@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022 Christian Brommer, Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -43,6 +43,13 @@ public:
   /// \param value Chi value
   ///
   void set_chi_value(const double& value);
+
+  ///
+  /// \brief get_result Returns the last report values, i.e. last residual and X2 value
+  /// \param last_res last residual
+  /// \param last_X2 last X2 value
+  ///
+  void get_result(Eigen::MatrixXd* const last_res, double* const last_X2) const;
 
   ///
   /// \brief CalculateUcv Perform the calculation of the upper critical value
