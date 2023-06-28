@@ -17,7 +17,10 @@ The Modular and Robust State-Estimation Framework, or short, MaRS, is a recursiv
 - Efficient handling of asynchronous and multi-rate sensor information
 - Separation between simple user interaction and the complexity of information handling
 
-Austrian Patent Application Pending
+**Patents:**
+
+- Austrian patent published [A 50969](https://patents.google.com/patent/AT523734B1/en)
+- U.S. patent pending [US2022/0146264A1](https://patents.google.com/patent/US20220146264A1/en)
 
 # Getting Started
 
