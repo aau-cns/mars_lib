@@ -29,7 +29,7 @@ public:
 
 TEST_F(mars_read_csv_test, READ_CSV)
 {
-  std::string test_data_path = std::string(MARS_LIB_TEST_DATA_PATH) + "/traj_test_dummy.csv";
+  std::string test_data_path = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/traj_test_dummy.csv";
 
   // TODO(CHB) Test needs to be re-written for the new CSV reader
   //  mars::CsvDataType data;
@@ -41,7 +41,7 @@ TEST_F(mars_read_csv_test, READ_CSV)
 
 TEST_F(mars_read_csv_test, READ_POSE_CSV)
 {
-  std::string test_data_path = std::string(MARS_LIB_TEST_DATA_PATH) + "/pose_test_dummy.csv";
+  std::string test_data_path = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/pose_test_dummy.csv";
 
   // create sensor
   mars::CoreState core_states;
@@ -52,4 +52,60 @@ TEST_F(mars_read_csv_test, READ_POSE_CSV)
 
   // read data
   EXPECT_NO_FATAL_FAILURE(mars::ReadPoseData(&measurement_data, pose_sensor_sptr, test_data_path));
+}
+
+
+TEST_F(mars_read_csv_test, READ_CORRUPTED_CSV_END)
+{
+  std::string csv_fn = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/corrupted_csv_end.csv";
+
+
+  std::map<std::string, std::vector<double>> csv_data;
+  mars::ReadCsv reader(&csv_data, csv_fn, ',');
+
+  EXPECT_EQ(csv_data["t_arr"].size(), 3);
+}
+
+TEST_F(mars_read_csv_test, READ_CORRUPTED_CSV_BETWEEN)
+{
+  std::string csv_fn = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/corrupted_csv_between.csv";
+
+
+  std::map<std::string, std::vector<double>> csv_data;
+  mars::ReadCsv reader(&csv_data, csv_fn, ',');
+
+  EXPECT_EQ(csv_data["t_arr"].size(), 3);
+}
+
+TEST_F(mars_read_csv_test, READ_CORRUPTED_CSV_EMPTY)
+{
+  std::string csv_fn = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/corrupted_csv_empty.csv";
+
+
+  std::map<std::string, std::vector<double>> csv_data;
+  mars::ReadCsv reader(&csv_data, csv_fn, ',');
+
+  EXPECT_EQ(csv_data["t_arr"].size(), 0);
+}
+
+TEST_F(mars_read_csv_test, READ_CORRUPTED_CSV_SINGLE)
+{
+  std::string csv_fn = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/corrupted_csv_single.csv";
+
+
+  std::map<std::string, std::vector<double>> csv_data;
+  mars::ReadCsv reader(&csv_data, csv_fn, ',');
+
+  EXPECT_EQ(csv_data["t_arr"].size(), 0);
+}
+
+TEST_F(mars_read_csv_test, READ_CORRUPTED_CSV_MORE)
+{
+  std::string csv_fn = std::string(MARS_LIB_TEST_DATA_PATH) + "/csv_data/corrupted_csv_more.csv";
+
+
+  std::map<std::string, std::vector<double>> csv_data;
+  mars::ReadCsv reader(&csv_data, csv_fn);
+
+  EXPECT_EQ(csv_data["t_arr"].size(), 2);
 }
