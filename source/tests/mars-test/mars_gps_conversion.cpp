@@ -38,3 +38,26 @@ TEST_F(mars_gps_test, CTOR_GPS)
 
   std::cout << coordinates_3 << std::endl;
 }
+
+TEST_F(mars_gps_test, COORDINATE_ADDITION)
+{
+  mars::GpsCoordinates coord1(1, 2, 3);
+  mars::GpsCoordinates coord2(1, 2, 3);
+
+  mars::GpsCoordinates sum1 = coord1 + coord2;
+  mars::GpsCoordinates sum2 = coord2 + coord1;
+
+  EXPECT_EQ(sum1.longitude_, sum2.longitude_);
+  EXPECT_EQ(sum1.latitude_, sum2.latitude_);
+  EXPECT_EQ(sum1.altitude_, sum2.altitude_);
+  EXPECT_EQ(sum1.latitude_, 2);
+  EXPECT_EQ(sum1.longitude_, 4);
+  EXPECT_EQ(sum1.altitude_, 6);
+
+  mars::GpsCoordinates sum3 = coord1;
+  sum3 += coord2;
+
+  EXPECT_EQ(sum1.longitude_, sum3.longitude_);
+  EXPECT_EQ(sum1.latitude_, sum3.latitude_);
+  EXPECT_EQ(sum1.altitude_, sum3.altitude_);
+}
