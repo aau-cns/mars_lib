@@ -77,8 +77,8 @@ TEST_F(mars_write_csv_test, WRITE_COV_HEADER_TO_CSV)
   //                 ,55,56
   //                    ,66
   std::string cov6_str_result(mars::WriteCsv::get_cov_header_string(6));
-  std::string cov6_str_expect(
-      ", p_1_1, p_1_2, p_1_3, p_1_4, p_1_5, p_1_6, p_2_2, p_2_3, p_2_4, p_2_5, p_2_6, p_3_3, p_3_4, p_3_5, "
-      "p_3_6, p_4_4, p_4_5, p_4_6, p_5_5, p_5_6, p_6_6");
+  std::string cov6_str_expect(", p_1_1, p_1_2, p_1_3, p_1_4, p_1_5, p_1_6, p_2_2, p_2_3, p_2_4, p_2_5, p_2_6, p_3_3, "
+                              "p_3_4, p_3_5, "
+                              "p_3_6, p_4_4, p_4_5, p_4_6, p_5_5, p_5_6, p_6_6");
   EXPECT_EQ(cov6_str_result, cov6_str_expect);
 }

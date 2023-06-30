@@ -15,7 +15,6 @@
 
 #include <mars/sensors/measurement_base_class.h>
 #include <mars/sensors/pressure/pressure_conversion.h>
-
 #include <Eigen/Dense>
 #include <utility>
 

@@ -14,7 +14,6 @@
 #define ATTITUDE_SENSOR_STATE_TYPE_H
 
 #include <mars/type_definitions/base_states.h>
-
 #include <Eigen/Dense>
 
 namespace mars

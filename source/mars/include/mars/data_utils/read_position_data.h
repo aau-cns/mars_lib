@@ -49,8 +49,7 @@ public:
       data_out->at(k) = current_entry;
     }
   }
-
 };
-}
+}  // namespace mars
 
 #endif  // READ_POSITION_DATA_H

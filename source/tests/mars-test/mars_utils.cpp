@@ -114,7 +114,6 @@ TEST_F(mars_utils_test, ENFORCE_SYMMETRY)
 
 TEST_F(mars_utils_test, AVERAGE_QUAT)
 {
-
   // Test average of identity
   {
     std::vector<Eigen::Quaterniond> quats;
@@ -133,7 +132,7 @@ TEST_F(mars_utils_test, AVERAGE_QUAT)
     quats.emplace_back(Eigen::Quaterniond(0.2496, -0.7802, -0.1212, -0.5606));
     quats.emplace_back(Eigen::Quaterniond(0.6294, -0.5781, -0.0381, 0.5179));
     quats.emplace_back(Eigen::Quaterniond(0.5311, -0.3866, -0.6291, 0.4155));
-    quats.emplace_back(Eigen::Quaterniond(0.4545, 0.5559,  0.3359, -0.6095));
+    quats.emplace_back(Eigen::Quaterniond(0.4545, 0.5559, 0.3359, -0.6095));
     quats.emplace_back(Eigen::Quaterniond(0.2320, -0.6568, -0.3290, -0.6376));
     quats.emplace_back(Eigen::Quaterniond(0.8314, 0.5518, 0.0549, 0.0364));
     quats.emplace_back(Eigen::Quaterniond(0.5708, 0.2599, 0.3520, -0.6948));
@@ -159,5 +158,26 @@ TEST_F(mars_utils_test, AVERAGE_QUAT)
     Eigen::Quaterniond correct_result = Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0);
     EXPECT_FALSE(result.coeffs().isApprox(correct_result.coeffs()));
   }
+}
 
+TEST_F(mars_utils_test, NORMALIZE_QUATERNION)
+{
+  double w, x, y, z;
+  w = 1;
+  x = 0;
+  y = 0;
+  z = 0.5;
+
+  Eigen::Quaterniond q_non_normalized(w, x, y, z);
+
+  Eigen::Quaterniond q_normalized1;
+  q_normalized1 = mars::Utils::NormalizeQuaternion(q_non_normalized, "Test1");
+  EXPECT_NEAR(q_normalized1.norm(), 1.0, 1e-10);
+  std::cout << "Q norm 1: " << q_normalized1.norm() << std::endl;
+
+  Eigen::Quaterniond q_normalized2;
+  q_normalized2 = mars::Utils::NormalizeQuaternion(w, x, y, z, "Test2");
+  EXPECT_NEAR(q_normalized2.norm(), 1.0, 1e-10);
+  std::cout << "Q norm 2: " << q_normalized1.norm() << std::endl;
+  ;
 }

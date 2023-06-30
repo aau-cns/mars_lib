@@ -22,7 +22,6 @@
 #include <mars/sensors/update_sensor_abs_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_data_type.h>
-
 #include <iostream>
 #include <memory>
 #include <string>

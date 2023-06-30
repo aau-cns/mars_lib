@@ -102,12 +102,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
         -Wreorder
         -Wignored-qualifiers
         -Wmissing-braces
-        -Wreturn-type
         -Wswitch
+        -Wreturn-type
         -Wswitch-default
         -Wuninitialized
         -Wmissing-field-initializers
-        
+        -Werror=return-type
+
         $<$<CXX_COMPILER_ID:GNU>:
             -Wmaybe-uninitialized
             

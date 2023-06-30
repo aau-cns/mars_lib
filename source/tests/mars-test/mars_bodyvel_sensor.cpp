@@ -14,7 +14,6 @@
 #include <mars/type_definitions/base_states.h>
 #include <mars/type_definitions/buffer_data_type.h>
 #include <mars/type_definitions/buffer_entry_type.h>
-
 #include <Eigen/Dense>
 
 class mars_bodyvel_sensor_test : public testing::Test

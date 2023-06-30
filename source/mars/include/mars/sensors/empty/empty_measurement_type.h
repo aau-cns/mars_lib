@@ -12,7 +12,6 @@
 #define EMPTYMEASUREMENTTYPE_H
 
 #include <mars/sensors/measurement_base_class.h>
-
 #include <utility>
 
 namespace mars

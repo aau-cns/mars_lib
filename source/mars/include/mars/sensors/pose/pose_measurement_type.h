@@ -12,7 +12,6 @@
 #define POSEMEASUREMENTTYPE_H
 
 #include <mars/sensors/measurement_base_class.h>
-
 #include <Eigen/Dense>
 #include <utility>
 

@@ -7,6 +7,9 @@ n_ba = [0.0083; 0.0083; 0.0083];
 ```
 
 ## GPS position
+
+This file provides position data in ENU with GPS uncertainties:
+
 ```
 Calibration
 p_ig=[0.0, 0.0, 0.0]

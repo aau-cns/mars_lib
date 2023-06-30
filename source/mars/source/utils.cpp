@@ -9,7 +9,7 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/general_functions/utils.h>
-
+#include <mars_lib/mars_lib-version.h>
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <cmath>
@@ -18,6 +18,16 @@
 namespace mars
 {
 Utils::Utils() = default;
+
+std::string Utils::get_mars_version_string()
+{
+  return std::string(std::string(MARS_LIB_VERSION) + "-" + std::string(MARS_LIB_VERSION_REVISION));
+}
+
+void Utils::PrintMarsVersion()
+{
+  std::cout << "MaRS Version: " << Utils::get_mars_version_string() << std::endl;
+}
 
 Eigen::MatrixXd Utils::EnforceMatrixSymmetry(const Eigen::Ref<const Eigen::MatrixXd>& mat_in)
 {
@@ -204,6 +214,22 @@ Eigen::Quaterniond Utils::quaternionAverage(const std::vector<Eigen::Quaterniond
   Eigen::Quaterniond qavg = Eigen::Quaterniond(V.col(col_index));
 
   return qavg;
+}
+
+Eigen::Quaterniond Utils::NormalizeQuaternion(const Eigen::Quaterniond& quat, std::string note)
+{
+  if (abs(quat.norm() - 1) > 0.01)
+  {
+    std::cout << "[Utils] Warning, quaternion not normalized in: " << note << "Norm: " << quat.norm() << std::endl;
+  }
+
+  return quat.normalized();
+}
+
+Eigen::Quaterniond Utils::NormalizeQuaternion(const double& w, const double& x, const double& y, const double& z,
+                                              std::string note)
+{
+  return NormalizeQuaternion(Eigen::Quaterniond(w, x, y, z), note);
 }
 
 }  // namespace mars

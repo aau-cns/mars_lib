@@ -197,4 +197,4 @@ MPerfType::time_type MPerfType::get_time()
 {
   return std::chrono::high_resolution_clock::now();
 }
-}
+}  // namespace mars

@@ -19,7 +19,6 @@
 #include <mars/sensors/position/position_sensor_class.h>
 #include <mars/time.h>
 #include <mars/type_definitions/buffer_entry_type.h>
-
 #include <Eigen/Dense>
 
 class mars_buffer_test : public testing::Test
@@ -119,33 +118,34 @@ TEST_F(mars_buffer_test, GETTER_EMPTY_BUFFER_RETURN)
 ///
 /// \brief Test that old entrys are removed if max_buffer_size is reached
 ///
-TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
-{
-  // Force removal of overflowing buffer entrys
-  const int num_test_entrys = 20;
-  const int max_buffer_size = 10;
-  mars::Buffer buffer(max_buffer_size);
+// TBD(CHB): Waiting for new test implementation
+// TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
+//{
+//  // Force removal of overflowing buffer entrys
+//  const int num_test_entrys = 20;
+//  const int max_buffer_size = 10;
+//  mars::Buffer buffer(max_buffer_size);
 
-  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
-  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
-      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+//  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+//  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+//      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
 
-  mars::Time timestamp(0);
-  int core_dummy = 13;
-  int sensor_dummy = 15;
-  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+//  mars::Time timestamp(0);
+//  int core_dummy = 13;
+//  int sensor_dummy = 15;
+//  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
-  for (int k = num_test_entrys; k > 0; k--)
-  {
-    mars::BufferEntryType entry(timestamp + mars::Time(1), data, pose_sensor_1_sptr, 1);
-    buffer.AddEntrySorted(entry);
-  }
+//  for (int k = num_test_entrys; k > 0; k--)
+//  {
+//    mars::BufferEntryType entry(timestamp + mars::Time(1), data, pose_sensor_1_sptr, 1);
+//    buffer.AddEntrySorted(entry);
+//  }
 
-  std::cout << "Buffer Length: " << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+//  std::cout << "Buffer Length: " << buffer.get_length() << std::endl;
+//  buffer.PrintBufferEntries();
 
-  ASSERT_EQ(buffer.get_length(), max_buffer_size);
-}
+//  ASSERT_EQ(buffer.get_length(), max_buffer_size);
+//}
 
 TEST_F(mars_buffer_test, LATEST_ENTRY)
 {
@@ -182,7 +182,7 @@ TEST_F(mars_buffer_test, LATEST_ENTRY)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   mars::BufferEntryType latest_entry;
   buffer.get_latest_entry(&latest_entry);
@@ -236,7 +236,7 @@ TEST_F(mars_buffer_test, OLDEST_LATEST_STATE_RETURN)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   mars::BufferEntryType latest_state_full;
   int latest_filled_state_return = buffer.get_latest_state(&latest_state_full);
@@ -287,7 +287,7 @@ TEST_F(mars_buffer_test, RESET_BUFFER)
   }
 
   std::cout << buffer.get_length() << std::endl;
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.get_length(), num_test_entrys);
   ASSERT_EQ(buffer.IsEmpty(), 0);
 
@@ -523,7 +523,7 @@ TEST_F(mars_buffer_test, ADD_SORTED)
   buffer.AddEntrySorted(mars::BufferEntryType(6, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.IsSorted(), 1);
   ASSERT_EQ(buffer.get_length(), 7);
 }
@@ -552,9 +552,9 @@ TEST_F(mars_buffer_test, REMOVE_STATES_STARTING_AT_IDX)
   buffer.AddEntrySorted(mars::BufferEntryType(8, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(9, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   buffer.DeleteStatesStartingAtIdx(4);
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   ASSERT_EQ(buffer.get_length(), 6);
 }
@@ -593,7 +593,7 @@ TEST_F(mars_buffer_test, MULTI_SENSOR_TYPE_SETUP)
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(7, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
   ASSERT_EQ(buffer.IsSorted(), 1);
   ASSERT_EQ(buffer.get_length(), 14);
 
@@ -644,40 +644,42 @@ TEST_F(mars_buffer_test, INSERT_DATA_IDX_TEST)
   ASSERT_EQ(int(0), idx_older);
 }
 
-TEST_F(mars_buffer_test, INSERT_DATA_IDX_MAX_BUFFER_TEST)
-{
-  const int buffer_size = 10;
-  mars::Buffer buffer(buffer_size);
+// TBD(CHB): Waiting for new test implementation
+// TEST_F(mars_buffer_test, INSERT_DATA_IDX_MAX_BUFFER_TEST)
+//{
+//  const int buffer_size = 10;
+//  mars::Buffer buffer(buffer_size);
 
-  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
-  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
-      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+//  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+//  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+//      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
 
-  int core_dummy = 13;
-  int sensor_dummy = 15;
-  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+//  int core_dummy = 13;
+//  int sensor_dummy = 15;
+//  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
-  // Fill the buffer until max_buffer_size and compare the returned index
-  for (int k = 0; k < buffer_size; k++)
-  {
-    int idx = buffer.AddEntrySorted(
-        mars::BufferEntryType(k, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-    ASSERT_EQ(k, idx);
-  }
+//  // Fill the buffer until max_buffer_size and compare the returned index
+//  for (int k = 0; k < buffer_size; k++)
+//  {
+//    int idx = buffer.AddEntrySorted(
+//        mars::BufferEntryType(k, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+//    ASSERT_EQ(k, idx);
+//  }
 
-  // Add further entrys at the beginning of the buffer to trigger the deletion of old states and ensure that the correct
-  // index is returned
-  for (int k = 0; k < 5; k++)
-  {
-    int idx = buffer.AddEntrySorted(
-        mars::BufferEntryType(buffer_size, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-    ASSERT_EQ(buffer_size - 1, idx);
-  }
-}
+//  // Add further entrys at the beginning of the buffer to trigger the deletion of old states and ensure that the
+//  correct
+//  // index is returned
+//  for (int k = 0; k < 5; k++)
+//  {
+//    int idx = buffer.AddEntrySorted(
+//        mars::BufferEntryType(buffer_size, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+//    ASSERT_EQ(buffer_size - 1, idx);
+//  }
+//}
 
 TEST_F(mars_buffer_test, CHECK_LAST_SENSOR_HANDLE)
 {
-  mars::Buffer buffer(10);
+  mars::Buffer buffer(20);
   std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
   std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
       std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
@@ -687,25 +689,37 @@ TEST_F(mars_buffer_test, CHECK_LAST_SENSOR_HANDLE)
   mars::BufferDataType data;
   mars::Time timestamp(1);
 
-  mars::BufferEntryType entry(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state);
-  buffer.AddEntrySorted(entry);
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  EXPECT_TRUE(buffer.CheckForLastSensorHandlePair(pose_sensor_1_sptr));
+  // Return false on non-existing state of sensor 2
+  EXPECT_FALSE(buffer.CheckForLastSensorHandlePair(pose_sensor_2_sptr));
+
   timestamp = timestamp + mars::Time(1);
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
+  EXPECT_TRUE(buffer.CheckForLastSensorHandlePair(pose_sensor_2_sptr));
 
-  EXPECT_TRUE(buffer.CheckForLastSensorHandle(pose_sensor_1_sptr));
-
-  // Add an entry with another sensor instance
-  mars::BufferEntryType entry2(timestamp, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state);
-  buffer.AddEntrySorted(entry2);
   timestamp = timestamp + mars::Time(1);
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  EXPECT_TRUE(buffer.CheckForLastSensorHandlePair(pose_sensor_1_sptr));
+  EXPECT_TRUE(buffer.CheckForLastSensorHandlePair(pose_sensor_2_sptr));
 
-  EXPECT_TRUE(buffer.CheckForLastSensorHandle(pose_sensor_1_sptr));
-
-  // Add an entry for sensor 1
-  mars::BufferEntryType entry3(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state);
-  buffer.AddEntrySorted(entry3);
-
-  // Two entrys of sensor 1 exist
-  EXPECT_FALSE(buffer.CheckForLastSensorHandle(pose_sensor_1_sptr));
+  timestamp = timestamp + mars::Time(1);
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(
+      mars::BufferEntryType(timestamp, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  // Three entrys of sensor 1 exist
+  EXPECT_FALSE(buffer.CheckForLastSensorHandlePair(pose_sensor_1_sptr));
+  EXPECT_TRUE(buffer.CheckForLastSensorHandlePair(pose_sensor_2_sptr));
 }
 
 ///
@@ -835,42 +849,16 @@ TEST_F(mars_buffer_test, GET_SENSOR_MEASUREMENTS)
   ASSERT_EQ(buffer.get_sensor_handle_measurements(imu_sensor_sptr, &entries_return), 0);
 }
 
-TEST_F(mars_buffer_test, REMOVE_OVERFLOW_ENTRIES)
-{
-  const int max_buffer_size = 5;
-  mars::Buffer buffer(max_buffer_size);
-  buffer.set_keep_last_sensor_handle(true);
-
-  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
-  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
-      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
-  std::shared_ptr<mars::PoseSensorClass> pose_sensor_2_sptr =
-      std::make_shared<mars::PoseSensorClass>("Pose_2", core_states_sptr);
-
-  int core_dummy = 13;
-  int sensor_dummy = 15;
-  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
-
-  buffer.AddEntrySorted(mars::BufferEntryType(0, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
-  buffer.PrintBufferEntrys();
-
-  // Trigger overflow removal
-  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
-  buffer.PrintBufferEntrys();
-
-  // Check that last state entry is still pose sensor 2
-  mars::BufferEntryType last_state;
-  buffer.get_oldest_state(&last_state);
-
-  ASSERT_EQ(pose_sensor_2_sptr, last_state.sensor_);
-}
-
+///
+/// \brief TEST_F Always delete measurement and state together
+///
+/// Check that, during the removal of overflow entries, sensor measurement and states for the same
+/// sensor_handle and the same time, are deleted together
+///
 TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
 {
+  // Only delete measurement and state pairs
+
   const int max_buffer_size = 5;
   mars::Buffer buffer(max_buffer_size);
   buffer.set_keep_last_sensor_handle(true);
@@ -885,19 +873,118 @@ TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES)
   int sensor_dummy = 15;
   mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
 
-  buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  // Measurement only, since we only allow to delete pairs, this results in no entry removal
+  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
 
-  ASSERT_EQ(buffer.get_length(), 5);
-
+  ASSERT_EQ(buffer.get_length(), 7);
   mars::BufferEntryType oldest_entry_return;
   buffer.get_oldest_state(&oldest_entry_return);
   ASSERT_EQ(oldest_entry_return.timestamp_, 1);
+
+  buffer.PrintBufferEntries();
+
+  // Add state for the corresponding message
+  // Now the oldest sensor handle is not the last one anymore and is deleted
+  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+
+  ASSERT_EQ(buffer.get_length(), 6);
+  buffer.get_oldest_state(&oldest_entry_return);
+  ASSERT_EQ(oldest_entry_return.timestamp_, 3);
+
+  buffer.PrintBufferEntries();
+}
+
+///
+/// \brief TEST_F Buffer consistency, keep two (measurement, state) pairs of a given sensor during out of order addition
+///
+/// Possible cause is unintended removal during buffer overflow handling
+///
+/// This ensures that during the addition of an out of order measurement, all states of another sensor still allow the
+/// propagtion after reworking of the buffer.
+///
+TEST_F(mars_buffer_test, ADD_AUTOREMOVE_ENTRIES_W_OOO)
+{
+  const int max_buffer_size = 8;
+  mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
+
+  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+  std::shared_ptr<mars::PoseSensorClass> pose_sensor_2_sptr =
+      std::make_shared<mars::PoseSensorClass>("Pose_2", core_states_sptr);
+
+  int core_dummy = 13;
+  int sensor_dummy = 15;
+  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(0, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(0, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(4, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+
+  // This should trigger an overflow removal and out of order integration
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
+
+  std::vector<mars::BufferEntryType> buffer_entry_data;
+
+  for (int k = 0; k < 9; k++)
+  {
+    mars::BufferEntryType buffer_entry_data_tmp;
+    buffer.get_entry_at_idx(k, &buffer_entry_data_tmp);
+    buffer_entry_data.push_back(buffer_entry_data_tmp);
+  }
+
+  std::vector<bool> result_vec;
+  result_vec.push_back(buffer_entry_data[0].sensor_ == pose_sensor_1_sptr);
+  result_vec.push_back(buffer_entry_data[0].metadata_ == mars::BufferMetadataType::measurement);
+  result_vec.push_back(buffer_entry_data[1].sensor_ == pose_sensor_1_sptr);
+  result_vec.push_back(buffer_entry_data[1].metadata_ == mars::BufferMetadataType::sensor_state);
+
+  result_vec.push_back(buffer_entry_data[2].sensor_ == pose_sensor_2_sptr);
+  result_vec.push_back(buffer_entry_data[2].metadata_ == mars::BufferMetadataType::measurement);
+  result_vec.push_back(buffer_entry_data[3].sensor_ == pose_sensor_2_sptr);
+  result_vec.push_back(buffer_entry_data[3].metadata_ == mars::BufferMetadataType::sensor_state);
+
+  result_vec.push_back(buffer_entry_data[4].sensor_ == pose_sensor_2_sptr);
+  result_vec.push_back(buffer_entry_data[4].metadata_ == mars::BufferMetadataType::measurement);
+  result_vec.push_back(buffer_entry_data[5].sensor_ == pose_sensor_2_sptr);
+  result_vec.push_back(buffer_entry_data[5].metadata_ == mars::BufferMetadataType::sensor_state);
+
+  result_vec.push_back(buffer_entry_data[6].sensor_ == pose_sensor_2_sptr);
+  result_vec.push_back(buffer_entry_data[6].metadata_ == mars::BufferMetadataType::measurement);
+
+  result_vec.push_back(buffer_entry_data[7].sensor_ == pose_sensor_1_sptr);
+  result_vec.push_back(buffer_entry_data[7].metadata_ == mars::BufferMetadataType::measurement);
+  result_vec.push_back(buffer_entry_data[8].sensor_ == pose_sensor_1_sptr);
+  result_vec.push_back(buffer_entry_data[8].metadata_ == mars::BufferMetadataType::sensor_state);
+
+  bool final_result = true;
+  for (auto k : result_vec)
+  {
+    if (!k)
+    {
+      final_result = false;
+      buffer.PrintBufferEntries();
+      break;
+    }
+  }
+
+  EXPECT_TRUE(final_result);
 }
 
 ///
@@ -923,6 +1010,7 @@ TEST_F(mars_buffer_test, ADD_INDEX_TEST)
   int sensor_dummy = 15;
   mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
 
+  buffer.AddEntrySorted(mars::BufferEntryType(0, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(0, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::measurement));
   buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_2_sptr, mars::BufferMetadataType::sensor_state));
@@ -932,13 +1020,13 @@ TEST_F(mars_buffer_test, ADD_INDEX_TEST)
   int idx =
       buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_3_sptr, mars::BufferMetadataType::measurement));
 
-  ASSERT_EQ(buffer.get_length(), 5);
+  ASSERT_EQ(buffer.get_length(), 7);
 
   mars::BufferEntryType entry_01;
   buffer.get_entry_at_idx(1, &entry_01);
 
-  ASSERT_EQ(entry_01.timestamp_, 2);
-  ASSERT_EQ(idx, 1);
+  ASSERT_EQ(entry_01.timestamp_, 0);
+  ASSERT_EQ(idx, 2);
 }
 
 ///
@@ -973,13 +1061,113 @@ TEST_F(mars_buffer_test, SIZE_TEST)
   buffer.AddEntrySorted(mars::BufferEntryType(2, data, pose_sensor_3_sptr, mars::BufferMetadataType::sensor_state));
 
   ASSERT_EQ(buffer.get_length(), 3);
-  buffer.PrintBufferEntrys();
+  buffer.PrintBufferEntries();
 
   // Check that last state entry is still pose sensor 2
   mars::BufferEntryType last_state;
   buffer.get_oldest_state(&last_state);
 
   ASSERT_EQ(pose_sensor_1_sptr, last_state.sensor_);
+}
+
+TEST_F(mars_buffer_test, BUFFER_INSERT_INTERMEDIATE_DATA)
+{
+  const int max_buffer_size = 10;
+  mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
+
+  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+  std::shared_ptr<mars::ImuSensorClass> imu_sensor_1_sptr =
+      std::make_shared<mars::ImuSensorClass>("imu");
+
+  int core_dummy = 13;
+  int sensor_dummy = 15;
+  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+
+  mars::BufferEntryType meas(4, data, imu_sensor_1_sptr, mars::BufferMetadataType::measurement);
+  mars::BufferEntryType state(4, data, imu_sensor_1_sptr, mars::BufferMetadataType::core_state);
+
+  EXPECT_FALSE(buffer.InsertIntermediateData(state, state));
+  // Confirm no change in buffersize
+  EXPECT_TRUE(buffer.get_length() == 5);
+  EXPECT_FALSE(buffer.InsertIntermediateData(meas, meas));
+  // Confirm no change in buffersize
+  EXPECT_TRUE(buffer.get_length() == 5);
+
+  buffer.PrintBufferEntries();
+
+  EXPECT_TRUE(buffer.InsertIntermediateData(meas, state));
+  EXPECT_TRUE(buffer.get_length() == 7);
+
+  buffer.PrintBufferEntries();
+
+  mars::BufferEntryType entry_04;
+  buffer.get_entry_at_idx(4, &entry_04);
+  mars::BufferEntryType entry_05;
+  buffer.get_entry_at_idx(5, &entry_05);
+
+  EXPECT_TRUE(entry_04.sensor_ == imu_sensor_1_sptr);
+  EXPECT_EQ(entry_04.timestamp_, 4);
+  EXPECT_TRUE(entry_04.metadata_ == mars::BufferMetadataType::measurement_auto);
+
+  EXPECT_TRUE(entry_05.sensor_ == imu_sensor_1_sptr);
+  EXPECT_EQ(entry_05.timestamp_, 4);
+  EXPECT_TRUE(entry_05.metadata_ == mars::BufferMetadataType::core_state_auto);
+}
+
+TEST_F(mars_buffer_test, BUFFER_GET_INTERMEDIATE_ENTRY_PAIR)
+{
+  const int max_buffer_size = 10;
+  mars::Buffer buffer(max_buffer_size);
+  buffer.set_keep_last_sensor_handle(true);
+
+  std::shared_ptr<mars::CoreState> core_states_sptr = std::make_shared<mars::CoreState>();
+  std::shared_ptr<mars::PoseSensorClass> pose_sensor_1_sptr =
+      std::make_shared<mars::PoseSensorClass>("Pose_1", core_states_sptr);
+  std::shared_ptr<mars::ImuSensorClass> imu_sensor_1_sptr = std::make_shared<mars::ImuSensorClass>("imu");
+
+  int core_dummy = 13;
+  int sensor_dummy = 15;
+  mars::BufferDataType data(std::make_shared<int>(core_dummy), std::make_shared<int>(sensor_dummy));
+
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, imu_sensor_1_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data, imu_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+  buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::measurement));
+
+  mars::BufferEntryType state_tmp;
+  EXPECT_FALSE(buffer.get_intermediate_entry_pair(pose_sensor_1_sptr, &state_tmp, &state_tmp));
+
+  mars::BufferEntryType meas(5, data, imu_sensor_1_sptr, mars::BufferMetadataType::measurement);
+  mars::BufferEntryType state(5, data, imu_sensor_1_sptr, mars::BufferMetadataType::core_state);
+
+  buffer.InsertIntermediateData(meas, state);
+
+  // Pretend the Sensor update was finished and a state was added
+  buffer.AddEntrySorted(mars::BufferEntryType(5, data, pose_sensor_1_sptr, mars::BufferMetadataType::sensor_state));
+
+  mars::BufferEntryType pose_state_at_5;
+  mars::BufferEntryType imu_state_at_5;
+
+  EXPECT_TRUE(buffer.get_intermediate_entry_pair(pose_sensor_1_sptr, &imu_state_at_5, &pose_state_at_5));
+
+  EXPECT_TRUE(pose_state_at_5.sensor_ == pose_sensor_1_sptr);
+  EXPECT_TRUE(imu_state_at_5.sensor_ == imu_sensor_1_sptr);
+
+  EXPECT_TRUE(pose_state_at_5.IsState());
+  EXPECT_TRUE(imu_state_at_5.IsState());
+
+  EXPECT_EQ(pose_state_at_5.timestamp_, 5);
+  EXPECT_EQ(imu_state_at_5.timestamp_, 5);
 }
 
 TEST_F(mars_buffer_test, INSERT_DATA_AT_IDX)

@@ -37,7 +37,7 @@ public:
   Eigen::Vector3d n_w_{ Eigen::Vector3d::Zero() };   ///< noise for angular velocity measurement
   Eigen::Vector3d n_bw_{ Eigen::Vector3d::Zero() };  ///< random walk for angular velocity bias
 
-  const Eigen::Vector3d g_{ 0, 0, 9.81 };  ///<defined gravity
+  const Eigen::Vector3d g_{ 0, 0, 9.81 };  ///< defined gravity
 
   CoreStateMatrix initial_covariance_;
 

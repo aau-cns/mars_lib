@@ -189,5 +189,5 @@ private:
   ///
   bool verbose_{ false };
 };
-}
+}  // namespace mars
 #endif  // M_PERF_H

@@ -12,7 +12,6 @@
 #include <mars/general_functions/utils.h>
 #include <mars/time.h>
 #include <mars/type_definitions/core_state_type.h>
-
 #include <utility>
 
 namespace mars
@@ -97,11 +96,23 @@ CoreStateType CoreState::PropagateState(const CoreStateType& prior_state, const 
 {
   CoreStateType current_state;
 
-  double delta_t = std::abs(dt);
+  double delta_t = dt;
+
+  if (delta_t < 0)
+  {
+    std::cout << "[Warning] Core State Propagation: delta t is negativ" << std::endl;
+    delta_t = std::abs(delta_t);
+  }
 
   // Map System Input
   current_state.w_m_ = measurement.angular_velocity_;
   current_state.a_m_ = measurement.linear_acceleration_;
+
+  // Sanity check that IMU ACC data is non-zero
+  if (current_state.a_m_.isZero())
+  {
+    std::cout << "[Warning] Core State Propagation: The acceleration measurement is zero" << std::endl;
+  }
 
   // Zero propagation
   if (fixed_gyro_bias_)
