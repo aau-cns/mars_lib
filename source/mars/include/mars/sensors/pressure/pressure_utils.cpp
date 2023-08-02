@@ -1,4 +1,5 @@
-// Copyright (C) 2021 Martin Scheiber, Control of Networked Systems, University of Klagenfurt, Austria.
+// Copyright (C) 2022-2023 Martin Scheiber, Christian Brommer,
+// Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
 //
@@ -6,11 +7,10 @@
 // no commercial use allowed, the full terms of which are made available
 // in the LICENSE file. No license in patents is granted.
 //
-// You can contact the author at <martin.scheiber@aau.at>
+// You can contact the authors at <christian.brommer@ieee.org>
+// and <martin.scheiber@ieee.org>.
 
 #include "mars/sensors/pressure/pressure_utils.h"
-
-// new stuff
 
 mars::PressureInit::PressureInit(const double& init_duration) : init_duration_(init_duration)
 {

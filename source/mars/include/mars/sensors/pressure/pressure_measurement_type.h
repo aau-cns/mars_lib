@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Martin Scheiber, Christian Brommer,
+// Copyright (C) 2021-2023 Martin Scheiber, Christian Brommer,
 // Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
@@ -8,10 +8,10 @@
 // in the LICENSE file. No license in patents is granted.
 //
 // You can contact the authors at <christian.brommer@ieee.org>
-// and <martin.scheiber@ieee.org>
+// and <martin.scheiber@ieee.org>.
 
-#ifndef PRESSUREMEASUREMENTTYPE_H
-#define PRESSUREMEASUREMENTTYPE_H
+#ifndef PRESSURE_MEASUREMENT_TYPE_H
+#define PRESSURE_MEASUREMENT_TYPE_H
 
 #include <mars/sensors/measurement_base_class.h>
 #include <mars/sensors/pressure/pressure_conversion.h>
@@ -23,7 +23,9 @@ namespace mars
 class PressureMeasurementType : public BaseMeas
 {
 public:
-  Pressure pressure_;
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  Pressure pressure_;  ///< Raw pressure measurement [Pascal] including the ambient temperature in [K]
 
   PressureMeasurementType(const double& height)
   {
@@ -44,4 +46,5 @@ public:
   }
 };
 }  // namespace mars
-#endif  // PRESSUREMEASUREMENTTYPE_H
+
+#endif  // PRESSURE_MEASUREMENT_TYPE_H
