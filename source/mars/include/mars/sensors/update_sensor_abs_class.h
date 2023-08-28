@@ -28,7 +28,7 @@ public:
   int aux_states_;
   int aux_error_states_;
   int ref_to_nav_;
-  Eigen::VectorXd residual_;
+  Eigen::MatrixXd residual_;
   Eigen::VectorXd R_;  ///< Measurement noise "squared"
   Eigen::MatrixXd F_;
   Eigen::MatrixXd H_;

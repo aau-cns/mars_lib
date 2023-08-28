@@ -208,10 +208,11 @@ public:
     // Calculate the residual z = z~ - (estimate)
     // Position
     const Eigen::Vector3d p_est = P_gw_w + R_gw_w * (P_wi + R_wi * P_ig);
-    const Eigen::Vector3d res = p_meas - p_est;
+    residual_ = Eigen::MatrixXd(p_est.rows(), 1);
+    residual_ = p_meas - p_est;
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
