@@ -288,11 +288,11 @@ public:
     const Eigen::Vector3d res_v = v_meas - v_est;
 
     // Combine residuals (vertical)
-    Eigen::MatrixXd res(res_p.rows() + res_v.rows(), 1);
-    res << res_p, res_v;
+    residual_ = Eigen::MatrixXd(res_p.rows() + res_v.rows(), 1);
+    residual_ << res_p, res_v;
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 

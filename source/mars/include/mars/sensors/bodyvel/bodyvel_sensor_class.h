@@ -185,10 +185,11 @@ public:
     // Calculate the residual z = z~ - (estimate)
     // Velocity
     const Eigen::Vector3d v_est = R_ib.transpose() * R_wi.transpose() * V_wi + R_ib.transpose() * w_wi_skew * P_ib;
-    const Eigen::Vector3d res = v_meas - v_est;
+    residual_ = Eigen::MatrixXd(v_est.rows(), 1);
+    residual_ = v_meas - v_est;
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 

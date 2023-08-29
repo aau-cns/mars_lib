@@ -264,10 +264,11 @@ public:
     // Orientation
     const Eigen::Vector3d rpy_est = mars::Utils::RPYFromRotMat(R_aw * R_wi * R_ib);
     const Eigen::Vector2d rp_est(rpy_est(0), rpy_est(1));
-    const Eigen::Vector2d res = rp_meas - rp_est;
+    residual_ = Eigen::MatrixXd(rp_est.rows(), 1);
+    residual_ = rp_meas - rp_est;
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
@@ -377,10 +378,11 @@ public:
     const Eigen::Quaternion<double> q_est =
         prior_sensor_state.q_aw_ * prior_core_state.q_wi_ * prior_sensor_state.q_ib_;
     const Eigen::Quaternion<double> res_q = q_est.inverse() * q_meas;
-    const Eigen::Vector3d res = 2 * res_q.vec() / res_q.w();
+    residual_ = Eigen::MatrixXd(res_q.vec().rows(), 1);
+    residual_ << (2 * res_q.vec() / res_q.w());
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 

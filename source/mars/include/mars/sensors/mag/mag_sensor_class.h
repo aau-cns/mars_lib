@@ -194,10 +194,11 @@ public:
     // Calculate the residual z = z~ - (estimate)
     // Position
     const Eigen::Vector3d mag_est = R_im.transpose() * R_wi.transpose() * mag_w;
-    const Eigen::Vector3d res = mag_meas - mag_est;
+    residual_ = Eigen::MatrixXd(mag_est.rows(), 1);
+    residual_ = mag_meas - mag_est;
 
     // Perform EKF calculations
-    mars::Ekf ekf(H, R_meas, res, P);
+    mars::Ekf ekf(H, R_meas, residual_, P);
     const Eigen::MatrixXd correction = ekf.CalculateCorrection(&chi2_);
     assert(correction.size() == size_of_full_error_state * 1);
 
