@@ -199,32 +199,46 @@ The Navigation-States (core states) are the essential states to localize a robot
 
 #### General Nomenclature
 
-The translation ![](https://latex.codecogs.com/svg.latex?_{A}\text{\textbf{P}}_{BC}) defines frame ![](https://latex.codecogs.com/svg.latex?C) with respect to frame ![](https://latex.codecogs.com/svg.latex?B) expressed in frame ![](https://latex.codecogs.com/svg.latex?A). The translation is expressed in frame ![](https://latex.codecogs.com/svg.latex?B) if the subscript ![](https://latex.codecogs.com/svg.latex?A) is not defined. The quaternion ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AB}) describes the rotation of frame ![](https://latex.codecogs.com/svg.latex?B) with respect to frame ![](https://latex.codecogs.com/svg.latex?A). ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{(\text{\textbf{q}}_{AB})}\equiv\text{\textbf{R}}_{\text{\textbf{AB}}}) denotes the conversion of quaternion ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AB}) to its corresponding rotation matrix. Please note that this framework uses the Hamilton notation for the Quaternion representation.
+The translation $`{}_{A}\mathbf{P}_{BC}`$ defines frame $`C`$ with respect to frame $B$ expressed in frame $`A`$. The translation is expressed in frame $B$ if the subscript $`A`$ is not defined. The quaternion $`\mathbf{q}_{AB}`$ describes the rotation of frame $`B`$ with respect to frame $`A`$. $`\mathbf{R}_{(\mathbf{q}_{AB})}\equiv\mathbf{R}_{\mathbf{AB}}`$ denotes the conversion of quaternion $`\mathbf{q}_{AB}`$ to its corresponding rotation matrix. Please note that this framework uses the Hamilton notation for the Quaternion representation.
 
 #### Symbols
 
-| Symbol                                                       | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\mathbf{X}_{Core})  | Navigation State                                             |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{p}}_{WI}) | Translation of the robot IMU/body frame expressed w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{v}}_{WI}) | Velocity of the robot IMU/body frame expressed w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{WI}) | Orientation of the robot IMU/body frame expressed w.r.t. the world frame (Hamiltonian) |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{b}}_{\omega}) | Gyroscopic bias                                              |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{b}}_{a}) | Accelerometer bias                                           |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{n}}_{\mathbf{\text{b}}_{\omega}}) | Zero mean white Gaussian noise of the gyroscope measurement  |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{n}}_{\mathbf{\text{b}}_{a}}) | Zero mean white Gaussian noise of the accelerometer measurement |
-| ![](https://latex.codecogs.com/svg.latex?\boldsymbol{\Omega}(\omega)) | The right side Quaternion multiplication matrix for ![](https://latex.codecogs.com/svg.latex?\omega) |
+| Symbol                                        | Description                                                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| $`\mathbf{X}_{Core}`$                         | Navigation State                                             |
+| $`\mathbf{p}_{WI}`$                           | Translation of the robot IMU/body frame expressed w.r.t. the world frame |
+| $`\mathbf{v}_{WI}`$                           | Velocity of the robot IMU/body frame expressed w.r.t. the world frame |
+| $`\mathbf{q}_{WI}`$                           | Orientation of the robot IMU/body frame expressed w.r.t. the world frame (Hamiltonian) |
+| $`\mathbf{b}_{\omega}`$                       | Gyroscopic bias                                              |
+| $`\mathbf{b}_{a}`$                            | Accelerometer bias                                           |
+| $`\mathbf{n}_{\mathbf{\text{b}}_{\omega}}`$   | Zero mean white Gaussian noise of the gyroscope measurement  |
+| $`\mathbf{n}_{\mathbf{\text{b}}_{a}}`$        | Zero mean white Gaussian noise of the accelerometer measurement |
+| $`\boldsymbol{\Omega}(\omega)`$               | The right side Quaternion multiplication matrix for $\omega$ |
 
 #### State-Definition
+
+```math
+\mathbf{X}_{Core} = \left[\mathbf{p}_{WI}^\mathsf{T},
+\mathbf{v}_{WI}^\mathsf{T}, \mathbf{q}_{WI}^\mathsf{T}, \mathbf{b}_{\omega}^\mathsf{T}, \mathbf{b}_{a}^\mathsf{T} \right]^\mathsf{T}
+```
 
 <!--$$
 \mathbf{X}_{Core}=\left[\text{\textbf{p}}_{WI}^\mathsf{T},
 \text{\textbf{v}}_{WI}^\mathsf{T}, \text{\textbf{q}}_{WI}^\mathsf{T}, \text{\textbf{b}}_{\omega}^\mathsf{T}, \text{\textbf{b}}_{a}^\mathsf{T} \right]^\mathsf{T}
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?\mathbf{X}_{Core}=\left[\text{\textbf{p}}_{WI}^\mathsf{T},\text{\textbf{v}}_{WI}^\mathsf{T},\text{\textbf{q}}_{WI}^\mathsf{T},\text{\textbf{b}}_{\omega}^\mathsf{T},\text{\textbf{b}}_{a}^\mathsf{T}\right]^\mathsf{T})
+<!-- ![](https://latex.codecogs.com/svg.latex?\mathbf{X}_{Core}=\left[\text{\textbf{p}}_{WI}^\mathsf{T},\text{\textbf{v}}_{WI}^\mathsf{T},\text{\textbf{q}}_{WI}^\mathsf{T},\text{\textbf{b}}_{\omega}^\mathsf{T},\text{\textbf{b}}_{a}^\mathsf{T}\right]^\mathsf{T}) -->
 
 #### State-Dynamics
+
+```math
+\begin{align*}
+   \dot{\mathbf{p}}_{WI} &= \mathbf{v}_{WI} \\
+   \dot{\mathbf{v}}_{WI} &= \mathbf{R}_{\left(\mathbf{q}_{WI}\right)} (\mathbf{a}_m-\mathbf{b}_a-\mathbf{n}_a)-\mathbf{g} \\
+   \dot{\mathbf{q}}_{WI} &= \frac{1}{2} \boldsymbol{\Omega}(\boldsymbol{\omega}_{m}-\mathbf{b}_w-\mathbf{n}_w) \mathbf{q}_{WI} \\
+   \dot{\mathbf{b}}_{\omega} &= \mathbf{n}_{\mathbf{b}_{\omega}} ,\, \dot{\mathbf{b}}_{a} = \mathbf{n}_{\mathbf{b}_{a}}
+\end{align*}
+```
 
 <!--$$
 \begin{align}
@@ -235,13 +249,13 @@ $$-->
 \end{align}
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{p}}}_{WI}=\text{\textbf{v}}_{WI})
+<!-- ![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{p}}}_{WI}=\text{\textbf{v}}_{WI})
 
 ![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{v}}}_{WI}=\mathbf{R}_{\left(\text{\textbf{q}}_{WI}\right)}(\mathbf{a}_m-\mathbf{b}_a-\mathbf{n}_a)-\mathbf{g})
 
 ![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{q}}}_{WI}=\frac{1}{2}\boldsymbol{\Omega}(\boldsymbol{\omega}_{m}-\mathbf{b}_w-\mathbf{n}_w)\text{\textbf{q}}_{WI})
 
-![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{b}}}_{\omega}=\mathbf{n}_{\text{\textbf{b}}_{\omega}},\dot{\text{\textbf{b}}}_{a}=\mathbf{n}_{\text{\textbf{b}}_{a}})
+![](https://latex.codecogs.com/svg.latex?\dot{\text{\textbf{b}}}_{\omega}=\mathbf{n}_{\text{\textbf{b}}_{\omega}},\dot{\text{\textbf{b}}}_{a}=\mathbf{n}_{\text{\textbf{b}}_{a}}) -->
 
 ### Provided Sensor Modules (Plug and Play)
 
@@ -251,28 +265,42 @@ New sensor modules can be added in a simple and straightforward fashion. Please 
 
 Symbols:
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IP}) | Translation of the position sensor w.r.t. the robot IMU/body frame |
+| Symbol                    | Definition                                                   |
+| ------------------------- | ------------------------------------------------------------ |
+| $`\mathbf{P}_{IP}`$       | Translation of the position sensor w.r.t. the robot IMU/body frame |
 
 Measurement equation:
 
+```math
+z = \mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP}
+```
+
+<!-- $`z = \mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP}`$ -->
 <!--$$
 z = \text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP}
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP})
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}) -->
 
 #### Pose (6 DoF)
 
 Symbols:
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IP}) | Translation of the pose sensor w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{IP}) | Orientation of the pose sensors w.r.t. the robot IMU/body frame |
+| Symbol                    | Definition                                                   |
+| ------------------------- | ------------------------------------------------------------ |
+| $`\mathbf{P}_{IP}`$       | Translation of the pose sensor w.r.t. the robot IMU/body frame |
+| $`\mathbf{q}_{IP}`$       | Orientation of the pose sensors w.r.t. the robot IMU/body frame |
 
 Measurement equation:
+
+```math
+\begin{align*}
+   z_{p} &= \mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP} \\
+   z_{q} &= \mathbf{q}_{WI} \otimes \mathbf{q}_{IP}
+\end{align*}
+```
+
+<!-- $`z_{p} = \mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP}`$
+$`z_{q} = \mathbf{q}_{WI} \otimes \mathbf{q}_{IP}`$ -->
 
 <!--$$
 \begin{align}
@@ -281,131 +309,188 @@ z_{q} =& \text{\textbf{q}}_{WI} \otimes \text{\textbf{q}}_{IP}
 \end{align}
 $$-->
 
-![](https://latex.codecogs.com/svg.latex?z_{p}=\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP})
-
-![](https://latex.codecogs.com/svg.latex?z_{q}=\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IP})
+<!-- ![](https://latex.codecogs.com/svg.latex?z_{p}=\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}) -->
+<!-- ![](https://latex.codecogs.com/svg.latex?z_{q}=\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IP}) -->
 
 #### Loosely-Coupled Vision (6 DoF)
 
 Symbols:
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{VW}) | Translation of the vision world frame w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{VW}) | Orientation of the vision world frame w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IC}) | Translation of the camera sensor w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?L)                      | Vision scale                                                 |
+| Symbol                    | Definition                                                   |
+| ------------------------- | ------------------------------------------------------------ |
+| $`\mathbf{P}_{VW}`$       | Translation of the vision world frame w.r.t. the world frame |
+| $`\mathbf{R}_{VW}`$       | Orientation of the vision world frame w.r.t. the world frame |
+| $`\mathbf{P}_{IC}`$       | Translation of the camera sensor w.r.t. the robot IMU/body frame |
+| $`L`$                     | Vision scale                                                 |
 
 Measurement equation:
 
+```math
+z = \left(\mathbf{P}_{VW} + \mathbf{R}_{VW}~\left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IC}\right)\right)~L
+```
+
+<!-- $`z = \left(\mathbf{P}_{VW} + \mathbf{R}_{VW}~\left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IC}\right)\right)~L`$ -->
 <!--$$
 z = \left(\text{\textbf{P}}_{VW} + \text{\textbf{R}}_{VW}~\left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IC}\right)\right)~L
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\left(\text{\textbf{P}}_{VW}+\text{\textbf{R}}_{VW}~\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IC}\right)\right)~L)
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\left(\text{\textbf{P}}_{VW}+\text{\textbf{R}}_{VW}~\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IC}\right)\right)~L) -->
 
 #### GNSS with local coordinate transforms (3 DoF)
 
 Symbols:
 
-| Symbol                     | Definition                                                   |
-| -------------------------- | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{GW~W}) | Translation of the GNSS world frame w.r.t. the world frame   |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{GW~W}) | Orientation of the GNSS world frame w.r.t. the world frame   |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IG})   | Translation of the GNSS sensor w.r.t. the robot IMU/body frame |
+| Symbol                    | Definition                                                   |
+| ------------------------- | ------------------------------------------------------------ |
+| $`\mathbf{P}_{GW~W}`$     | Translation of the GNSS world frame w.r.t. the world frame   |
+| $`\mathbf{R}_{GW~W}`$     | Orientation of the GNSS world frame w.r.t. the world frame   |
+| $`\mathbf{P}_{IG}`$       | Translation of the GNSS sensor w.r.t. the robot IMU/body frame |
 
 Measurement equation:
 
+```math
+z = \mathbf{P}_{GW~W} + \mathbf{R}_{GW~W}~\left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IG}\right)
+```
+
+<!-- $`z = \mathbf{P}_{GW~W} + \mathbf{R}_{GW~W}~\left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IG}\right)`$ -->
 <!--$$
 z = \text{\textbf{P}}_{GW~W} + \text{\textbf{R}}_{GW~W}~\left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IG}\right)
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{P}}_{GW~W}+\text{\textbf{R}}_{GW~W}~\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IG}\right))
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{P}}_{GW~W}+\text{\textbf{R}}_{GW~W}~\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IG}\right)) -->
 
 #### GNSS with rotational constraints from velocity
 
 Symbols:
 
-| Symbol                                                       | Definition                                                   |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{WI}) | Rotation of the IMU/Body frame expressed w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{V}}_{WI}) | Velocity of the IMU/Body frame expressed w.r.t. the world frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IG}) | Translation of the GNSS sensor w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+| Symbol                    | Definition                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| $`\mathbf{R}_{WI}`$       | Rotation of the IMU/Body frame expressed w.r.t. the world frame   |
+| $`\mathbf{V}_{WI}`$       | Velocity of the IMU/Body frame expressed w.r.t. the world frame   |
+| $`\mathbf{P}_{IG}`$       | Translation of the GNSS sensor w.r.t. the robot IMU/body frame    |
+| $`\omega_{I}`$            | Angular velocity of the IMU/Body frame                            |
 
-![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{Z}}=\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\alpha\left\|\mu\right\|)
+
+```math
+\mathbf{Z} = \mathbf{V}_{WG} = \mathbf{R}_{WI}\alpha\left\|\mu\right\|, \\
+```
+
+<!-- $`\mathbf{Z} = \mathbf{V}_{WG} = \mathbf{R}_{WI}\alpha\left\|\mu\right\|`$ -->
+<!-- ![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{Z}}=\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\alpha\left\|\mu\right\|) -->
 
 with
 
-![](https://latex.codecogs.com/svg.latex?\alpha=\left[1,0,0\right]^T)
+```math
+\alpha=\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}
+```
+
+<!-- $`\alpha=\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}`$ -->
+<!-- ![](https://latex.codecogs.com/svg.latex?\alpha=\left[1,0,0\right]^T) -->
 
 for alignment with the x-axis, and
 
-![](https://latex.codecogs.com/svg.latex?\mu=\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG})
+```math
+\mu=\mathbf{V}_{WI}+\mathbf{R}_{WI} [\omega_i]_{\times} \mathbf{P}_{IG}.
+```
+
+<!-- $`\mu=\mathbf{V}_{WI}+\mathbf{R}_{WI} [\omega_i]_{\times} \mathbf{P}_{IG}`$. -->
+<!-- ![](https://latex.codecogs.com/svg.latex?\mu=\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG}) -->
 
 Thus
 
-![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\left[1,0,0\right]^T\left\|\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG}\right\|)
+```math
+\mathbf{V}_{WG}=\mathbf{R}_{WI}\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}^\mathsf{T} \left\|\mathbf{V}_{WI}+\mathbf{R}_{WI}[\omega_i]_{\times} \mathbf{P}_{IG}\right\|.
+```
+
+<!-- $`\mathbf{V}_{WG}=\mathbf{R}_{WI}\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}^\mathsf{T} \left\|\mathbf{V}_{WI}+\mathbf{R}_{WI}[\omega_i]_{\times} \mathbf{P}_{IG}\right\|`$. -->
+<!-- ![](https://latex.codecogs.com/svg.latex?\textrm{\textbf{V}}_{WG}=\textrm{\textbf{R}}_{WI}\left[1,0,0\right]^T\left\|\textrm{\textbf{V}}_{WI}+\textrm{\textbf{R}}_{WI}[\omega_i]\textrm{\textbf{P}}_{IG}\right\|) -->
 
 Leading to the following derivatives
 
-![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}}=-\textrm{\textbf{R}}_{WI}[\alpha]\left\|\mu\right\|-\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\left[\omega_i\right]\textrm{\textbf{P}}_{IG}\right])
+```math
+\begin{align*}
+   \frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}} &= -\mathbf{R}_{WI}[\alpha]\left\|\mu\right\|-\mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\left[\omega_i\right]_{\times} \mathbf{P}_{IG}\right]_{\times} \\
+   \frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{V}}_{WI} &= \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|} \\
+   \frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{P}}_{IG} &= \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\omega_i\right]_{\times}
+\end{align*}
+```
+
+
+<!-- $`\frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}}=-\mathbf{R}_{WI}[\alpha]\left\|\mu\right\|-\mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\left[\omega_i\right]_{\times} \mathbf{P}_{IG}\right]_{\times}`$,
+
+$`\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{V}}_{WI} = \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}`$
+
+$`\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{P}}_{IG} = \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\omega_i\right]_{\times}`$ -->
+
+<!-- ![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}}=-\textrm{\textbf{R}}_{WI}[\alpha]\left\|\mu\right\|-\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\left[\omega_i\right]\textrm{\textbf{P}}_{IG}\right])
 
 ![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\textrm{\textbf{V}}_{WI}}=\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|})
 
-![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\textrm{\textbf{P}}_{IG}}=\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\omega_i\right])
+![](https://latex.codecogs.com/svg.latex?\frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\textrm{\textbf{P}}_{IG}}=\textrm{\textbf{R}}_{WI}\alpha\frac{\mu^T}{\left\|\mu\right\|}\textrm{\textbf{R}}_{WI}\left[\omega_i\right]) -->
 
 #### Magnetometer (3 DoF)
 
 Symbols:
 
-| Symbol                     | Definition                                                   |
-| -------------------------- | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{IM})   | Orientation of the Magnetometer w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?{}_W\text{\textbf{mag}}) | Magnetic field vector expressed in the world frame           |
+
+| Symbol                    | Definition                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| $`\mathbf{R}_{IM}`$       | Orientation of the Magnetometer w.r.t. the robot IMU/body frame   |
+| $`{}_W\text{\textbf{mag}}`$ | Magnetic field vector expressed in the world frame                |
 
 Measurement equation:
 
+```math
+z = \mathbf{R}_{IM}^\mathsf{T} ~ \mathbf{R}_{WI}^\mathsf{T} ~ {}_W\text{\textbf{mag}}
+```
+
+<!-- $`z = \mathbf{R}_{IM}^\mathsf{T} ~ \mathbf{R}_{WI}^\mathsf{T} ~ {}_W\text{\textbf{mag}}`$ -->
 <!--$$
 z = \text{\textbf{R}}_{IM}^\mathsf{T} ~ \text{\textbf{R}}_{WI}^\mathsf{T} ~ {}_W\text{\textbf{mag}}
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IM}^\mathsf{T}~\text{\textbf{R}}_{WI}^\mathsf{T}~{}_W\text{\textbf{mag}})
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IM}^\mathsf{T}~\text{\textbf{R}}_{WI}^\mathsf{T}~{}_W\text{\textbf{mag}}) -->
 
 #### Barometric Pressure (1 DoF)
 
 Symbols:
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IP}) | Translation of the pressure sensor w.r.t. the robot IMU/body frame |
+
+| Symbol                    | Definition                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| $`\mathbf{P}_{IP}`$       | Translation of the pressure sensor w.r.t. the robot IMU/body frame |
 
 Measurement equation:
 
+```math
+z = \begin{bmatrix} 0 & 0 & 1 \end{bmatrix} \left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP} \right)
+```
+
+<!-- $`z = \begin{bmatrix} 0 & 0 & 1 \end{bmatrix} \left(\mathbf{P}_{WI} + \mathbf{R}_{WI} ~ \mathbf{P}_{IP} \right)`$ -->
 <!--$$
 z = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}^\mathsf{T} \left(\text{\textbf{P}}_{WI} + \text{\textbf{R}}_{WI} ~ \text{\textbf{P}}_{IP} \right)
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right))
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\begin{bmatrix}0\\0\\1\end{bmatrix}\left(\text{\textbf{P}}_{WI}+\text{\textbf{R}}_{WI}~\text{\textbf{P}}_{IP}\right)) -->
 
 #### Body Velocity (3 DoF)
 
 Symbols:
 
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{P}}_{IB}) | Translation of the bodyvel sensor w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{R}}_{IB}) | Orientation of the bodyvel sensor w.r.t. the robot IMU/body frame |
-| ![](https://latex.codecogs.com/svg.latex?\omega_{I})         | Angular velocity of the IMU/Body frame                       |
+| Symbol                    | Definition                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| $`\mathbf{P}_{IB}`$       | Translation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| $`\mathbf{R}_{IB}`$       | Orientation of the bodyvel sensor w.r.t. the robot IMU/body frame |
+| $`\omega_{I}`$            | Angular velocity of the IMU/Body frame                            |
 
 Measurement equation:
 
+```math
+z = \mathbf{R}_{IB}^\mathsf{T} \mathbf{R}_{WI}^\mathsf{T} \mathbf{V}_{WI} + \mathbf{R}_{IB}^\mathsf{T} \left[\omega_{I}\right]_{\times} \mathbf{P}_{IB}
+```
+
+<!-- $`z = \mathbf{R}_{IB}^\mathsf{T} \mathbf{R}_{WI}^\mathsf{T} \mathbf{V}_{WI} + \mathbf{R}_{IB}^\mathsf{T} \left[\omega_{I}\right]_{\times} \mathbf{P}_{IB}`$ -->
 <!--$$
 z = \text{\textbf{R}}_{IB}^\mathsf{T} \text{\textbf{R}}_{WI}^\mathsf{T} \text{\textbf{V}}_{WI} + \text{\textbf{R}}_{IB}^\mathsf{T} \omega_{I} \times \text{\textbf{P}}_{IB}
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB})
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{R}}_{IB}^\mathsf{T}\text{\textbf{R}}_{WI}^\mathsf{T}\text{\textbf{V}}_{WI}+\text{\textbf{R}}_{IB}^\mathsf{T}\omega_{I}\times\text{\textbf{P}}_{IB}) -->
 
 
 #### Attitude (2-3 DoF)
@@ -413,19 +498,22 @@ $$-->
 Symbols:
 
 
-| Symbol                   | Definition                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{AW}) | Orientation of the attitude origin w.r.t. the world/global frame |
-| ![](https://latex.codecogs.com/svg.latex?\text{\textbf{q}}_{IB}) | Orientation of the attitude sensor w.r.t. the robot IMU/body frame |
-
+| Symbol                    | Definition                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| $`\mathbf{q}_{AW}`$       | Orientation of the attitude origin w.r.t. the world/global frame  |
+| $`\mathbf{q}_{IB}`$       | Orientation of the attitude sensor w.r.t. the robot IMU/body frame |
 
 Measurement equation:
 
+```math
+z = \mathbf{R}_{AW}\mathbf{R}_{WI}\mathbf{R}_{IB}
+```
+
+<!-- $`z = \mathbf{R}_{AW}\mathbf{R}_{WI}\mathbf{R}_{IB}`$ -->
 <!--$$
 z = \text{\textbf{R}}_{AW}\text{\textbf{R}}_{WI}\text{\textbf{R}}_{IB}
 $$-->
-
-![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{q}}_{AW}\otimes\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IB})
+<!-- ![](https://latex.codecogs.com/svg.latex?z=\text{\textbf{q}}_{AW}\otimes\text{\textbf{q}}_{WI}\otimes\text{\textbf{q}}_{IB}) -->
 
 
 ## CSV file formats for sensor data
