@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Martin Scheiber, Christian Brommer,
+// Copyright (C) 2022-2023 Martin Scheiber, Christian Brommer,
 // Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
@@ -8,10 +8,10 @@
 // in the LICENSE file. No license in patents is granted.
 //
 // You can contact the authors at <christian.brommer@ieee.org>
-// and <martin.scheiber@ieee.org>
+// and <martin.scheiber@ieee.org>.
 
-#ifndef PRESSURESENSORCLASS_H
-#define PRESSURESENSORCLASS_H
+#ifndef PRESSURE_SENSOR_CLASS_H
+#define PRESSURE_SENSOR_CLASS_H
 
 #include <mars/core_state.h>
 #include <mars/ekf.h>
@@ -275,4 +275,4 @@ public:
 };
 }  // namespace mars
 
-#endif  // PRESSURESENSORCLASS_H
+#endif  // PRESSURE_SENSOR_CLASS_H
