@@ -22,6 +22,10 @@ The Modular and Robust State-Estimation Framework, or short, MaRS, is a recursiv
 - Austrian patent published [A 50969](https://patents.google.com/patent/AT523734B1/en)
 - U.S. patent pending [US2022/0146264A1](https://patents.google.com/patent/US20220146264A1/en)
 
+**Code Documentation:**
+
+- You can find the Doxygen generated code documentation [here](https://aau-cns.github.io/mars_lib/)
+
 # Getting Started
 
 ## Setup and Building the Project
