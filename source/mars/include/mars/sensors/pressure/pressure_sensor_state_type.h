@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Martin Scheiber, Christian Brommer,
+// Copyright (C) 2022-2023 Martin Scheiber, Christian Brommer,
 // Control of Networked Systems, University of Klagenfurt, Austria.
 //
 // All rights reserved.
@@ -8,10 +8,10 @@
 // in the LICENSE file. No license in patents is granted.
 //
 // You can contact the authors at <christian.brommer@ieee.org>
-// and <martin.scheiber@ieee.org>
+// and <martin.scheiber@ieee.org>.
 
-#ifndef PRESSURESENSORSTATETYPE_H
-#define PRESSURESENSORSTATETYPE_H
+#ifndef PRESSURE_SENSOR_STATE_TYPE_H
+#define PRESSURE_SENSOR_STATE_TYPE_H
 
 #include <mars/type_definitions/base_states.h>
 #include <Eigen/Dense>
@@ -23,8 +23,8 @@ class PressureSensorStateType : public BaseStates
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  Eigen::Vector3d p_ip_;
-  double bias_p_;
+  Eigen::Vector3d p_ip_;  ///< translation between IMU and Pressure sensor
+  double bias_p_;         ///< bias of pressure sensor
   // technically also scale here, which is currently assumed one
 
   PressureSensorStateType() : BaseStates(4)  // cov size
@@ -56,4 +56,5 @@ public:
   }
 };
 }  // namespace mars
-#endif  // PRESSURESENSORSTATETYPE_H
+
+#endif  // PRESSURE_SENSOR_STATE_TYPE_H

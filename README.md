@@ -452,7 +452,7 @@ Individual symbols are described in section [Symbols](#Symbols) and sensor state
 | [GNSS](#gnss-with-local-coordinate-transforms-3-dof)         | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
 | [GNSS with Velocity](#gnss-with-rotational-constraints-from-velocity) | [time, p_ig_x, p_ig_y, p_ig_z, p_gw_w_x, p_gw_w_y, p_gw_w_z, <br />q_gw_w_w, q_gw_w_x, q_gw_w_y, q_gw_w_z] |
 | [Magnetometer](#magnetometer-3-dof)                          | [time, mag_w_x, mag_w_y, mag_w_z, q_im_w, q_im_x, q_im_y, q_im_z] |
-| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, p_ip_x, p_ip_y, p_ip_z]                               |
+| [Pressure Sensor](#barometric-pressure-1-dof)                | [time, p_ip_x, p_ip_y, p_ip_z, bias]                               |
 
 
 ## Package Layout/Codebase
