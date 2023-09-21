@@ -44,6 +44,30 @@ public:
     pressure_.data_ = pressure;
     pressure_.temperature_K_ = temperature;
   }
+
+  static std::string get_csv_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "pressure, ";
+    os << "temperature, ";
+    os << "type";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << pressure_.data_;
+    os << ", " << pressure_.temperature_K_;
+    os << ", " << pressure_.type_;
+
+    return os.str();
+  }
 };
 }  // namespace mars
 

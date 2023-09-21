@@ -24,6 +24,26 @@ public:
   EmptyMeasurementType(const double& value) : value_(value)
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "value";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << value_;
+
+    return os.str();
+  }
 };
 }  // namespace mars
 #endif  // EMPTYMEASUREMENTTYPE_H
