@@ -29,6 +29,26 @@ public:
   MagMeasurementType(Eigen::Vector3d mag_vector) : mag_vector_(std::move(mag_vector))
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "m_x, m_y, m_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << mag_vector_.x() << ", " << mag_vector_.y() << ", " << mag_vector_.z();
+
+    return os.str();
+  }
 };
 }  // namespace mars
 
