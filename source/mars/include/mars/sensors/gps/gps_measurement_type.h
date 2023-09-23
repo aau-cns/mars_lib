@@ -26,6 +26,26 @@ public:
     : coordinates_(std::move(latitude), std::move(longitude), std::move(altitude))
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "lat, lon, alt";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << coordinates_.latitude_ << ", " << coordinates_.longitude_ << ", " << coordinates_.altitude_;
+
+    return os.str();
+  }
 };
 }  // namespace mars
 #endif  // GPS_MEASUREMENTTYPE_H

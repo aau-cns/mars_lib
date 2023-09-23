@@ -128,6 +128,10 @@ int main(int /*argc*/, char** /*argv[]*/)
   ofile_pose.open("/tmp/mars_pose_state.csv", std::ios::out);
   ofile_pose << std::setprecision(17);
 
+  std::ofstream ofile_meas;
+  ofile_meas.open("/tmp/mars_pose_meas.csv", std::ios::out);
+  ofile_meas << std::setprecision(17);
+
   // process data
   for (auto k : measurement_data)
   {
@@ -165,11 +169,18 @@ int main(int /*argc*/, char** /*argv[]*/)
       core_logic.buffer_.get_latest_sensor_handle_state(pose_sensor_sptr, &latest_result);
       mars::PoseSensorStateType last_state = pose_sensor_sptr->get_state(latest_result.data_.sensor_);
       ofile_pose << last_state.to_csv_string(latest_result.timestamp_.get_seconds()) << std::endl;
+
+      // Retreive the last measurement and write it to the measurement file
+      mars::BufferEntryType latest_meas;
+      core_logic.buffer_.get_latest_sensor_handle_measurement(pose_sensor_sptr, &latest_meas);
+      mars::PoseMeasurementType* last_meas = static_cast<mars::PoseMeasurementType*>(latest_meas.data_.sensor_.get());
+      ofile_meas << last_meas->to_csv_string(k.timestamp_.get_seconds()) << std::endl;
     }
   }
 
   ofile_core.close();
   ofile_pose.close();
+  ofile_meas.close();
 
   mars::BufferEntryType latest_result;
   core_logic.buffer_.get_latest_state(&latest_result);

@@ -31,6 +31,26 @@ public:
   BodyvelMeasurementType(Eigen::Vector3d velocity) : velocity_(std::move(velocity))
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "v_x, v_y, v_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << velocity_.x() << ", " << velocity_.y() << ", " << velocity_.z();
+
+    return os.str();
+  }
 };
 }  // namespace mars
 #endif  // BODYVELMEASUREMENTTYPE_H

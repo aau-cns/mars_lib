@@ -49,6 +49,27 @@ public:
   AttitudeMeasurementType(const Eigen::Matrix3d& rot_mat) : attitude_(rot_mat)
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "q_w, q_x, q_y, q_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << attitude_.quaternion_.w() << ", " << attitude_.quaternion_.x() << ", " << attitude_.quaternion_.y()
+       << ", " << attitude_.quaternion_.z();
+
+    return os.str();
+  }
 };
 }  // namespace mars
 

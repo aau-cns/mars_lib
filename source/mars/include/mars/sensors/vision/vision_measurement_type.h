@@ -31,6 +31,28 @@ public:
     : position_(std::move(position)), orientation_(orientation)
   {
   }
+
+  static std::string get_csv_state_header_string()
+  {
+    std::stringstream os;
+    os << "t, ";
+    os << "p_x, p_y, p_z, ";
+    os << "q_w, q_x, q_y, q_z";
+
+    return os.str();
+  }
+
+  std::string to_csv_string(const double& timestamp) const
+  {
+    std::stringstream os;
+    os.precision(17);
+    os << timestamp;
+
+    os << ", " << position_.x() << ", " << position_.y() << ", " << position_.z();
+    os << ", " << orientation_.w() << ", " << orientation_.x() << ", " << orientation_.y() << ", " << orientation_.z();
+
+    return os.str();
+  }
 };
 }  // namespace mars
 #endif  // VISIONMEASUREMENTTYPE_H
