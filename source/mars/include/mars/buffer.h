@@ -187,6 +187,13 @@ public:
   bool get_entry_at_idx(const int& index, BufferEntryType* entry) const;
 
   ///
+  /// \brief RemoveSensorFromBuffer Removes all entrys that are associated with the given sensor handle
+  /// \param sensor_handle Sensor handle to be removed
+  /// \return true if the operation was performed, false otherwise
+  ///
+  bool RemoveSensorFromBuffer(const std::shared_ptr<SensorAbsClass>& sensor_handle);
+
+  ///
   /// \brief AddEntrySorted Adds a new entry to the buffer and ensures the buffer is sorted
   /// \param new_entry new buffer entry to be added
   /// \return Index of the added entry. The index is -1 if the entry was removed because the max_buffer_size was

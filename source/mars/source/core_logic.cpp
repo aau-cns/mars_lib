@@ -382,7 +382,18 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 {
   if (verbose_)
   {
-    std::cout << "[CoreLogic]: Process Measurement (" << sensor->name_ << ")" << std::endl;
+    std::cout << "[CoreLogic]: Process Measurement (" << sensor->name_ << ")";
+    if (!sensor->do_update_)
+    {
+      std::cout << ". Sensor is deactivated.";
+    }
+    std::cout << std::endl;
+  }
+  
+  if (!sensor->do_update_)
+  {
+    // Do not perform update for this sensor
+    return false;
   }
 
   // Generate buffer entry element for the measurement
