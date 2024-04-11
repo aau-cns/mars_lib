@@ -11,6 +11,7 @@
 #ifndef TIME_H
 #define TIME_H
 
+#include <ctime>
 #include <iostream>
 
 namespace mars
@@ -21,8 +22,9 @@ public:
   Time() = default;
   Time(const double& seconds);
 
-  double get_seconds() const;
+  static Time get_time_now();
 
+  double get_seconds() const;
   Time abs() const;
 
   Time operator+(const Time& rhs) const;
