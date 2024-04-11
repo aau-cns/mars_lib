@@ -30,8 +30,8 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   std::shared_ptr<CoreState> core_states_{ nullptr };  /// Holds a pointer to the core_states
-  Buffer buffer_{ 300 };                               /// Main buffer of the filter
-  Buffer buffer_prior_core_init_{ 100 };               /// Buffer that holds measurements prior initialization
+  Buffer buffer_;                               /// Main buffer of the filter
+  Buffer buffer_prior_core_init_;               /// Buffer that holds measurements prior initialization
   SensorManager sensor_manager_;
   bool core_is_initialized_{ false };  /// core_is_initialized_ = true if the core state was initialized, false
                                        /// otherwise

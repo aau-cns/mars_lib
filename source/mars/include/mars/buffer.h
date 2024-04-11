@@ -38,7 +38,7 @@ public:
   /// \brief Buffer default constructor
   /// max buffer size is set to 400 by default
   ///
-  Buffer() = default;
+  Buffer();
 
   ///
   /// \brief Buffer constructor

@@ -15,6 +15,12 @@
 
 namespace mars
 {
+Buffer::Buffer()
+{
+  this->set_max_buffer_size(300);
+  std::cout << "Created: Buffer (Size=" << max_buffer_size_ << " (DEFAULT))" << std::endl;
+}
+
 Buffer::Buffer(const int& size)
 {
   this->set_max_buffer_size(size);
