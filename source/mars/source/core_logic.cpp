@@ -389,7 +389,7 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
     }
     std::cout << std::endl;
   }
-  
+
   if (!sensor->do_update_)
   {
     // Do not perform update for this sensor
@@ -486,8 +486,9 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
     // Use measurement and perform out of order updates
     if (verbose_ || verbose_out_of_order_)
     {
-      std::cout << "Warning: " << sensor.get()->name_ << " Measurement is out of order. "
-                << "dt = " << latest_buffer_entry.timestamp_ - timestamp << " "
+      std::cout << "Warning: " << sensor.get()->name_ << " Measurement is out of order. \n"
+                << "dt to latest buffer = " << latest_buffer_entry.timestamp_ - timestamp << "\n"
+                << "dt to time now = " << mars::Time::get_time_now() - timestamp << "\n"
                 << "Latest stamp: " << latest_buffer_entry.timestamp_ << " Measurement stamp: " << timestamp
                 << std::endl;
     }
