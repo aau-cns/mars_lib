@@ -299,7 +299,7 @@ bool Buffer::get_closest_state(const Time& timestamp, BufferEntryType* entry, in
       }
       else
       {
-        continue;
+        break;
       }
       previous_state_index = k;
     }
@@ -370,7 +370,7 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
     }
     else
     {
-      index -= del_idx < index ? 1 : 0;
+      index -= del_idx < index ? 2 : 0;
     }
   }
 
