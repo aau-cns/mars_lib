@@ -407,7 +407,7 @@ Leading to the following derivatives
 
 ```math
 \begin{align*}
-   \frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}} &= -\mathbf{R}_{WI}[\alpha]\left\|\mu\right\|-\mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\left[\omega_i\right]_{\times} \mathbf{P}_{IG}\right]_{\times} \\
+   \frac{\mathrm{d}h(x)}{\mathrm{d}\delta_{rm}} &= -\mathbf{R}_{WI}\left[\alpha\right]_{\times} \left\|\mu\right\|-\mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\left[\omega_i\right]_{\times} \mathbf{P}_{IG}\right]_{\times} \\
    \frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{V}}_{WI} &= \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|} \\
    \frac{\mathrm{d}h(x)}{\mathrm{d}\Delta\mathbf{P}}_{IG} &= \mathbf{R}_{WI}\alpha\frac{\mu^\mathsf{T}}{\left\|\mu\right\|}\mathbf{R}_{WI}\left[\omega_i\right]_{\times}
 \end{align*}
