@@ -94,6 +94,9 @@ set(headers
     ${include_path}/sensors/empty/empty_measurement_type.h
     ${include_path}/sensors/empty/empty_sensor_class.h
     ${include_path}/sensors/empty/empty_sensor_state_type.h
+    ${include_path}/sensors/velocity/velocity_measurement_type.h
+    ${include_path}/sensors/velocity/velocity_sensor_class.h
+    ${include_path}/sensors/velocity/velocity_sensor_state_type.h
     ${include_path}/data_utils/read_csv.h
     ${include_path}/data_utils/write_csv.h
     ${include_path}/data_utils/read_sim_data.h
@@ -105,6 +108,7 @@ set(headers
     ${include_path}/data_utils/read_gps_data.h
     ${include_path}/data_utils/read_mag_data.h
     ${include_path}/data_utils/read_baro_data.h
+    ${include_path}/data_utils/read_velocity_data.h
     ${include_path}/data_utils/filesystem.h
 )
 
