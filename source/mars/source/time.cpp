@@ -9,13 +9,32 @@
 // You can contact the author at <christian.brommer@ieee.org>
 
 #include <mars/time.h>
+#include <chrono>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 
 namespace mars
 {
 Time::Time(const double& seconds) : seconds_(seconds)
 {
+}
+
+////
+/// \brief get_time_now
+/// \return seconds since epoch for the current time
+///
+Time Time::get_time_now()
+{
+  using namespace std::chrono;
+  auto sys_time_now = system_clock::now();
+  double sys_sec = double(duration_cast<milliseconds>(sys_time_now.time_since_epoch()).count())/1e3;
+
+  // Cast to millisecond precision only
+  // auto sys_ms = (duration_cast<milliseconds>(sys_time_now.time_since_epoch()) -
+  //                duration_cast<seconds>(sys_time_now.time_since_epoch()));
+
+  return Time(sys_sec);
 }
 
 double Time::get_seconds() const
