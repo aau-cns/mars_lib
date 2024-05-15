@@ -339,6 +339,24 @@ bool Buffer::get_entry_at_idx(const int& index, BufferEntryType* entry) const
   return false;
 }
 
+bool Buffer::RemoveSensorFromBuffer(const std::shared_ptr<SensorAbsClass>& sensor_handle)
+{
+  if (this->IsEmpty())
+  {
+    return false;
+  }
+
+  for (int k = 0; k < this->get_length(); k++)
+  {
+    if (data_[k].sensor_ == sensor_handle)
+    {
+      *data_.erase(data_.begin() + k);
+    }
+  }
+
+  return true;
+}
+
 int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
 {
   int index = InsertDataAtTimestamp(new_entry);

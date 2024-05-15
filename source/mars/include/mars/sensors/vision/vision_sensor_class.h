@@ -72,10 +72,10 @@ public:
     initial_calib_provided_ = true;
   }
 
-  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> /*sensor_data*/,
+  BufferDataType Initialize(const Time& timestamp, std::shared_ptr<void> sensor_data,
                             std::shared_ptr<CoreType> latest_core_data)
   {
-    // VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
+    VisionMeasurementType measurement = *static_cast<VisionMeasurementType*>(sensor_data.get());
 
     VisionSensorData sensor_state;
     std::string calibration_type;
@@ -88,6 +88,44 @@ public:
 
       sensor_state.state_ = calib.state_;
       sensor_state.sensor_cov_ = calib.sensor_cov_;
+
+      // Overwrite the calibration between the reference world and navigation world in given sensor_state
+      if (!this->ref_to_nav_given_)
+      {
+        // The calibration between reference world and navigation world is not given.
+        // Calculate it given the current estimate and measurement
+
+        // Orientation Vision World R_vw
+
+        Eigen::Quaterniond q_wi(latest_core_data->state_.q_wi_);
+        Eigen::Quaterniond q_ic(calib.state_.q_ic_);
+        Eigen::Quaterniond q_vc(measurement.orientation_);
+        Eigen::Quaterniond q_vw = (q_wi * q_ic * q_vc.inverse()).inverse();
+
+        Eigen::Matrix3d R_wi(q_wi.toRotationMatrix());
+        Eigen::Matrix3d R_ic(q_ic.toRotationMatrix());
+
+        Eigen::Matrix3d R_vw(q_vw.toRotationMatrix());
+
+        Eigen::Vector3d p_wi(latest_core_data->state_.p_wi_);
+        Eigen::Vector3d p_ic(calib.state_.p_ic_);
+        Eigen::Vector3d p_vc(measurement.position_);
+
+        Eigen::Vector3d p_vw = -(R_vw * (p_wi + (R_wi * p_ic)) - p_vc);
+
+        sensor_state.state_.q_vw_ = q_vw;
+        sensor_state.state_.p_vw_ = p_vw;
+      }
+      std::cout << "Info: [" << name_ << "] Reference Frame initialized to:" << std::endl;
+      std::cout << "\tP_vw[m]: [" << sensor_state.state_.p_vw_.transpose() << " ]" << std::endl;
+
+      Eigen::Vector4d q_vw_out(sensor_state.state_.q_vw_.w(), sensor_state.state_.q_vw_.x(),
+                               sensor_state.state_.q_vw_.y(), sensor_state.state_.q_vw_.z());
+
+      std::cout << "\tq_vw: [" << q_vw_out.transpose() << " ]" << std::endl;
+      std::cout << "\tR_vw[deg]: ["
+                << sensor_state.state_.q_vw_.toRotationMatrix().eulerAngles(0, 1, 2).transpose() * (180 / M_PI) << " ]"
+                << std::endl;
     }
     else
     {
@@ -148,6 +186,12 @@ public:
                   std::shared_ptr<void> latest_sensor_data, const Eigen::MatrixXd& prior_cov,
                   BufferDataType* new_state_data)
   {
+    // Check if updates should be performed with the sensor
+    if (!do_update_)
+    {
+      return false;
+    }
+
     // Cast the sensor measurement and prior state information
     VisionMeasurementType* meas = static_cast<VisionMeasurementType*>(measurement.get());
     VisionSensorData* prior_sensor_data = static_cast<VisionSensorData*>(latest_sensor_data.get());
