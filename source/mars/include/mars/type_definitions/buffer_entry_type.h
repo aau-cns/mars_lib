@@ -27,12 +27,12 @@ enum BufferMetadataType
 {
   invalid,
   core_state,
-  core_state_auto,  ///< auto generated core_state
+  core_state_auto,  ///< auto generated core_state e.g. introduced by interpolation
   sensor_state,
   init_state,
   measurement,      ///< regular measurement
   measurement_ooo,  ///< out of order measurement
-  measurement_auto  ///< auto generated measurement
+  measurement_auto  ///< auto generated measurement e.g. introduced by interpolation
 };
 }  // namespace BufferMetadataTypes
 
