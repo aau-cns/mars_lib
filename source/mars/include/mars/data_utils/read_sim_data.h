@@ -65,10 +65,11 @@ public:
       core_ground_truth.b_a_ = bAcc;
 
       BufferDataType data;
-      data.set_core_data(std::make_shared<CoreStateType>(core_ground_truth));
-      data.set_sensor_data(std::make_shared<IMUMeasurementType>(a_imu, w_imu));
+      // TODO
+      // data.set_core_state(std::make_shared<CoreStateType>(core_ground_truth));
+      data.set_measurement(std::make_shared<IMUMeasurementType>(a_imu, w_imu));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

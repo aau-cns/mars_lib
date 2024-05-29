@@ -59,12 +59,16 @@ int Buffer::get_length() const
 
 void Buffer::PrintBufferEntries() const
 {
-  std::cout << "Idx \t Sensor Name \t Timestamp \t Metadata " << std::endl;
+  std::cout << "Idx"
+            << "\tSensor Name"
+            << "\tTimestamp"
+            << "\t\tMetadata"
+            << "\tStates" << std::endl;
 
   // iterate forwards
   for (size_t k = 0; k < data_.size(); ++k)
   {
-    std::cout << k << "\t " << data_[k] << std::endl;
+    std::cout << k << '\t' << data_[k] << std::endl;
   }
 }
 
@@ -89,7 +93,7 @@ bool Buffer::get_latest_state(BufferEntryType* entry) const
   // iterate backwards
   for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (k->IsState())
+    if (k->HasStates())
     {
       *entry = *k;
       return true;
@@ -109,7 +113,7 @@ bool Buffer::get_oldest_state(BufferEntryType* entry) const
   // iterate forwards
   for (const auto& k : data_)
   {
-    if (k.IsState())
+    if (k.HasStates())
     {
       *entry = k;
       return true;
@@ -129,7 +133,7 @@ bool Buffer::get_oldest_core_state(BufferEntryType* entry) const
   // iterate forwards (oldest to newest)
   for (const auto& k : data_)
   {
-    if (k.metadata_ == mars::BufferMetadataType::core_state)
+    if (k.HasStates() && k.IsValid())
     {
       *entry = k;
       return true;
@@ -149,9 +153,9 @@ bool Buffer::get_latest_init_state(BufferEntryType* entry) const
   // iterate backwards (newest to oldest)
   for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (k->IsState())
+    if (k->HasStates())
     {
-      if (k->metadata_ == BufferMetadataType::init_state)
+      if (k->metadata_ == BufferMetadataType::init)
       {
         *entry = *k;
         return true;
@@ -181,9 +185,9 @@ bool Buffer::get_latest_sensor_handle_state(const std::shared_ptr<SensorAbsClass
   // iterate backwards
   for (int k = data_.size() - 1; k >= 0; --k)
   {
-    if (data_[k].IsState())
+    if (data_[k].HasStates())
     {
-      if (data_[k].sensor_.get() == sensor_handle.get())
+      if (data_[k].sensor_handle_.get() == sensor_handle.get())
       {
         *entry = data_[k];
         *index = k;
@@ -207,9 +211,9 @@ bool Buffer::get_oldest_sensor_handle_state(const std::shared_ptr<SensorAbsClass
   // iterate forwards (oldest to newest)
   for (const auto& k : data_)
   {
-    if (k.IsState())
+    if (k.HasStates())
     {
-      if (k.sensor_.get() == sensor_handle.get())
+      if (k.sensor_handle_.get() == sensor_handle.get())
       {
         *entry = k;
         return true;
@@ -228,16 +232,14 @@ bool Buffer::get_latest_sensor_handle_measurement(const std::shared_ptr<SensorAb
     return false;
   }
 
-  // iterate backwards (newest to oldest)
+  // Iterate backwards (newest to oldest)
+  // Every entry does have a measurement
   for (auto k = data_.rbegin(); k != data_.rend(); ++k)
   {
-    if (k->IsMeasurement())
+    if (k->sensor_handle_.get() == sensor_handle.get())
     {
-      if (k->sensor_.get() == sensor_handle.get())
-      {
-        *entry = *k;
-        return true;
-      }
+      *entry = *k;
+      return true;
     }
   }
 
@@ -258,12 +260,9 @@ bool Buffer::get_sensor_handle_measurements(const std::shared_ptr<SensorAbsClass
   // iterate forwards (oldest to newest)
   for (const auto& k : data_)
   {
-    if (k.IsMeasurement())
+    if (k.sensor_handle_.get() == sensor_handle.get())
     {
-      if (k.sensor_.get() == sensor_handle.get())
-      {
-        entries->push_back(&k);
-      }
+      entries->push_back(&k);
     }
   }
 
@@ -293,7 +292,7 @@ bool Buffer::get_closest_state(const Time& timestamp, BufferEntryType* entry, in
   // iterate backwards / start with latest entry
   for (int k = data_.size() - 1; k >= 0; --k)
   {
-    if (data_[k].IsState())
+    if (data_[k].HasStates())
     {
       found_state = true;
 
@@ -352,11 +351,17 @@ bool Buffer::RemoveSensorFromBuffer(const std::shared_ptr<SensorAbsClass>& senso
     return false;
   }
 
-  for (int k = 0; k < this->get_length(); k++)
+  for (auto it = data_.begin(); it != data_.end();)
   {
-    if (data_[k].sensor_ == sensor_handle)
+    if (it->sensor_handle_ == sensor_handle)
     {
-      *data_.erase(data_.begin() + k);
+      // Erase returns the next iterator
+      it = data_.erase(it);
+    }
+    else
+    {
+      // Only increment if we didn't delete
+      it++;
     }
   }
 
@@ -367,17 +372,10 @@ int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
 {
   int index = InsertDataAtTimestamp(new_entry);
 
-  if (this->get_length() > max_buffer_size_)
+  int del_idx = RemoveOverflowEntrys();
+  if (del_idx > index)
   {
-    int del_idx = RemoveOverflowEntrys();
-    if (del_idx < 0)
-    {
-      index = -1;
-    }
-    else
-    {
-      index -= del_idx < index ? 2 : 0;
-    }
+    index = -1;
   }
 
   return index;
@@ -389,22 +387,30 @@ int Buffer::FindClosestTimestamp(const Time& /*timestamp*/) const
   return false;
 }
 
-bool Buffer::DeleteStatesStartingAtIdx(const int& idx)
+bool Buffer::ClearStatesStartingAtIdx(const int& idx)
 {
   if (this->IsEmpty())
   {
     return false;
   }
 
-  // start deleting from the back to keep the running index valid
   if (idx < this->get_length())
   {
-    for (int k = get_length() - 1; k >= idx; --k)
+    for (auto it = data_.begin() + idx; it != data_.end();)
     {
-      if (data_[k].IsState())
+      if (it->IsAutoGenerated())
       {
-        *data_.erase(data_.begin() + k);
+        // erase returns the next iterator
+        it = data_.erase(it);
+        continue;
       }
+      else if (it->HasStates())
+      {
+        it->ClearStates();
+      }
+
+      // Only increment if we didn't delete or if the entry was only a measurement
+      it++;
     }
     return true;
   }
@@ -452,8 +458,9 @@ int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry)
 
     if (current_time_distance.get_seconds() >= 0)
     {
-      data_.insert(data_.begin() + k + 1, new_entry);
-      return k + 1;  // return entry index
+      int insert_idx = k + 1;
+      data_.insert(data_.begin() + insert_idx, new_entry);
+      return insert_idx;  // return entry index
     }
   }
 
@@ -472,37 +479,6 @@ bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& inde
   }
 
   data_.insert(data_.begin() + index, new_entry);
-  return true;
-}
-
-bool Buffer::InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state)
-{
-  // Ensure the given data has the right meta data
-  if (!(measurement.IsMeasurement() && state.IsState()))
-  {
-    return false;
-  }
-
-  // Check of the latest entry is a state or measurement
-  if (data_.back().IsState())
-  {
-    return false;
-  }
-  else if (data_.back().IsMeasurement())
-  {
-    // insert set of data one element before latest
-    // change entry meta data to auto generated
-    BufferEntryType meas_auto(measurement);
-    meas_auto.metadata_ = BufferMetadataType::measurement_auto;
-
-    BufferEntryType state_auto(state);
-    state_auto.metadata_ = BufferMetadataType::core_state_auto;
-
-    int last_idx = get_length();
-    InsertDataAtIndex(meas_auto, last_idx - 1);
-    InsertDataAtIndex(state_auto, last_idx);
-  }
-
   return true;
 }
 
@@ -525,7 +501,7 @@ bool Buffer::get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& 
   size_t interm_core_idx = size_t(found_sensor_state_idx - entry_offset);
 
   // Ensure that the entrie is a state entry, as expected, and has the same timestamp as the sensor state
-  if (data_[interm_core_idx].IsState() && data_[interm_core_idx].timestamp_ == found_sensor_state.timestamp_)
+  if (data_[interm_core_idx].HasStates() && data_[interm_core_idx].timestamp_ == found_sensor_state.timestamp_)
   {
     *sensor_state = found_sensor_state;
     *imu_state = data_[interm_core_idx];
@@ -537,82 +513,58 @@ bool Buffer::get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& 
 
 int Buffer::RemoveOverflowEntrys()
 {
-  // Only delete if buffer would overflow
-  if (this->get_length() < this->max_buffer_size_)
+  // Only delete if buffer did overflow
+  if (this->get_length() <= this->max_buffer_size_)
   {
     return -1;
   }
 
-  int delete_idx = 0;  // 0 is the oldest index
+  // Starting with the oldest at zero
 
-  for (int k = 0; k < this->get_length() - 1; k++)
+  auto it = data_.begin();
+
+  for (; it != data_.end(); it++)
   {
-    if (data_[delete_idx].IsMeasurement())
+    if (CheckForLastSensorHandleWithState(it->sensor_handle_))
     {
-      if (CheckForLastSensorHandlePair(data_[delete_idx].sensor_))
-      {
-        // Is last SensorHandle, dont delete
-        delete_idx++;
-      }
-      else
-      {
-        bool same_timestamp = data_[delete_idx].timestamp_ == data_[delete_idx + 1].timestamp_;
-        bool same_handle = data_[delete_idx].sensor_ == data_[delete_idx + 1].sensor_;
-
-        if (same_timestamp && same_handle)
-        {
-          *data_.erase(data_.begin() + delete_idx + 1);
-          *data_.erase(data_.begin() + delete_idx);
-        }
-        else
-        {
-          // Error
-        }
-        return delete_idx;
-      }
+      continue;
     }
     else
     {
-      delete_idx++;
+      it = data_.erase(it);
+      break;
     }
   }
 
-  return -1;
-}  // namespace mars
+  // return deleted index
+  return int(distance(data_.begin(), it));
+}
 
-bool Buffer::CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle) const
+bool Buffer::CheckForLastSensorHandleWithState(const std::shared_ptr<SensorAbsClass>& sensor_handle) const
 {
-  int num_found_ms_pair = 0;
+  int num_found_instances = 0;
 
-  for (auto current_it = data_.begin(); current_it != data_.end() - 1; ++current_it)
+  for (auto current_it = data_.begin(); current_it != data_.end(); ++current_it)
   {
-    auto next_it = current_it + 1;
-
-    if (current_it->sensor_ == sensor_handle && current_it->IsMeasurement() && next_it->IsState())
+    if ((current_it->sensor_handle_ == sensor_handle) && current_it->HasStates())
     {
-      // Additional check
-      if (next_it->sensor_ != sensor_handle)
+      num_found_instances++;
+
+      if (num_found_instances > 1)
       {
-        // Error
+        return false;
       }
-
-      num_found_ms_pair++;
-    }
-
-    if (num_found_ms_pair > 2)
-    {
-      return false;
     }
   }
 
-  if (num_found_ms_pair == 0)
+  if (num_found_instances == 1)
   {
-    // Cover the case that no entrie existed
-    return false;
+    return true;
   }
   else
   {
-    return true;
+    // Cover the case that no entrie existed
+    return false;
   }
 }
 }  // namespace mars

@@ -45,9 +45,9 @@ public:
       double pressure(csv_data["p"][k]);
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<PressureMeasurementType>(pressure, temperature));
+      data.set_measurement(std::make_shared<PressureMeasurementType>(pressure, temperature));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

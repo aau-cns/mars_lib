@@ -42,11 +42,11 @@ public:
       Time time = csv_data["t"][k] + time_offset;
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<GpsVelMeasurementType>(csv_data["lat"][k], csv_data["long"][k],
+      data.set_measurement(std::make_shared<GpsVelMeasurementType>(csv_data["lat"][k], csv_data["long"][k],
                                                                    csv_data["alt"][k], csv_data["v_x"][k],
                                                                    csv_data["v_y"][k], csv_data["v_z"][k]));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

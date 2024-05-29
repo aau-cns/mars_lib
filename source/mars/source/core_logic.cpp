@@ -12,6 +12,7 @@
 #include <mars/general_functions/utils.h>
 #include <mars/nearest_cov.h>
 #include <mars/sensors/imu/imu_measurement_type.h>
+#include <mars/sensors/pose/pose_sensor_class.h>
 #include <mars/type_definitions/core_type.h>
 
 namespace mars
@@ -23,46 +24,44 @@ CoreLogic::CoreLogic(std::shared_ptr<CoreState> core_states) : core_states_(move
 
 int CoreLogic::Initialize(const Eigen::Vector3d& p_wi_init, const Eigen::Quaterniond& q_wi_init)
 {
+  // Warning if the prior buffer is empty and the filter should be initialized.
   if (buffer_prior_core_init_.IsEmpty())
   {
     std::cout << "CoreLogic: "
-              << "No measurements to initialize the filter" << std::endl;
+              << "Warning: No measurements to initialize the filter" << std::endl;
     return false;
   }
 
   // Get Propagation Sensor Data from Prior Buffer
+  // NOTE: Additional modification of the past IMU data such as prefiltering can be done here.
   BufferEntryType latest_prop_sensor_prior_buffer_entry;
-
   buffer_prior_core_init_.get_latest_sensor_handle_measurement(core_states_->propagation_sensor_,
                                                                &latest_prop_sensor_prior_buffer_entry);
-  // NOTE: Additional modification of the past IMU data such as
-  // prefiltering can be done here.
-  buffer_.AddEntrySorted(latest_prop_sensor_prior_buffer_entry);
 
-  // Get Propagation Sensor Data from Main Buffer
-  BufferEntryType latest_prop_sensor_buffer_entry;
-  buffer_.get_latest_sensor_handle_measurement(core_states_->propagation_sensor_, &latest_prop_sensor_buffer_entry);
+  // Prepare the first main buffer entry by coping the pre buffer entry, clearing possible states and setting the meta
+  BufferEntryType init_main_buffer_entry(latest_prop_sensor_prior_buffer_entry);
+  init_main_buffer_entry.ClearStates();
+  init_main_buffer_entry.metadata_ = BufferMetadataType::init;
 
   // Initialize the state with the latest IMU data, as well as previously set position and orientation (assuming zero
   // velocity at the moment)
+
+  // Get IMU measurement
   IMUMeasurementType imu_measurement =
-      *static_cast<IMUMeasurementType*>(latest_prop_sensor_buffer_entry.data_.sensor_.get());
+      *static_cast<IMUMeasurementType*>(init_main_buffer_entry.data_.measurement_.get());
 
+  // Set core-states
   CoreType initial_core_state;
-
   initial_core_state.state_ = core_states_->InitializeState(
       imu_measurement.angular_velocity_, imu_measurement.linear_acceleration_, p_wi_init, Eigen::Vector3d::Zero(),
       q_wi_init, Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero());
 
   initial_core_state.cov_ = core_states_->InitializeCovariance();
 
-  BufferDataType init_core_state_data;
-  init_core_state_data.set_core_data(std::make_shared<CoreType>(initial_core_state));
+  // Generate data element for initial state entry and add it to the existing entry
+  init_main_buffer_entry.data_.set_core_state(std::make_shared<CoreType>(initial_core_state));
 
-  BufferEntryType new_core_state_entry(latest_prop_sensor_buffer_entry.timestamp_, init_core_state_data,
-                                       latest_prop_sensor_buffer_entry.sensor_, mars::BufferMetadataType::init_state);
-
-  buffer_.AddEntrySorted(new_core_state_entry);
+  buffer_.AddEntrySorted(init_main_buffer_entry);
 
   core_is_initialized_ = true;
   std::cout << "Info: Filter was initialized" << std::endl;
@@ -85,10 +84,10 @@ CoreStateMatrix CoreLogic::GenerateStateTransitionBlock(const int& first_transit
     BufferEntryType entry;
     buffer_.get_entry_at_idx(k, &entry);
 
-    if (entry.IsState() && entry.metadata_ != BufferMetadataType::sensor_state &&
-        entry.metadata_ != BufferMetadataType::init_state)
+    if (entry.HasStates() && (entry.sensor_handle_ == core_states_->propagation_sensor_) &&
+        (entry.metadata_ != BufferMetadataType::init))
     {
-      CoreStateMatrix entry_st = static_cast<CoreType*>(entry.data_.core_.get())->state_transition_;
+      CoreStateMatrix entry_st = static_cast<CoreType*>(entry.data_.core_state_.get())->state_transition_;
       state_transition = entry_st * state_transition;
     }
   }
@@ -124,8 +123,8 @@ Eigen::MatrixXd CoreLogic::PropagateSensorCrossCov(const Eigen::MatrixXd& sensor
   return propagated_cov;
 }
 
-bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, std::shared_ptr<SensorAbsClass> sensor,
-                                    const Time& timestamp, std::shared_ptr<BufferDataType> sensor_data)
+bool CoreLogic::PerformSensorUpdate(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
+                                    BufferEntryType* sensor_data)
 {
   if (verbose_)
   {
@@ -144,11 +143,14 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
       return false;
     }
 
-    CoreType latest_core_data = *static_cast<CoreType*>(closest_state_entry.data_.core_.get());
+    CoreType latest_core_data = *static_cast<CoreType*>(closest_state_entry.data_.core_state_.get());
 
     BufferDataType init_data =
-        sensor->Initialize(timestamp, sensor_data->sensor_, std::make_shared<CoreType>(latest_core_data));
-    *state_buffer_entry_return = BufferEntryType(timestamp, init_data, sensor, BufferMetadataType::init_state);
+        sensor->Initialize(timestamp, sensor_data->data_.measurement_, std::make_shared<CoreType>(latest_core_data));
+
+    // TODO the init function should directly receive the state entry and return it
+    sensor_data->data_.set_states(init_data.core_state_, init_data.sensor_state_);
+    sensor_data->metadata_ = BufferMetadataType::init;
 
     return true;
   }
@@ -173,28 +175,34 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
   mars::BufferEntryType latest_state_buffer_entry;
   buffer_.get_latest_state(&latest_state_buffer_entry);
 
-  CoreType core_prev = *static_cast<CoreType*>(latest_state_buffer_entry.data_.core_.get());
+  // Get latest IMU measurement
+  CoreType core_prev = *static_cast<CoreType*>(latest_state_buffer_entry.data_.core_state_.get());
   IMUMeasurementType imu_meas_curr(core_prev.state_.a_m_, core_prev.state_.w_m_);
   BufferDataType interm_prop;
-  interm_prop.set_sensor_data(std::make_shared<IMUMeasurementType>(imu_meas_curr));
+  interm_prop.set_measurement(std::make_shared<IMUMeasurementType>(imu_meas_curr));
 
-  mars::BufferEntryType new_core_state_entry;
-  new_core_state_entry = PerformCoreStatePropagation(core_states_->propagation_sensor_, timestamp,
-                                                     std::make_shared<BufferDataType>(interm_prop),
-                                                     std::make_shared<BufferEntryType>(latest_state_buffer_entry));
+  // Copy IMU measurement for zero order hold interpolation
+  mars::BufferEntryType interm_buffer_entry(timestamp, interm_prop, core_states_->propagation_sensor_,
+                                            mars::BufferMetadataType::auto_add);
+
+  PerformCoreStatePropagation(core_states_->propagation_sensor_, timestamp, latest_state_buffer_entry,
+                              &interm_buffer_entry);
 
   // Extract prior information from buffer entries
-  CoreType prior_core_data = *static_cast<CoreType*>(new_core_state_entry.data_.core_.get());
+  CoreType prior_core_data = *static_cast<CoreType*>(interm_buffer_entry.data_.core_state_.get());
   Utils::CheckCov(prior_core_data.cov_, "CoreLogic: Core cov prior");
-  Eigen::MatrixXd prior_sensor_covariance = sensor->get_covariance(prior_sensor_state_entry.data_.sensor_);
+  Eigen::MatrixXd prior_sensor_covariance = sensor->get_covariance(prior_sensor_state_entry.data_.sensor_state_);
   CoreStateMatrix state_transition;
 
   if (add_interm_buffer_entries_)
   {
     // Intermediate IMU Measurement and propergated state
-    mars::BufferEntryType interm_imu_measurement_entry(timestamp, interm_prop, core_states_->propagation_sensor_,
-                                                       mars::BufferMetadataType::measurement);
-    buffer_.InsertIntermediateData(interm_imu_measurement_entry, new_core_state_entry);
+    buffer_.AddEntrySorted(interm_buffer_entry);
+
+    if (verbose_)
+    {
+      std::cout << "[CoreLogic]: Intermediate propergated state was written to buffer." << std::endl;
+    }
 
     // Generate state transition block between prior_sensor_idx and prior_core_idx
     BufferEntryType tmp_entry;
@@ -219,62 +227,52 @@ bool CoreLogic::PerformSensorUpdate(BufferEntryType* state_buffer_entry_return, 
   // Perform the sensor update
   BufferDataType corrected_state_data;
   bool successful_update;
-  successful_update = sensor->CalcUpdate(timestamp, sensor_data->sensor_, prior_core_data.state_,
-                                         prior_sensor_state_entry.data_.sensor_, corrected_cov, &corrected_state_data);
+  successful_update =
+      sensor->CalcUpdate(timestamp, sensor_data->data_.measurement_, prior_core_data.state_,
+                         prior_sensor_state_entry.data_.sensor_state_, corrected_cov, &corrected_state_data);
 
-  if (verbose_)
-  {
-    std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
-  }
+  // TODO: This should also happen inside the update class or a preset object should be given that already has the
+  // measurement
 
   if (successful_update)
   {
-    // Generate buffer entry and return the corrected states
-    *state_buffer_entry_return =
-        BufferEntryType(timestamp, corrected_state_data, sensor, BufferMetadataType::sensor_state);
+    sensor_data->data_.set_states(corrected_state_data.core_state_, corrected_state_data.sensor_state_);
+
+    PoseMeasurementType* meas = static_cast<PoseMeasurementType*>(sensor_data->data_.measurement_.get());
+    mars::PoseSensorData* prior_sensor_data =
+        static_cast<mars::PoseSensorData*>(sensor_data->data_.sensor_state_.get());
 
     if (verbose_)
     {
-      std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
+      std::cout << "[CoreLogic]: Perform Sensor Update (Successfull) - DONE" << std::endl;
     }
 
     return true;
   }
   else
   {
-    // Store the propagated core state as an auto generated state "zero order hold" in case the original update was
-    // rejected. The sensor handle will be that of the propagtion sensor
-
-    BufferEntryType generated_prior_data(new_core_state_entry);
-    generated_prior_data.sensor_ = core_states_->propagation_sensor_;
-    generated_prior_data.metadata_ = BufferMetadataType::core_state_auto;
-
-    *state_buffer_entry_return = generated_prior_data;
-
     if (verbose_)
     {
-      std::cout << "[CoreLogic]: Measurement was rejected, propagated core state was written instead" << std::endl;
-      std::cout << "[CoreLogic]: Perform Sensor Update - DONE" << std::endl;
+      std::cout << "[CoreLogic]: Perform Sensor Update (Rejected) - DONE" << std::endl;
     }
 
-    return true;
+    return false;
   }
 }
 
-BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
-                                                       const std::shared_ptr<BufferDataType>& data_measurement,
-                                                       const std::shared_ptr<BufferEntryType>& prior_state_entry)
+void CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
+                                            const BufferEntryType& prior_state_entry, BufferEntryType* sensor_entry)
 {
   if (verbose_)
   {
     std::cout << "[CoreLogic]: Perform Core State Propagation" << std::endl;
   }
 
-  CoreType prior_core_data = *static_cast<CoreType*>(prior_state_entry->data_.core_.get());
-  IMUMeasurementType meas_system_input = *static_cast<IMUMeasurementType*>(data_measurement->sensor_.get());
+  CoreType prior_core_data = *static_cast<CoreType*>(prior_state_entry.data_.core_state_.get());
+  IMUMeasurementType meas_system_input = *static_cast<IMUMeasurementType*>(sensor_entry->data_.measurement_.get());
 
   const Time current_time = timestamp;
-  const Time previous_time = prior_state_entry->timestamp_;
+  const Time previous_time = prior_state_entry.timestamp_;
   const Time dt = (current_time - previous_time).abs();
 
   if (dt == 0 && verbose_)
@@ -287,94 +285,89 @@ BufferEntryType CoreLogic::PerformCoreStatePropagation(std::shared_ptr<SensorAbs
   propagated_core_state.state_ =
       core_states_->PropagateState(prior_core_data.state_, meas_system_input, dt.get_seconds());
 
-  BufferDataType buffer_data;
-  buffer_data.set_core_data(std::make_shared<CoreType>(propagated_core_state));
-
-  BufferEntryType new_core_state_entry(current_time, buffer_data, sensor, mars::BufferMetadataType::core_state);
+  sensor_entry->data_.set_core_state(std::make_shared<CoreType>(propagated_core_state));
 
   if (verbose_)
   {
     std::cout << "[CoreLogic]: Perform Core State Propagation - DONE" << std::endl;
   }
-
-  return new_core_state_entry;
 }
 
 void CoreLogic::ReworkBufferStartingAtIndex(const int& index)
 {
-  if (verbose_)
-  {
-    std::cout << "[CoreLogic]: Rework Buffer Starting At Index " << index << std::endl;
-  }
+  //  if (verbose_)
+  //  {
+  //    std::cout << "[CoreLogic]: Rework Buffer Starting At Index " << index << std::endl;
+  //  }
 
-  assert(index >= 0);
+  //  assert(index >= 0);
 
-  buffer_.DeleteStatesStartingAtIdx(index);
+  //  buffer_.ClearStatesStartingAtIdx(index);
 
-  // The buffer grows by one index for each additional state,
-  // index_offset corrects this
-  int index_offset = 0;
+  //  // The buffer grows by one index for each additional state,
+  //  // index_offset corrects this
+  //  int index_offset = 0;
 
-  // The buffer size can change during the reiteration. The reiteration needs to be done with the initial size
-  // (current_buffer_length).
-  const int current_buffer_length = buffer_.get_length();
-  for (int k = index; k < current_buffer_length; k++)
-  {
-    // All states after the "out of order" index have been deleted
-    // that's why getting the latest state returns the latest valid
-    // state before the out of order measurement at this point
+  //  // The buffer size can change during the reiteration. The reiteration needs to be done with the initial size
+  //  // (current_buffer_length).
+  //  const int current_buffer_length = buffer_.get_length();
+  //  for (int k = index; k < current_buffer_length; k++)
+  //  {
+  //    // All states after the "out of order" index have been deleted
+  //    // that's why getting the latest state returns the latest valid
+  //    // state before the out of order measurement at this point
 
-    // get next measurement
-    int measurement_entry_idx = k + index_offset;
-    int state_insertion_idx = measurement_entry_idx + 1;
+  //    // get next measurement
+  //    int measurement_entry_idx = k + index_offset;
+  //    int state_insertion_idx = measurement_entry_idx + 1;
 
-    BufferEntryType next_measurement_buffer_entry;
-    buffer_.get_entry_at_idx(measurement_entry_idx, &next_measurement_buffer_entry);
+  //    BufferEntryType next_measurement_buffer_entry;
+  //    buffer_.get_entry_at_idx(measurement_entry_idx, &next_measurement_buffer_entry);
 
-    std::shared_ptr<SensorAbsClass> sensor_handle = next_measurement_buffer_entry.sensor_;
-    Time timestamp = next_measurement_buffer_entry.timestamp_;
-    BufferDataType buffer_data = next_measurement_buffer_entry.data_;
+  //    std::shared_ptr<SensorAbsClass> sensor_handle = next_measurement_buffer_entry.sensor_handle_;
+  //    Time timestamp = next_measurement_buffer_entry.timestamp_;
+  //    BufferDataType buffer_data = next_measurement_buffer_entry.data_;
 
-    // Propagate State with System Input from Propagation Sensor
-    if (sensor_handle == core_states_->propagation_sensor_)
-    {
-      // Since the measurement was not out of order, get latest state is valid
-      mars::BufferEntryType latest_state_buffer_entry;
-      buffer_.get_latest_state(&latest_state_buffer_entry);
+  //    // Propagate State with System Input from Propagation Sensor
+  //    if (sensor_handle == core_states_->propagation_sensor_)
+  //    {
+  //      // Since the measurement was not out of order, get latest state is valid
+  //      mars::BufferEntryType latest_state_buffer_entry;
+  //      buffer_.get_latest_state(&latest_state_buffer_entry);
 
-      // Zero-order hold for IMU measurement. Copy imu measurement from latest state to current sensor state
-      mars::BufferEntryType latest_prop_meas_entry;
-      buffer_.get_latest_sensor_handle_state(core_states_->propagation_sensor_, &latest_prop_meas_entry);
+  //      // Zero-order hold for IMU measurement. Copy imu measurement from latest state to current sensor state
+  //      mars::BufferEntryType latest_prop_meas_entry;
+  //      buffer_.get_latest_sensor_handle_state(core_states_->propagation_sensor_, &latest_prop_meas_entry);
 
-      latest_state_buffer_entry.data_.sensor_ = latest_prop_meas_entry.data_.sensor_;
+  //      latest_state_buffer_entry.data_.sensor_state_ = latest_prop_meas_entry.data_.sensor_state_;
 
-      mars::BufferEntryType new_core_state_entry;
-      new_core_state_entry =
-          PerformCoreStatePropagation(sensor_handle, timestamp, std::make_shared<BufferDataType>(buffer_data),
-                                      std::make_shared<BufferEntryType>(latest_state_buffer_entry));
+  //      mars::BufferEntryType new_core_state_entry;
+  //      new_core_state_entry =
+  //          PerformCoreStatePropagation(sensor_handle, timestamp, std::make_shared<BufferDataType>(buffer_data),
+  //                                      std::make_shared<BufferEntryType>(latest_state_buffer_entry));
 
-      buffer_.InsertDataAtIndex(new_core_state_entry, state_insertion_idx);
-    }
-    else
-    {
-      // Process non-propagation sensor information
-      mars::BufferEntryType new_state_buffer_entry;
-      PerformSensorUpdate(&new_state_buffer_entry, sensor_handle, timestamp,
-                          std::make_shared<BufferDataType>(buffer_data));
+  //      buffer_.InsertDataAtIndex(new_core_state_entry, state_insertion_idx);
+  //    }
+  //    else
+  //    {
+  //      //  non-propagation sensor information
+  //      mars::BufferEntryType new_state_buffer_entry;
+  //      PerformSensorUpdate(&new_state_buffer_entry, sensor_handle, timestamp,
+  //                          std::make_shared<BufferDataType>(buffer_data));
 
-      buffer_.InsertDataAtIndex(new_state_buffer_entry, state_insertion_idx);
-    }
+  //      buffer_.InsertDataAtIndex(new_state_buffer_entry, state_insertion_idx);
+  //    }
 
-    index_offset = index_offset + 1;
-  }
+  //    index_offset = index_offset + 1;
+  //  }
 
-  // delete last buffer entry if the max. buffer size is reached
-  buffer_.RemoveOverflowEntrys();
+  //  // delete last buffer entry if the max. buffer size is reached
+  //  buffer_.RemoveOverflowEntrys();
 
-  if (verbose_)
-  {
-    std::cout << "[CoreLogic]: Rework Buffer Starting At Index - DONE" << std::endl;
-  }
+  //  if (verbose_)
+  //  {
+  //    std::cout << "[CoreLogic]: Rework Buffer Starting At Index - DONE" << std::endl;
+  //  }
 }
 
 bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp,
@@ -397,7 +390,7 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
   }
 
   // Generate buffer entry element for the measurement
-  mars::BufferEntryType new_measurement_buffer_entry(timestamp, data, sensor, mars::BufferMetadataType::measurement);
+  mars::BufferEntryType new_sensor_entry(timestamp, data, sensor);
 
   // Store measurements prior to the core initialization in the Prior-Buffer
   if (!this->core_is_initialized_)
@@ -408,7 +401,7 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
       core_init_warn_once_ = true;
     }
 
-    buffer_prior_core_init_.AddEntrySorted(new_measurement_buffer_entry);
+    buffer_prior_core_init_.AddEntrySorted(new_sensor_entry);
     return false;
   }
 
@@ -419,7 +412,30 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
   if (timestamp >= latest_buffer_entry.timestamp_)
   {
     // Measurement is newer than the latest entry - proceed normally
-    buffer_.AddEntrySorted(new_measurement_buffer_entry);
+    // Main part to process the measurement
+    if (sensor == core_states_->propagation_sensor_)
+    {
+      // Propagate State with System Input from Propagation Sensor
+
+      // Since the measurement was not out of order, get latest state is valid
+      mars::BufferEntryType latest_state_buffer_entry;
+      buffer_.get_latest_state(&latest_state_buffer_entry);
+
+      PerformCoreStatePropagation(sensor, timestamp, latest_state_buffer_entry, &new_sensor_entry);
+
+      buffer_.AddEntrySorted(new_sensor_entry);
+    }
+    else
+    {
+      if (!PerformSensorUpdate(sensor, timestamp, &new_sensor_entry))
+      {
+        return false;
+      }
+
+      buffer_.AddEntrySorted(new_sensor_entry);
+    }
+
+    return true;
   }
   else
   {
@@ -495,7 +511,7 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 
     // Store Measurement as out of order
     mars::BufferEntryType new_ooo_measurement_buffer_entry(timestamp, data, sensor,
-                                                           mars::BufferMetadataType::measurement_ooo);
+                                                           mars::BufferMetadataType::out_of_order);
 
     int out_of_order_buffer_idx = buffer_.AddEntrySorted(new_ooo_measurement_buffer_entry);
 
@@ -509,34 +525,5 @@ bool CoreLogic::ProcessMeasurement(std::shared_ptr<SensorAbsClass> sensor, const
 
     return true;
   }
-
-  // Main part to process the measurement
-  if (sensor == core_states_->propagation_sensor_)
-  {
-    // Propagate State with System Input from Propagation Sensor
-
-    // Since the measurement was not out of order, get latest state is valid
-    mars::BufferEntryType latest_state_buffer_entry;
-    buffer_.get_latest_state(&latest_state_buffer_entry);
-
-    mars::BufferEntryType new_core_state_entry;
-    new_core_state_entry = PerformCoreStatePropagation(sensor, timestamp, std::make_shared<BufferDataType>(data),
-                                                       std::make_shared<BufferEntryType>(latest_state_buffer_entry));
-
-    buffer_.AddEntrySorted(new_core_state_entry);
-  }
-  else
-  {
-    // Process non-propagation sensor information
-    mars::BufferEntryType new_state_buffer_entry;
-    if (!PerformSensorUpdate(&new_state_buffer_entry, sensor, timestamp, std::make_shared<BufferDataType>(data)))
-    {
-      return false;
-    }
-
-    buffer_.AddEntrySorted(new_state_buffer_entry);
-  }
-
-  return true;
 }
 }  // namespace mars

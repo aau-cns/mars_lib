@@ -124,6 +124,9 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
   // create the CoreLogic and link the core states
   mars::CoreLogic core_logic(core_states_sptr);
 
+  core_logic.verbose_ = false;
+  core_logic.add_interm_buffer_entries_ = true;
+
   // Open file for data export
   std::ofstream ofile_core;
   ofile_core.open("/tmp/mars_core_state.csv", std::ios::out);
@@ -136,12 +139,12 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
   // process data
   for (auto k : measurement_data)
   {
-    core_logic.ProcessMeasurement(k.sensor_, k.timestamp_, k.data_);
+    core_logic.ProcessMeasurement(k.sensor_handle_, k.timestamp_, k.data_);
 
     if (!core_logic.core_is_initialized_)
     {
       // Initialize the first time at which the propagation sensor occures
-      if (k.sensor_ == core_logic.core_states_->propagation_sensor_)
+      if (k.sensor_handle_ == core_logic.core_states_->propagation_sensor_)
       {
         Eigen::Vector3d p_wi_init(0, 0, 5);
         Eigen::Quaterniond q_wi_init = Eigen::Quaterniond::Identity();
@@ -154,21 +157,21 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
     }
 
     // Store results in a csv file
-    if (k.sensor_ == core_logic.core_states_->propagation_sensor_)
+    if (k.sensor_handle_ == core_logic.core_states_->propagation_sensor_)
     {
       mars::BufferEntryType latest_result;
       core_logic.buffer_.get_latest_state(&latest_result);
-      mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->state_;
+      mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->state_;
       ofile_core << last_state.to_csv_string(latest_result.timestamp_.get_seconds()) << std::endl;
     }
 
-    if (k.sensor_ == pose_sensor_sptr)
+    if (k.sensor_handle_ == pose_sensor_sptr)
     {
       // Repropagation after an out of order update can cause the latest state to be different from the current update
       // sensor. Using get_latest_sensor_handle_state is the safest option.
       mars::BufferEntryType latest_result;
       core_logic.buffer_.get_latest_sensor_handle_state(pose_sensor_sptr, &latest_result);
-      mars::PoseSensorStateType last_state = pose_sensor_sptr->get_state(latest_result.data_.sensor_);
+      mars::PoseSensorStateType last_state = pose_sensor_sptr->get_state(latest_result.data_.sensor_state_);
       ofile_pose << last_state.to_csv_string(latest_result.timestamp_.get_seconds()) << std::endl;
     }
   }
@@ -178,7 +181,7 @@ TEST_F(mars_e2e_imu_pose_update, END_2_END_IMU_POSE_UPDATE)
 
   mars::BufferEntryType latest_result;
   core_logic.buffer_.get_latest_state(&latest_result);
-  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->state_;
+  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->state_;
 
   std::cout << "Last State:" << std::endl;
   std::cout << last_state << std::endl;

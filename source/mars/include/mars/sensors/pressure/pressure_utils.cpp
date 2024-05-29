@@ -60,7 +60,7 @@ mars::Pressure mars::PressureInit::get_press_mean(const std::shared_ptr<mars::Se
   {
     if ((cur_time - (*it)->timestamp_).get_seconds() <= init_duration_)
     {
-      const PressureMeasurementType meas = *static_cast<PressureMeasurementType*>((*it)->data_.sensor_.get());
+      const PressureMeasurementType meas = *static_cast<PressureMeasurementType*>((*it)->data_.sensor_state_.get());
 
       avg_pressure += meas.pressure_;
       cnt_meas++;

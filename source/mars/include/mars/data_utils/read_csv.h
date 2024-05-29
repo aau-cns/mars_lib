@@ -30,8 +30,9 @@ class ReadCsv
 {
   char delim{ ',' };
   HeaderMapType header_map;
+
 public:
-  ReadCsv(CsvDataType* csv_data, const std::string& file_path, char delim_=',') : delim(delim_)
+  ReadCsv(CsvDataType* csv_data, const std::string& file_path, char delim_ = ',') : delim(delim_)
   {
     if (!mars::filesystem::IsFile(file_path))
     {
@@ -62,18 +63,18 @@ public:
     }
 
     CsvDataType csv_data_int;
-    for(auto it=header_map.begin(); it != header_map.end(); it++) {
-      csv_data_int[it->second].resize(rows-1, 0.0);
+    for (auto it = header_map.begin(); it != header_map.end(); it++)
+    {
+      csv_data_int[it->second].resize(rows - 1, 0.0);
     }
 
     // Read columns associated to header tokens
     std::string line;
     int line_counter = 0;
-    int parsed_row_counter = first_value_row; // header already parsed.
+    int parsed_row_counter = first_value_row;  // header already parsed.
 
     while (std::getline(file_, line))
     {
-
       std::stringstream row_stream(line);
       std::string token;
       int column_counter = 0;
@@ -81,23 +82,26 @@ public:
       double item;
       while (std::getline(row_stream, token, delim))
       {
-        if(column_counter >= (int)header_map.size()) {
+        if (column_counter >= (int)header_map.size())
+        {
           std::cout << "ReadCsv(): Warning: too many entries in row!" << std::endl;
-          ++column_counter; // to indicate a corrupted row
+          ++column_counter;  // to indicate a corrupted row
           break;
         }
 
         std::istringstream is(token);
         is >> item;
-        csv_data_int[header_map[column_counter]][line_counter]=(item);
+        csv_data_int[header_map[column_counter]][line_counter] = (item);
         ++column_counter;
       }
 
       // check if row was corrupted, if so, overwrite current line with the next one
-      if(column_counter != (int)header_map.size()) {
+      if (column_counter != (int)header_map.size())
+      {
         std::cout << "ReadCsv(): Warning: corrupted row=" << parsed_row_counter << " will be skipped!" << std::endl;
       }
-      else {
+      else
+      {
         line_counter++;
       }
 
@@ -106,7 +110,8 @@ public:
     }
 
     // shrink to the actual size
-    for(auto it=header_map.begin(); it != header_map.end(); it++) {
+    for (auto it = header_map.begin(); it != header_map.end(); it++)
+    {
       csv_data_int[it->second].resize(line_counter);
     }
 
