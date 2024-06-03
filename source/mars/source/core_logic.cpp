@@ -155,7 +155,7 @@ bool CoreLogic::PerformSensorUpdate(std::shared_ptr<SensorAbsClass> sensor, cons
     BufferDataType init_data =
         sensor->Initialize(timestamp, sensor_data->data_.measurement_, std::make_shared<CoreType>(latest_core_data));
 
-    // TODO the init function should directly receive the state entry and return it
+    // TODO (CHB) the init function should directly receive the state entry and return it
     sensor_data->data_.set_states(init_data.core_state_, init_data.sensor_state_);
     sensor_data->metadata_ = BufferMetadataType::init;
 
@@ -239,12 +239,13 @@ bool CoreLogic::PerformSensorUpdate(std::shared_ptr<SensorAbsClass> sensor, cons
       sensor->CalcUpdate(timestamp, sensor_data->data_.measurement_, prior_core_data.state_,
                          prior_sensor_state_entry.data_.sensor_state_, corrected_cov, &corrected_state_data);
 
-  // TODO: This should also happen inside the update class or a preset object should be given that already has the
+  // TODO(CHB): This should also happen inside the update class or a preset object should be given that already has the
   // measurement
 
   if (successful_update)
   {
     sensor_data->data_.set_states(corrected_state_data.core_state_, corrected_state_data.sensor_state_);
+    sensor_data->metadata_ = mars::BufferMetadataType::invalid;
 
     if (verbose_)
     {
@@ -341,6 +342,7 @@ void CoreLogic::ReworkBufferStartingAtIndex(const int& index)
       //  Processing update sensors
       bool added_interm_state = false;
       PerformSensorUpdate(sensor_handle, timestamp, &current_measurement_buffer_entry, &added_interm_state);
+
       if (added_interm_state)
       {
         current_state_entry_idx++;

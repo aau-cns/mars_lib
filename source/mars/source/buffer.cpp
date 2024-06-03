@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt,
+// Copyright (C) 2024 Christian Brommer and Martin Scheiber, Control of Networked Systems, University of Klagenfurt,
 // Austria.
 //
 // All rights reserved.
@@ -365,9 +365,49 @@ bool Buffer::RemoveSensorFromBuffer(const std::shared_ptr<SensorAbsClass>& senso
 
 int Buffer::AddEntrySorted(const BufferEntryType& new_entry, const bool& after)
 {
-  int index = InsertDataAtTimestamp(new_entry, after);
+  if (this->IsEmpty())
+  {
+    data_.push_back(new_entry);
+    // entry is added at idx 0, buffer was empty
+    return 0;
+  }
 
-  return index;
+  BufferEntryType latest_entry;
+  this->get_latest_entry(&latest_entry);
+  if (latest_entry <= new_entry)
+  {
+    data_.push_back(new_entry);
+    // get index based on iterator
+    return static_cast<int>(data_.end() - data_.begin()) - 1;
+  }
+
+  Time previous_time_distance(1e100);
+  const Time timestamp = new_entry.timestamp_;
+
+  // iterate backwards and start with latest entry
+  // find the first entry at which (state_entry_stamp - new_stamp) is >=0
+  // the new entry is entered after this index (idx+1)
+  for (int k = data_.size() - 1; k >= 0; --k)
+  {
+    Time current_time_distance = timestamp - data_[k].timestamp_;
+
+    if (current_time_distance.get_seconds() >= 0)
+    {
+      int insert_idx = k;
+
+      if (after)
+      {
+        insert_idx += 1;
+      }
+
+      data_.insert(data_.begin() + insert_idx, new_entry);
+      return insert_idx;  // return entry index
+    }
+  }
+
+  // If the buffer has only one element and the new entry is older then the existing entry
+  data_.push_front(new_entry);
+  return 0;  // push front adds element at index 0
 }
 
 int Buffer::FindClosestTimestamp(const Time& /*timestamp*/) const
@@ -415,53 +455,6 @@ bool Buffer::IsSorted() const
   }
 
   return std::is_sorted(data_.begin(), data_.end());
-}
-
-int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry, const bool& after)
-{
-  if (this->IsEmpty())
-  {
-    data_.push_back(new_entry);
-    // entry is added at idx 0, buffer was empty
-    return 0;
-  }
-
-  BufferEntryType latest_entry;
-  this->get_latest_entry(&latest_entry);
-  if (latest_entry <= new_entry)
-  {
-    data_.push_back(new_entry);
-    // get index based on iterator
-    return static_cast<int>(data_.end() - data_.begin()) - 1;
-  }
-
-  Time previous_time_distance(1e100);
-  const Time timestamp = new_entry.timestamp_;
-
-  // iterate backwards and start with latest entry
-  // find the first entry at which (state_entry_stamp - new_stamp) is >=0
-  // the new entry is entered after this index (idx+1)
-  for (int k = data_.size() - 1; k >= 0; --k)
-  {
-    Time current_time_distance = timestamp - data_[k].timestamp_;
-
-    if (current_time_distance.get_seconds() >= 0)
-    {
-      int insert_idx = k;
-
-      if (after)
-      {
-        insert_idx += 1;
-      }
-
-      data_.insert(data_.begin() + insert_idx, new_entry);
-      return insert_idx;  // return entry index
-    }
-  }
-
-  // If the buffer has only one element and the new entry is older then the existing entry
-  data_.push_front(new_entry);
-  return 0;  // push front adds element at index 0
 }
 
 bool Buffer::OverwriteDataAtIndex(const BufferEntryType& new_entry, const int& index)

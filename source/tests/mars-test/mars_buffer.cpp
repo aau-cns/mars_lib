@@ -774,18 +774,18 @@ TEST_F(mars_buffer_test, INSERT_DATA_IDX_TEST)
   buffer.AddEntrySorted(mars::BufferEntryType(7, data_with_state, pose_sensor_1_sptr));
 
   // New entry is newer than newest existing entry and needs to be inserted at idx 4
-  int idx_newer = buffer.InsertDataAtTimestamp(mars::BufferEntryType(8, data_with_state, pose_sensor_1_sptr));
+  int idx_newer = buffer.AddEntrySorted(mars::BufferEntryType(8, data_with_state, pose_sensor_1_sptr));
   ASSERT_EQ(4, idx_newer);
 
   // add entry in the middle of the buffer
-  int idx_mid = buffer.InsertDataAtTimestamp(mars::BufferEntryType(5.3, data_with_state, pose_sensor_1_sptr));
+  int idx_mid = buffer.AddEntrySorted(mars::BufferEntryType(5.3, data_with_state, pose_sensor_1_sptr));
   ASSERT_EQ(2, idx_mid);
 
-  idx_mid = buffer.InsertDataAtTimestamp(mars::BufferEntryType(5.6, data_with_state, pose_sensor_1_sptr));
+  idx_mid = buffer.AddEntrySorted(mars::BufferEntryType(5.6, data_with_state, pose_sensor_1_sptr));
   ASSERT_EQ(3, idx_mid);
 
   // New entry is older than oldest existing entry and needs to be inserted at idx 0
-  int idx_older = buffer.InsertDataAtTimestamp(mars::BufferEntryType(1, data_with_state, pose_sensor_1_sptr));
+  int idx_older = buffer.AddEntrySorted(mars::BufferEntryType(1, data_with_state, pose_sensor_1_sptr));
   ASSERT_EQ(int(0), idx_older);
 }
 
@@ -1385,7 +1385,7 @@ TEST_F(mars_buffer_test, BUFFER_GET_INTERMEDIATE_ENTRY_PAIR)
   // EXPECT_EQ(imu_state_at_5.timestamp_, 5);
 }
 
-TEST_F(mars_buffer_test, INSERT_DATA_AT_IDX)
+TEST_F(mars_buffer_test, OVERWRITE_ENTRY_AT_INDEX)
 {
   // TODO
 }

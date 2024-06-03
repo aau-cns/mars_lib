@@ -202,6 +202,9 @@ public:
   /// \return Index of the added entry. The index is -1 if the entry was removed because the max_buffer_size was
   /// reached.
   ///
+  /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
+  /// elements. It then determines if the entry needs to be added before or after the closest entry.
+  ///
   int AddEntrySorted(const BufferEntryType& new_entry, const bool& after = true);
 
   ///
@@ -226,15 +229,6 @@ public:
   /// \return true if sorted, false otherwise
   ///
   bool IsSorted() const;
-
-  ///
-  /// \brief Inserting new element before the element at the specified position
-  /// \param new_entry ntry that is added to the buffer
-  ///
-  /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
-  /// elements. It then determines if the entry needs to be added before or after the closest entry.
-  ///
-  int InsertDataAtTimestamp(const BufferEntryType& new_entry, const bool& after = true);
 
   ///
   /// \brief InsertDataAtIndex Adds 'entry' at buffer position 'index'
