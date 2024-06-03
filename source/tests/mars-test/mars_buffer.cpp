@@ -153,6 +153,7 @@ TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
   {
     mars::BufferEntryType entry(mars::Time(k), data, pose_sensor_1_sptr, 1);
     buffer.AddEntrySorted(entry);
+    buffer.RemoveOverflowEntrys();
   }
 
   std::cout << "Buffer Length: " << buffer.get_length() << std::endl;
@@ -170,11 +171,13 @@ TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
     {
       mars::BufferEntryType entry(mars::Time(k), data, pose_sensor_1_sptr, 1);
       buffer2.AddEntrySorted(entry);
+      buffer2.RemoveOverflowEntrys();
     }
     else
     {
       mars::BufferEntryType entry(mars::Time(k), data, pose_sensor_2_sptr, 1);
       buffer2.AddEntrySorted(entry);
+      buffer2.RemoveOverflowEntrys();
     }
   }
   buffer2.PrintBufferEntries();
@@ -197,22 +200,24 @@ TEST_F(mars_buffer_test, STORAGE_MAX_ENTRY)
     {
       mars::BufferEntryType entry(mars::Time(k), data, pose_sensor_1_sptr, 1);
       buffer3.AddEntrySorted(entry);
+      buffer3.RemoveOverflowEntrys();
     }
     else
     {
       mars::BufferEntryType entry(mars::Time(k), data, pose_sensor_2_sptr, 1);
       buffer3.AddEntrySorted(entry);
+      buffer3.RemoveOverflowEntrys();
     }
   }
   buffer3.PrintBufferEntries();
   ASSERT_EQ(buffer.get_length(), max_buffer_size);
 
   mars::BufferEntryType t3_idx0, t3_idx1;
-  buffer3.get_entry_at_idx(0, &t2_idx0);
-  buffer3.get_entry_at_idx(1, &t2_idx1);
+  buffer3.get_entry_at_idx(0, &t3_idx0);
+  buffer3.get_entry_at_idx(1, &t3_idx1);
 
-  ASSERT_EQ(t2_idx0.timestamp_, 9);
-  ASSERT_EQ(t2_idx1.timestamp_, 11);
+  ASSERT_EQ(t3_idx0.timestamp_, 9);
+  ASSERT_EQ(t3_idx1.timestamp_, 11);
 }
 
 TEST_F(mars_buffer_test, LATEST_ENTRY)

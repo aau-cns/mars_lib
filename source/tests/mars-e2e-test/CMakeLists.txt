@@ -23,6 +23,7 @@ set(sources
     main.cpp
     mars_e2e_imu_prop.cpp
     mars_e2e_imu_pose_update.cpp
+    mars_e2e_imu_pose_ooo_rework.cpp
     mars_e2e_imu_pose_update_perf.cpp
     mars_e2e_imu_prop_empty_updates.cpp
 )

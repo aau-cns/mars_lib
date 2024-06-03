@@ -73,6 +73,9 @@ public:
   /// \brief PerformSensorUpdate Returns new state with corrected state and updated covariance
   ///
   bool PerformSensorUpdate(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp, BufferEntryType* sensor_data);
+  bool PerformSensorUpdate(std::shared_ptr<SensorAbsClass> sensor, const Time& timestamp, BufferEntryType* sensor_data,
+                           bool* added_interm_state);
+
   ///
   /// \brief PerformCoreStatePropagation Propagates the core state and returns the new state entry
   ///

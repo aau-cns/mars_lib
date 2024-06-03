@@ -52,11 +52,6 @@ bool Buffer::IsEmpty() const
   return data_.empty();
 }
 
-int Buffer::get_length() const
-{
-  return static_cast<int>(data_.size());
-}
-
 void Buffer::PrintBufferEntries() const
 {
   std::cout << "Idx"
@@ -368,15 +363,9 @@ bool Buffer::RemoveSensorFromBuffer(const std::shared_ptr<SensorAbsClass>& senso
   return true;
 }
 
-int Buffer::AddEntrySorted(const BufferEntryType& new_entry)
+int Buffer::AddEntrySorted(const BufferEntryType& new_entry, const bool& after)
 {
-  int index = InsertDataAtTimestamp(new_entry);
-
-  int del_idx = RemoveOverflowEntrys();
-  if (del_idx > index)
-  {
-    index = -1;
-  }
+  int index = InsertDataAtTimestamp(new_entry, after);
 
   return index;
 }
@@ -428,7 +417,7 @@ bool Buffer::IsSorted() const
   return std::is_sorted(data_.begin(), data_.end());
 }
 
-int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry)
+int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry, const bool& after)
 {
   if (this->IsEmpty())
   {
@@ -458,7 +447,13 @@ int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry)
 
     if (current_time_distance.get_seconds() >= 0)
     {
-      int insert_idx = k + 1;
+      int insert_idx = k;
+
+      if (after)
+      {
+        insert_idx += 1;
+      }
+
       data_.insert(data_.begin() + insert_idx, new_entry);
       return insert_idx;  // return entry index
     }
@@ -469,17 +464,15 @@ int Buffer::InsertDataAtTimestamp(const BufferEntryType& new_entry)
   return 0;  // push front adds element at index 0
 }
 
-bool Buffer::InsertDataAtIndex(const BufferEntryType& new_entry, const int& index)
+bool Buffer::OverwriteDataAtIndex(const BufferEntryType& new_entry, const int& index)
 {
-  if (this->get_length() - 1 < index)
+  if (index < (this->get_length()))
   {
-    // required index is beyond buffersize, append at the end of the buffer
-    data_.push_back(new_entry);
+    data_[index] = new_entry;
     return true;
   }
 
-  data_.insert(data_.begin() + index, new_entry);
-  return true;
+  return false;
 }
 
 bool Buffer::get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle,
@@ -532,7 +525,11 @@ int Buffer::RemoveOverflowEntrys()
     else
     {
       it = data_.erase(it);
-      break;
+
+      if (this->get_length() <= this->max_buffer_size_)
+      {
+        break;
+      }
     }
   }
 

@@ -79,7 +79,10 @@ public:
   /// \brief get_length
   /// \return current number of elements stored in the buffer
   ///
-  int get_length() const;
+  inline int get_length() const
+  {
+    return static_cast<int>(data_.size());
+  }
 
   ///
   /// \brief PrintBufferEntries prints all buffer entries in a formatted way
@@ -199,7 +202,7 @@ public:
   /// \return Index of the added entry. The index is -1 if the entry was removed because the max_buffer_size was
   /// reached.
   ///
-  int AddEntrySorted(const BufferEntryType& new_entry);
+  int AddEntrySorted(const BufferEntryType& new_entry, const bool& after = true);
 
   ///
   /// \brief FindClosestTimestamp Returns the index of the entry which is the closest to the specified 'timestamp' when
@@ -231,14 +234,14 @@ public:
   /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
   /// elements. It then determines if the entry needs to be added before or after the closest entry.
   ///
-  int InsertDataAtTimestamp(const BufferEntryType& new_entry);
+  int InsertDataAtTimestamp(const BufferEntryType& new_entry, const bool& after = true);
 
   ///
   /// \brief InsertDataAtIndex Adds 'entry' at buffer position 'index'
   /// \param new_entry Entry buffer entry to be added
   /// \param index position at which the entry is added
   ///
-  bool InsertDataAtIndex(const BufferEntryType& new_entry, const int& index);
+  bool OverwriteDataAtIndex(const BufferEntryType& new_entry, const int& index);
 
   ///
   /// \brief get_latest_interm_entrie Get last state pair of imu prop and sensor update

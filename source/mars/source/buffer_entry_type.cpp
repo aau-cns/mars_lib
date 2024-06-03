@@ -71,7 +71,7 @@ std::ostream& operator<<(std::ostream& out, const BufferEntryType& entry)
   out << BufferEntryType::get_metadata_label(entry.metadata_) << '\t';
 
   out << "Core";
-  if (entry.HasStates())
+  if (entry.data_.HasCoreStates())
   {
     out << "[x]";
   }
@@ -81,7 +81,7 @@ std::ostream& operator<<(std::ostream& out, const BufferEntryType& entry)
   }
 
   out << "  Sensor ";
-  if (entry.HasStates())
+  if (entry.data_.HasSensorStates())
   {
     out << "[x]";
   }
