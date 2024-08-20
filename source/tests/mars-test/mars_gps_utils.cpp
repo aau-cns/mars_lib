@@ -59,13 +59,13 @@ TEST_F(mars_gps_utils_test, AVG_CALC)
   mars::GpsMeasurementType meas_gps2(-5.0, 4.0, 3.0);
   mars::GpsMeasurementType meas_gps3(3.0, 5.5, 3.0);
   mars::BufferDataType data_gps1, data_gps2, data_gps3;
-  data_gps1.set_sensor_data(std::make_shared<mars::GpsMeasurementType>(meas_gps1));
-  data_gps2.set_sensor_data(std::make_shared<mars::GpsMeasurementType>(meas_gps2));
-  data_gps3.set_sensor_data(std::make_shared<mars::GpsMeasurementType>(meas_gps3));
+  data_gps1.set_measurement(std::make_shared<mars::GpsMeasurementType>(meas_gps1));
+  data_gps2.set_measurement(std::make_shared<mars::GpsMeasurementType>(meas_gps2));
+  data_gps3.set_measurement(std::make_shared<mars::GpsMeasurementType>(meas_gps3));
 
   // add measurements to buffer
-  buffer.AddEntrySorted(mars::BufferEntryType(1, data_dummy, pose1_sensor_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(2, data_dummy, pose1_sensor_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data_dummy, pose1_sensor_sptr));
+  buffer.AddEntrySorted(mars::BufferEntryType(2, data_dummy, pose1_sensor_sptr));
 
   // perform update without measurements in buffer
   mars::GpsCoordinates gps_mean = gps_init.get_gps_mean(gps1_sensor_sptr, buffer, meas_gps1.coordinates_, 1);
@@ -78,9 +78,9 @@ TEST_F(mars_gps_utils_test, AVG_CALC)
   gps_init.Reset();
 
   // continue to fill buffer
-  buffer.AddEntrySorted(mars::BufferEntryType(1, data_gps1, gps1_sensor_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(3, data_gps2, gps1_sensor_sptr, mars::BufferMetadataType::measurement));
-  buffer.AddEntrySorted(mars::BufferEntryType(4, data_dummy, pose1_sensor_sptr, mars::BufferMetadataType::measurement));
+  buffer.AddEntrySorted(mars::BufferEntryType(1, data_gps1, gps1_sensor_sptr));
+  buffer.AddEntrySorted(mars::BufferEntryType(3, data_gps2, gps1_sensor_sptr));
+  buffer.AddEntrySorted(mars::BufferEntryType(4, data_dummy, pose1_sensor_sptr));
 
   // test mean again
   gps_mean = gps_init.get_gps_mean(gps1_sensor_sptr, buffer, meas_gps3.coordinates_, 5);

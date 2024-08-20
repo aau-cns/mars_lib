@@ -12,7 +12,6 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
-#include <iomanip>
 
 namespace mars
 {
@@ -28,7 +27,7 @@ Time Time::get_time_now()
 {
   using namespace std::chrono;
   auto sys_time_now = system_clock::now();
-  double sys_sec = double(duration_cast<milliseconds>(sys_time_now.time_since_epoch()).count())/1e3;
+  double sys_sec = double(duration_cast<milliseconds>(sys_time_now.time_since_epoch()).count()) / 1e3;
 
   // Cast to millisecond precision only
   // auto sys_ms = (duration_cast<milliseconds>(sys_time_now.time_since_epoch()) -

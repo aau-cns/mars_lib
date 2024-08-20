@@ -87,12 +87,12 @@ TEST_F(mars_e2e_imu_prop, END_2_END_IMU_PROPAGATION)
   // process data
   for (auto k : measurement_data)
   {
-    core_logic.ProcessMeasurement(k.sensor_, k.timestamp_, k.data_);
+    core_logic.ProcessMeasurement(k.sensor_handle_, k.timestamp_, k.data_);
 
     if (!core_logic.core_is_initialized_)
     {
       // Initialize the first time at which the propagation sensor occures
-      if (k.sensor_ == core_logic.core_states_->propagation_sensor_)
+      if (k.sensor_handle_ == core_logic.core_states_->propagation_sensor_)
       {
         // Initialize with ground truth
         Eigen::Vector3d p_wi_init(0, 0, 5);
@@ -118,8 +118,8 @@ TEST_F(mars_e2e_imu_prop, END_2_END_IMU_PROPAGATION)
 
   std::cout << "Timestamp: " << latest_result.timestamp_ << std::endl;
 
-  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->state_;
-  Eigen::MatrixXd last_state_cov = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->cov_;
+  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->state_;
+  Eigen::MatrixXd last_state_cov = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->cov_;
 
   std::cout << "Last State:" << std::endl;
   std::cout << last_state << std::endl;

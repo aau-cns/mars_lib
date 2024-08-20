@@ -45,9 +45,9 @@ public:
       Eigen::Vector3d mag_vec(csv_data["cart_x"][k], csv_data["cart_y"][k], csv_data["cart_z"][k]);
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<MagMeasurementType>(mag_vec));
+      data.set_measurement(std::make_shared<MagMeasurementType>(mag_vec));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

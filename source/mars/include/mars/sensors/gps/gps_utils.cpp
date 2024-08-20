@@ -69,7 +69,7 @@ mars::GpsCoordinates mars::GPSInit::get_gps_mean(const std::shared_ptr<mars::Sen
   {
     if ((cur_time - (*it)->timestamp_).get_seconds() <= init_duration_)
     {
-      const GpsCoordinates meas = (*static_cast<GpsMeasurementType*>((*it)->data_.sensor_.get())).coordinates_;
+      const GpsCoordinates meas = (*static_cast<GpsMeasurementType*>((*it)->data_.measurement_.get())).coordinates_;
 
       avg_ref += meas;
       cnt_meas++;

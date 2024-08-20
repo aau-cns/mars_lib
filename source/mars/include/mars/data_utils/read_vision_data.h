@@ -46,9 +46,9 @@ public:
       orientation = Utils::NormalizeQuaternion(orientation, "vision csv reader");
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<VisionMeasurementType>(position, orientation));
+      data.set_measurement(std::make_shared<VisionMeasurementType>(position, orientation));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

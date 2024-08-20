@@ -80,7 +80,7 @@ public:
   int dof_{ 3 };                   /// Degrees of freedom for the setup
   double chi_value_{ 0.05 };       /// Chi value for the confidence intervall (0.05 represents 95% test)
   double ucv_;                     /// Upper critival value
-  bool do_test_{ false };          /// Determine if the test is performed or not
+  bool do_test_{ true };          /// Determine if the test is performed or not
   bool passed_{ false };           /// Shows if the test passed or not (true=passed)
 
 private:

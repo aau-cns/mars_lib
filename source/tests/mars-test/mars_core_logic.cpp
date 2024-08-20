@@ -55,18 +55,18 @@ TEST_F(mars_core_logic_test, INITIALIZE)
   // Call on empty buffer
   ASSERT_FALSE(core_logic.Initialize(p_wi_init, q_wi_init));
 
+  // Add measurement to pre-buffer
   int timestamp = 0;
   mars::IMUMeasurementType imu_meas(Eigen::Vector3d(1, 2, 3), Eigen::Vector3d(4, 5, 6));
 
   mars::BufferDataType data;
-  data.set_sensor_data(std::make_shared<mars::IMUMeasurementType>(imu_meas));
+  data.set_measurement(std::make_shared<mars::IMUMeasurementType>(imu_meas));
 
-  mars::BufferEntryType buffer_entry(timestamp, data, imu_sensor_sptr, mars::BufferMetadataType::measurement);
+  mars::BufferEntryType buffer_entry(timestamp, data, imu_sensor_sptr);
 
   core_logic.buffer_prior_core_init_.AddEntrySorted(buffer_entry);
 
   // Call on non-empty buffer
-
   ASSERT_TRUE(core_logic.Initialize(p_wi_init, q_wi_init));
 }
 
@@ -93,9 +93,9 @@ TEST_F(mars_core_logic_test, GENERATE_STATE_TRANSITION_BLOCK)
     double timestamp = k;
     // Generate buffer entrys
     mars::BufferDataType data;
-    data.set_core_data(std::make_shared<mars::CoreType>(state_transition_test_data[k]));
+    data.set_core_state(std::make_shared<mars::CoreType>(state_transition_test_data[k]));
 
-    mars::BufferEntryType buffer_entry(timestamp, data, imu_sensor_sptr, mars::BufferMetadataType::core_state);
+    mars::BufferEntryType buffer_entry(timestamp, data, imu_sensor_sptr);
     core_logic.buffer_.AddEntrySorted(buffer_entry);
   }
 
@@ -142,15 +142,14 @@ TEST_F(mars_core_logic_test, PERFORM_SENSOR_UPDATE)
   std::shared_ptr<mars::PoseSensorClass> sensor_sptr =
       std::make_shared<mars::PoseSensorClass>("Pose", core_states_sptr);
 
-  // Prepare Dummy data
-  int sensor_dummy = 15;
-  mars::BufferDataType data(std::make_shared<mars::CoreType>(), std::make_shared<int>(sensor_dummy));
-  std::shared_ptr<mars::BufferDataType> data_sptr = std::make_shared<mars::BufferDataType>(data);
+  // Prepare Dummy entry
+  mars::BufferEntryType new_buffer_entry;
+  new_buffer_entry.data_.set_states(std::make_shared<mars::CoreType>(), std::make_shared<int>(13));
+  new_buffer_entry.data_.set_measurement(std::make_shared<int>(13));
 
   // Call sensor update with prepared objects
   int sensor_update_status;
-  mars::BufferEntryType new_buffer_entry;
-  sensor_update_status = core_logic.PerformSensorUpdate(&new_buffer_entry, sensor_sptr, 10, data_sptr);
+  sensor_update_status = core_logic.PerformSensorUpdate(sensor_sptr, 10, &new_buffer_entry);
 
   ASSERT_EQ(sensor_update_status, 0);
 }

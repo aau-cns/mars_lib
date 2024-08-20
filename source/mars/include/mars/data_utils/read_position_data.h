@@ -43,9 +43,9 @@ public:
       Eigen::Vector3d position(csv_data["p_x"][k], csv_data["p_y"][k], csv_data["p_z"][k]);
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<PositionMeasurementType>(position));
+      data.set_measurement(std::make_shared<PositionMeasurementType>(position));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

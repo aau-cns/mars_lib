@@ -69,12 +69,44 @@ TEST_F(mars_buffer_type_test, DATA_STORAGE)
   // the unique pointer ensures deletion when leaving the scope
   {
     std::unique_ptr<mars::BufferDataType> data(new mars::BufferDataType);
-    data->set_sensor_data(std::make_shared<mars::IMUMeasurementType>(imu_meas));
-    buffer_entry = mars::BufferEntryType(1, *data, imu_sensor_sptr, mars::BufferMetadataType::measurement);
+    data->set_sensor_state(std::make_shared<mars::IMUMeasurementType>(imu_meas));
+    buffer_entry = mars::BufferEntryType(1, *data, imu_sensor_sptr);
   }
 
-  mars::IMUMeasurementType imu_meas_return = *static_cast<mars::IMUMeasurementType*>(buffer_entry.data_.sensor_.get());
+  mars::IMUMeasurementType imu_meas_return =
+      *static_cast<mars::IMUMeasurementType*>(buffer_entry.data_.sensor_state_.get());
 
   ASSERT_EQ(imu_meas, imu_meas_return);
-  ASSERT_EQ(imu_sensor_sptr.get(), buffer_entry.sensor_.get());
+  ASSERT_EQ(imu_sensor_sptr.get(), buffer_entry.sensor_handle_.get());
+}
+
+TEST_F(mars_buffer_type_test, SET_RESET_STATE_ELEMENT)
+{
+  // Plane instance
+  mars::BufferDataType data_empty;
+  ASSERT_FALSE(data_empty.HasCoreStates());
+  ASSERT_FALSE(data_empty.HasSensorStates());
+  ASSERT_FALSE(data_empty.HasStates());
+
+  // Instance init with data
+  mars::BufferDataType data_w_state(std::make_shared<int>(12), std::make_shared<int>(13));
+
+  ASSERT_TRUE(data_w_state.HasCoreStates());
+  ASSERT_TRUE(data_w_state.HasSensorStates());
+
+  data_w_state.ClearStates();
+  ASSERT_FALSE(data_w_state.HasCoreStates());
+  ASSERT_FALSE(data_w_state.HasSensorStates());
+
+  // Only set core state
+  data_w_state.set_core_state(std::make_shared<int>(12));
+
+  ASSERT_TRUE(data_w_state.HasCoreStates());
+  ASSERT_FALSE(data_w_state.HasSensorStates());
+
+  // Set sensor state separately
+  data_w_state.set_sensor_state(std::make_shared<int>(12));
+
+  ASSERT_TRUE(data_w_state.HasCoreStates());
+  ASSERT_TRUE(data_w_state.HasSensorStates());
 }
