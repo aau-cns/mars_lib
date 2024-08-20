@@ -45,9 +45,9 @@ public:
       Eigen::Vector3d angular_velocity(csv_data["w_x"][k], csv_data["w_y"][k], csv_data["w_z"][k]);
 
       BufferDataType data;
-      data.set_sensor_data(std::make_shared<IMUMeasurementType>(linear_acceleration, angular_velocity));
+      data.set_measurement(std::make_shared<IMUMeasurementType>(linear_acceleration, angular_velocity));
 
-      BufferEntryType current_entry(time, data, sensor, BufferMetadataType::measurement);
+      BufferEntryType current_entry(time, data, sensor);
       data_out->at(k) = current_entry;
     }
   }

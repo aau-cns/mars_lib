@@ -41,6 +41,6 @@ public:
 
   std::shared_ptr<CoreState> core_states_;
 };
-};  // namespace mars
+}  // namespace mars
 
 #endif  // UPDATE_SENSOR_ABS_CLASS_H

@@ -38,7 +38,7 @@ public:
   /// \brief Buffer default constructor
   /// max buffer size is set to 400 by default
   ///
-  Buffer() = default;
+  Buffer();
 
   ///
   /// \brief Buffer constructor
@@ -79,7 +79,10 @@ public:
   /// \brief get_length
   /// \return current number of elements stored in the buffer
   ///
-  int get_length() const;
+  inline int get_length() const
+  {
+    return static_cast<int>(data_.size());
+  }
 
   ///
   /// \brief PrintBufferEntries prints all buffer entries in a formatted way
@@ -199,7 +202,10 @@ public:
   /// \return Index of the added entry. The index is -1 if the entry was removed because the max_buffer_size was
   /// reached.
   ///
-  int AddEntrySorted(const BufferEntryType& new_entry);
+  /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
+  /// elements. It then determines if the entry needs to be added before or after the closest entry.
+  ///
+  int AddEntrySorted(const BufferEntryType& new_entry, const bool& after = true);
 
   ///
   /// \brief FindClosestTimestamp Returns the index of the entry which is the closest to the specified 'timestamp' when
@@ -211,10 +217,12 @@ public:
 
   ///
   /// \brief Deletes all states after, and including the given index
+  /// This also deletes all auto generated states
+  ///
   /// \param idx Start index after which all states are deleted
   /// \return true if function was performed correct, false otherwise
   ///
-  bool DeleteStatesStartingAtIdx(const int& idx);
+  bool ClearStatesStartingAtIdx(const int& idx);
 
   ///
   /// \brief Checks if all buffer entrys are correctly sorted by time
@@ -223,32 +231,11 @@ public:
   bool IsSorted() const;
 
   ///
-  /// \brief Inserting new element before the element at the specified position
-  /// \param new_entry ntry that is added to the buffer
-  ///
-  /// The method finds the closest timestamp based on the shortest 'time' distance between the new and existing buffer
-  /// elements. It then determines if the entry needs to be added before or after the closest entry.
-  ///
-  int InsertDataAtTimestamp(const BufferEntryType& new_entry);
-
-  ///
   /// \brief InsertDataAtIndex Adds 'entry' at buffer position 'index'
   /// \param new_entry Entry buffer entry to be added
   /// \param index position at which the entry is added
   ///
-  bool InsertDataAtIndex(const BufferEntryType& new_entry, const int& index);
-
-  ///
-  /// \brief InsertIntermediateData Insert data during the intermediate propagation step
-  ///
-  /// This function is intended for inserting a auto generated measurement and state before a current measurement entry.
-  /// This is required for intermediate propagation information.
-  ///
-  /// \param measurement
-  /// \param state
-  /// \return
-  ///
-  bool InsertIntermediateData(const BufferEntryType& measurement, const BufferEntryType& state);
+  bool OverwriteDataAtIndex(const BufferEntryType& new_entry, const int& index);
 
   ///
   /// \brief get_latest_interm_entrie Get last state pair of imu prop and sensor update
@@ -261,14 +248,15 @@ public:
   ///
   /// \return True if successfull, false of no pair was found
   ///
-  bool get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle, BufferEntryType* imu_state, BufferEntryType* sensor_state) const;
+  bool get_intermediate_entry_pair(const std::shared_ptr<SensorAbsClass>& sensor_handle, BufferEntryType* imu_state,
+                                   BufferEntryType* sensor_state) const;
 
   ///
-  /// \brief CheckForLastHandle Checks if the given sensor handle only exists once in the buffer
-  /// \param sensor_handle
-  /// \return true if current sensor handle is the last in the buffer, false otherwise
+  /// \brief CheckForLastSensorHandleWithState Checks if the given sensor handle only exists once in the buffer and if
+  /// it has a state \param sensor_handle \return true if current sensor handle is the last in the buffer, false
+  /// otherwise
   ///
-  bool CheckForLastSensorHandlePair(const std::shared_ptr<SensorAbsClass>& sensor_handle) const;
+  bool CheckForLastSensorHandleWithState(const std::shared_ptr<SensorAbsClass>& sensor_handle) const;
 
   ///
   /// \brief RemoveOverflowEntrys Removes the oldest entries if max buffer size is reached
