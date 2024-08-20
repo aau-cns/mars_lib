@@ -26,6 +26,10 @@ The Modular and Robust State-Estimation Framework, or short, MaRS, is a recursiv
 
 - You can find the Doxygen generated code documentation [here](https://aau-cns.github.io/mars_lib/)
 
+**Whats New?**
+
+- **Version 2.0.0:** Starting with this version, the MaRS buffer does not require a double entry for measurements and states anymore. A single buffer entry now tracks measurements and states. If no states are generated, e.g. because they are outliers, entries are kept in the buffer and their invalidity is indicated by a meta tag. This renders the buffer logic more lightweight and improves performance. Please refer to the [migration guide for API changes](#migration-100-to-200).
+
 # Getting Started
 
 ## Setup and Building the Project
@@ -979,6 +983,17 @@ After these steps have been completed, you can use the sensor as a generalized o
   - Link to the complete flight setup: [AAU CNS Flight Package](TODO)
 
 [![MaRS GNSS Demo](https://img.youtube.com/vi/sVYeHpfOjuQ/0.jpg)](https://www.youtube.com/watch?v=sVYeHpfOjuQ "Dual-GNSS Localization using the MaRS Framework")
+
+# Migration Guide
+
+## Migration 1.0.0 to 2.0.0
+
+- Member of `mars::BufferEntryType` `IsState()` -> `HasStates()`
+- Member of `BufferDataType` within  `mars::BufferEntryType`
+  -  `buffer_entry.data_.core_`->`buffer_entry.data_.core_state_`
+  -  `buffer_entry.data_.sensor_`->`buffer_entry.data_.sensor_state_`
+  - Measurement data is not indicated by meta data anymore and now has a dedicated member variable and setter: `data.set_sensor_data()`->`data.set_measurement()`
+- `BufferMetadataType` has no type calles `measurement` anymore. It now indicates the validity of the state and remarks if a measurement was out of order. Passing this type can now be omitted e.g.: `BufferEntryType gps_meas_entry(timestamp, data, gps1_sensor_sptr_, BufferMetadataType::measurement);`-> `BufferEntryType gps_meas_entry(timestamp, data, gps1_sensor_sptr_);`
 
 # Known Issues
 
