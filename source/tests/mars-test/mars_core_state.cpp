@@ -22,7 +22,7 @@ public:
 
 TEST_F(mars_core_state_test, CTOR_CORE_TYPE)
 {
-  mars::CoreType core_type();
+  mars::CoreType core_type;
 }
 
 TEST_F(mars_core_state_test, CTOR_CORE_STATE_TYPE)

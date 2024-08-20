@@ -36,6 +36,7 @@ set(sources
     mars_pose_sensor.cpp
     mars_vision_sensor.cpp
     mars_position_sensor.cpp
+    mars_velocity_sensor.cpp
     mars_bodyvel_sensor.cpp
     mars_attitude_sensor.cpp
     mars_pressure_sensor.cpp
