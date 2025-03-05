@@ -135,12 +135,12 @@ int main(int /*argc*/, char** /*argv[]*/)
   // process data
   for (auto k : measurement_data)
   {
-    core_logic.ProcessMeasurement(k.sensor_, k.timestamp_, k.data_);
+    core_logic.ProcessMeasurement(k.sensor_handle_, k.timestamp_, k.data_);
 
     if (!core_logic.core_is_initialized_)
     {
       // Initialize the first time at which the propagation sensor occures
-      if (k.sensor_ == core_logic.core_states_->propagation_sensor_)
+      if (k.sensor_handle_ == core_logic.core_states_->propagation_sensor_)
       {
         Eigen::Vector3d p_wi_init(0, 0, 5);
         Eigen::Quaterniond q_wi_init = Eigen::Quaterniond::Identity();
@@ -153,27 +153,28 @@ int main(int /*argc*/, char** /*argv[]*/)
     }
 
     // Store results in a csv file
-    if (k.sensor_ == core_logic.core_states_->propagation_sensor_)
+    if (k.sensor_handle_ == core_logic.core_states_->propagation_sensor_)
     {
       mars::BufferEntryType latest_result;
       core_logic.buffer_.get_latest_state(&latest_result);
-      mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->state_;
+      mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->state_;
       ofile_core << last_state.to_csv_string(latest_result.timestamp_.get_seconds()) << std::endl;
     }
 
-    if (k.sensor_ == pose_sensor_sptr)
+    if (k.sensor_handle_ == pose_sensor_sptr)
     {
       // Repropagation after an out of order update can cause the latest state to be different from the current update
       // sensor. Using get_latest_sensor_handle_state is the safest option.
       mars::BufferEntryType latest_result;
       core_logic.buffer_.get_latest_sensor_handle_state(pose_sensor_sptr, &latest_result);
-      mars::PoseSensorStateType last_state = pose_sensor_sptr->get_state(latest_result.data_.sensor_);
+      mars::PoseSensorStateType last_state = pose_sensor_sptr->get_state(latest_result.data_.sensor_state_);
       ofile_pose << last_state.to_csv_string(latest_result.timestamp_.get_seconds()) << std::endl;
 
       // Retreive the last measurement and write it to the measurement file
       mars::BufferEntryType latest_meas;
       core_logic.buffer_.get_latest_sensor_handle_measurement(pose_sensor_sptr, &latest_meas);
-      mars::PoseMeasurementType* last_meas = static_cast<mars::PoseMeasurementType*>(latest_meas.data_.sensor_.get());
+      mars::PoseMeasurementType* last_meas =
+          static_cast<mars::PoseMeasurementType*>(latest_meas.data_.measurement_.get());
       ofile_meas << last_meas->to_csv_string(k.timestamp_.get_seconds()) << std::endl;
     }
   }
@@ -184,7 +185,7 @@ int main(int /*argc*/, char** /*argv[]*/)
 
   mars::BufferEntryType latest_result;
   core_logic.buffer_.get_latest_state(&latest_result);
-  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_.get())->state_;
+  mars::CoreStateType last_state = static_cast<mars::CoreType*>(latest_result.data_.core_state_.get())->state_;
 
   std::cout << "Last State:" << std::endl;
   std::cout << last_state << std::endl;
