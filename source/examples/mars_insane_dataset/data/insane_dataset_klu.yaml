@@ -1,0 +1,167 @@
+# Sensor measurement files need to be placed in source/test/test_data/
+# the file paths below are relative to this path.
+
+# Sensor Measurement files
+data_path: "/tmp/data"
+result_dir_pref: "/results"
+
+imu_file_name: "px4_imu.csv"
+mag1_file_name: "px4_mag.csv"
+mag2_file_name: "lsm_mag.csv"
+gps1_file_name: "rtk_gps1_crop.csv"
+gps2_file_name: "rtk_gps2_crop.csv"
+gps3_file_name: "gps3.csv"
+pose1_file_name: "vio.csv"
+pose2_file_name: "mocap_vehicle_data.csv"
+baro1_file_name: "px4_baro.csv"
+
+t_start: 0 # In seconds, 0 = no limit
+t_stop:  215 # In seconds, 0 = no limit
+
+# Sensor controls
+enable_gps1: true
+t_offset_gps1: -5.16
+
+enable_gps2: true
+t_offset_gps2: -5.16
+
+enable_gps3: false
+t_offset_gps3: 0
+
+enable_mag1: true
+t_offset_mag1: 0
+update_on_mag1: false
+
+enable_mag2: false
+t_offset_mag2: 0
+update_on_mag2: true
+
+# VIO
+enable_pose1: true
+t_offset_pose1: 0
+
+# MoCap
+enable_pose2: true
+t_offset_pose2: 0.2
+
+enable_baro1: false
+t_offset_baro1: 0
+
+# Framework Settings
+pub_on_prop: true
+verbose: false
+verbose_out_of_order: true
+discard_ooo_prop_meas: false
+cov_debug: false
+buffer_size: 4000
+use_common_gps_reference: true
+
+# Yaw initialization
+enable_manual_yaw_init: false
+yaw_init_deg: 210
+auto_mag_init_samples: 50
+
+# Publisher
+publish_gps_enu: true
+
+# Sensor Settings
+gyro_rate_noise: 0.0013 # Noise STD [rad/s]
+gyro_bias_noise: 0.00013
+acc_noise: 0.0083 # Noise STD [m/s^2]
+acc_bias_noise: 0.00083
+
+disable_acc_bias: false
+disable_gyro_bias: false
+
+# Core state covariance p,v,q,bw,ba
+core_init_cov_p: [1, 1, 1]
+core_init_cov_v: [0.25, 0.25, 0.25]
+core_init_cov_q: [0.02742, 0.02742, 0.02742] #30degree
+core_init_cov_bw: [0.0002, 0.0002, 0.0002]
+core_init_cov_ba: [0.0005, 0.0005, 0.0005]
+
+# GPS Settings
+use_manual_gps_ref: false
+manual_gps_ref: [46.61355929, 14.26238830, 489.4940] #lat, long, alt
+
+## GPS1
+gps1_chi2_enable: false
+gps1_chi2_value: 0.05
+gps1_pos_meas_noise: [0.1, 0.1, 0.1]
+gps1_vel_meas_noise: [0.1, 0.1, 0.1]
+gps1_cal_ig: [0.350121933088198, 0.410121933088197, 0]
+gps1_state_init_cov: [0.00000001, 0.00000001, 0.00000001]
+gps1_use_vel_rot: false
+gps1_vel_rot_axis: [1, 0, 0]
+gps1_vel_rot_thr: 1
+
+## GPS2
+gps2_chi2_enable: false
+gps2_chi2_value: 0.05
+gps2_pos_meas_noise: [0.1, 0.1, 0.1]
+gps2_vel_meas_noise: [0.1, 0.1, 0.1]
+gps2_cal_ig: [-0.470121933088198, -0.410121933088197, 0]
+gps2_state_init_cov: [0.00000001, 0.00000001, 0.00000001]
+gps2_use_vel_rot: false
+gps2_vel_rot_axis: [1, 0, 0]
+gps2_vel_rot_thr: 1
+
+## GPS3
+gps3_chi2_enable: false
+gps3_chi2_value: 0.05
+gps3_pos_meas_noise: [0.2, 0.2, 0.2]
+gps3_vel_meas_noise: [0.2, 0.2, 0.2]
+gps3_cal_ig: [0, 0, 0]
+gps3_state_init_cov: [0.0025, 0.0025, 0.0025]
+gps3_use_vel_rot: false
+gps3_vel_rot_axis: [1, 0, 0]
+gps3_vel_rot_thr: 1
+
+# Magnetometer Settings
+
+## Mag1
+mag1_normalize: true
+mag1_decl: 3.4   #degree
+mag1_incl: -62.4 #degree
+mag1_meas_noise: [0.5, 0.5, 0.5]
+mag1_cal_q_im: [0.999668027881894, -0.001947377048362, -0.019792811256137, 0.016379449805652] # w,x,y,z
+mag1_state_init_cov: [0.05, 0.05, 0.05, 0.00305, 0.00305, 0.00305] #v_wm q_im
+mag1_apply_intrinsic: true
+mag1_intr_offset: [-4.49261238868243e-07, -2.75221587230597e-07, -3.62012076428164e-08]
+mag1_intr_transform: [[0.950293907398799,-0.0142399310612498,-0.0527705818747349], [-0.0142399310612499,0.925633084091132,0.0368580937010118], [-0.0527705818747349,0.0368580937010118,0.905540967674482]]
+
+
+## Mag2
+mag2_normalize: true
+mag2_decl: 3.4   #degree
+mag2_incl: -62.4 #degree
+mag2_meas_noise: [0.05, 0.05, 0.05]
+mag2_cal_q_im: [-0.916529663380115, -0.053628008273472, 0.184859578148265, 0.350605689114994] # w,x,y,z
+mag2_state_init_cov: [0.05, 0.05, 0.05, 0.00305, 0.00305, 0.00305] #v_wm q_im
+mag2_apply_intrinsic: true
+mag2_intr_offset: [0.246466156356275, 0.406911723126105, -0.0712056126421493]
+mag2_intr_transform: [[0.970795675644504,-0.0146501492537981,-0.0174249642692250],[-0.0146501492537981,0.975653659276230,0.000248595708612520],[-0.0174249642692249,0.000248595708612576,0.984848671930239]]
+
+# Pose sensor settings
+
+## Pose1 VIO
+pose1_pos_meas_noise: [0.05, 0.05, 0.05]
+pose1_rot_meas_noise: [0.08, 0.08, 0.08]
+#pose1_cal_p_ip: [-0.239, -0.05, -0.019]
+#pose1_cal_q_ip: [0.0106393146811171, 0.0109080578822580, -0.999880660312949, 0.00254644624828031] #w,x,y,z
+pose1_use_scale: true
+pose1_state_init_cov: [0.00000000001, 0.00000000001, 0.00000000001, 0.00000000001, 0.00000000001, 0.00000000001] #position[3], rot[3]
+
+## Pose2 MoCap
+pose2_pos_meas_noise: [0.05, 0.05, 0.05]
+pose2_rot_meas_noise: [0.03, 0.03, 0.03]
+pose2_cal_p_ip: [-0.1, 0, 0.06]
+pose2_cal_q_ip: [0.99914, -0.025684, 0.018159, 0.027015] #w,x,y,z
+pose2_use_scale: false
+pose2_state_init_cov: [0.0001, 0.0001, 0.0001, 0.03, 0.03, 0.03] #position[3], rot[3], scale [1]
+
+## Baro1
+baro1_meas_noise: 1
+baro1_cal_p_ip: [0.0, 0.0, 0.0]
+baro1_state_init_cov: [0.00009, 0.00009, 0.00009] # position[3]
+

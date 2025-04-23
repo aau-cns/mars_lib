@@ -7,3 +7,4 @@ endif()
 # Example applications
 add_subdirectory(mars_cmd)
 add_subdirectory(mars_thl)
+add_subdirectory(mars_insane_dataset)
